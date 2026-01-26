@@ -1,0 +1,3070 @@
+{
+  "version": "1.3",
+  "updated": "2026-01-26",
+  "playbooks": {
+    "horton-2150": {
+      "manufacturer": "Horton",
+      "model": "2150",
+      "type": "sliding",
+      "manuals": [
+        {
+          "name": "2150 - version 11 software.pdf",
+          "drive_id": null
+        },
+        {
+          "name": "2150 version 10 quality.pdf",
+          "drive_id": null
+        }
+      ],
+      "symptoms": {
+        "display-not-lighting": {
+          "title": "Display Not Lighting",
+          "steps": [
+            "Check main power connection at CN7",
+            "Verify 24VDC at power supply output",
+            "Check F1 fuse (main power fuse)",
+            "Inspect ribbon cable from display to main board",
+            "Check for LED indicators on control board"
+          ],
+          "parts": [
+            {
+              "name": "Power Supply",
+              "confidence": 0.7
+            },
+            {
+              "name": "Control Board",
+              "confidence": 0.5
+            },
+            {
+              "name": "Display Module",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "door-wont-move": {
+          "title": "Door Won't Move",
+          "steps": [
+            "Verify operation mode selector is not in OFF position",
+            "Check for error codes on display",
+            "Test activation sensors (motion/presence)",
+            "Verify encoder connection at CN2",
+            "Check motor cable connections",
+            "Test with manual jog using push buttons",
+            "Check for mechanical obstructions"
+          ],
+          "parts": [
+            {
+              "name": "Motor Assembly",
+              "confidence": 0.5
+            },
+            {
+              "name": "Encoder",
+              "confidence": 0.6
+            },
+            {
+              "name": "Control Board",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "door-slams": {
+          "title": "Door Slams/Closes Too Fast",
+          "steps": [
+            "Check closing speed parameter settings",
+            "Verify encoder is reading correctly",
+            "Run Learn cycle to recalibrate",
+            "Check for loose belt or drive components",
+            "Inspect for damaged encoder disc"
+          ],
+          "parts": [
+            {
+              "name": "Encoder",
+              "confidence": 0.6
+            },
+            {
+              "name": "Belt",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "fuse-blowing-f2": {
+          "title": "F2 Fuse Blowing (Motor Fuse)",
+          "steps": [
+            "Disconnect motor and test fuse",
+            "Check motor winding resistance",
+            "Inspect motor cable for damage/shorts",
+            "Check for mechanical binding",
+            "Verify motor type setting matches installed motor"
+          ],
+          "parts": [
+            {
+              "name": "Motor Assembly",
+              "confidence": 0.7
+            },
+            {
+              "name": "Motor Cable",
+              "confidence": 0.4
+            },
+            {
+              "name": "F2 Fuse",
+              "confidence": 1.0
+            }
+          ]
+        },
+        "fuse-blowing-f3": {
+          "title": "F3 Fuse Blowing (Accessories)",
+          "steps": [
+            "Disconnect all accessories",
+            "Check 24V accessory load",
+            "Inspect sensor wiring for shorts",
+            "Test fuse with accessories disconnected",
+            "Reconnect accessories one at a time"
+          ],
+          "parts": [
+            {
+              "name": "F3 Fuse",
+              "confidence": 1.0
+            },
+            {
+              "name": "Sensor",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "encoder-errors": {
+          "title": "Encoder Errors",
+          "steps": [
+            "Check encoder cable connection at CN2",
+            "Verify encoder disc is clean and undamaged",
+            "Check encoder mounting and alignment",
+            "Test encoder output with multimeter",
+            "Verify motor type parameter setting"
+          ],
+          "parts": [
+            {
+              "name": "Encoder",
+              "confidence": 0.8
+            },
+            {
+              "name": "Encoder Cable",
+              "confidence": 0.5
+            }
+          ]
+        },
+        "lock-errors": {
+          "title": "Lock Errors",
+          "steps": [
+            "Verify lock type parameter matches installed lock",
+            "Check lock cable connections",
+            "Test lock manually with 24V direct",
+            "Inspect lock mechanism for damage",
+            "Check lock mounting and alignment"
+          ],
+          "parts": [
+            {
+              "name": "Electric Lock",
+              "confidence": 0.7
+            },
+            {
+              "name": "Lock Cable",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "obstruction-detection": {
+          "title": "False Obstruction Detection",
+          "steps": [
+            "Clean track and floor guide",
+            "Check for debris in door path",
+            "Verify presence sensors are clean",
+            "Adjust obstruction sensitivity parameter",
+            "Run new Learn cycle"
+          ],
+          "parts": [
+            {
+              "name": "Presence Sensor",
+              "confidence": 0.5
+            },
+            {
+              "name": "Control Board",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "battery-failure": {
+          "title": "Battery/Emergency Unit Failure",
+          "steps": [
+            "Check battery voltage (should be 24V nominal)",
+            "Verify battery connections are secure",
+            "Test battery under load",
+            "Check emergency unit if installed",
+            "Verify charging circuit is functioning"
+          ],
+          "parts": [
+            {
+              "name": "Battery Pack",
+              "confidence": 0.8
+            },
+            {
+              "name": "Emergency Unit",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "grinding-noise": {
+          "title": "Grinding or Unusual Noise",
+          "steps": [
+            "Inspect belt for wear or damage",
+            "Check belt tension and alignment",
+            "Inspect hanger rollers for wear",
+            "Check motor bearings",
+            "Verify door panels are not rubbing"
+          ],
+          "parts": [
+            {
+              "name": "Drive Belt",
+              "confidence": 0.6
+            },
+            {
+              "name": "Hanger Rollers",
+              "confidence": 0.5
+            },
+            {
+              "name": "Motor Assembly",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "learn-cycle-failure": {
+          "title": "Learn Cycle Failure",
+          "steps": [
+            "Verify door moves freely by hand (power off)",
+            "Check for obstructions in full travel path",
+            "Ensure all sensors are connected properly",
+            "Verify lock is releasing (if installed)",
+            "Check for error codes after Learn attempt"
+          ],
+          "parts": [
+            {
+              "name": "Control Board",
+              "confidence": 0.4
+            },
+            {
+              "name": "Encoder",
+              "confidence": 0.5
+            }
+          ]
+        },
+        "slow-operation": {
+          "title": "Door Operating Slowly",
+          "steps": [
+            "Check speed parameter settings",
+            "Verify Run Program parameter",
+            "Inspect for mechanical friction",
+            "Check belt tension",
+            "Test in different operation modes"
+          ],
+          "parts": [
+            {
+              "name": "Motor Assembly",
+              "confidence": 0.4
+            },
+            {
+              "name": "Drive Belt",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "sensor-issues": {
+          "title": "Sensor Not Detecting",
+          "steps": [
+            "Verify 24V power at sensor",
+            "Check sensor alignment and coverage",
+            "Clean sensor lens",
+            "Test sensor output with multimeter",
+            "Verify sensor type parameter setting"
+          ],
+          "parts": [
+            {
+              "name": "Motion Sensor",
+              "confidence": 0.6
+            },
+            {
+              "name": "Presence Sensor",
+              "confidence": 0.6
+            }
+          ]
+        }
+      },
+      "errorCodes": {
+        "E01": {
+          "meaning": "Encoder error",
+          "action": "Check encoder connection and disc"
+        },
+        "E02": {
+          "meaning": "Motor current error",
+          "action": "Check motor and cable connections"
+        },
+        "E03": {
+          "meaning": "Speed error",
+          "action": "Run Learn cycle, check encoder"
+        },
+        "E04": {
+          "meaning": "Position error",
+          "action": "Run Learn cycle, check for obstructions"
+        },
+        "E05": {
+          "meaning": "Lock error",
+          "action": "Check lock type setting and connections"
+        },
+        "E06": {
+          "meaning": "Communication error",
+          "action": "Check internal cable connections"
+        },
+        "E07": {
+          "meaning": "Emergency unit error",
+          "action": "Check battery and emergency unit"
+        },
+        "E08": {
+          "meaning": "Sensor monitoring error",
+          "action": "Check sensor connections"
+        },
+        "E09": {
+          "meaning": "Internal error",
+          "action": "Reset, if persists replace control board"
+        },
+        "E10": {
+          "meaning": "EEPROM error",
+          "action": "Reset to defaults, replace board if persists"
+        },
+        "E11": {
+          "meaning": "Motor temperature high",
+          "action": "Let motor cool, reduce duty cycle"
+        },
+        "E12": {
+          "meaning": "24V overload",
+          "action": "Check accessory connections"
+        },
+        "E13": {
+          "meaning": "Lock current error",
+          "action": "Check lock installation"
+        },
+        "E14": {
+          "meaning": "Learn required",
+          "action": "Run Learn cycle"
+        },
+        "E15": {
+          "meaning": "Hardware watchdog",
+          "action": "Reset, replace board if persists"
+        },
+        "E16": {
+          "meaning": "Motor type mismatch",
+          "action": "Verify motor type parameter"
+        },
+        "E17": {
+          "meaning": "Brake chopper error",
+          "action": "Reset, replace board if persists"
+        },
+        "E18": {
+          "meaning": "Link voltage error",
+          "action": "Check power supply"
+        }
+      },
+      "testProcedures": {
+        "function-test": {
+          "title": "Function Test",
+          "steps": [
+            "Set operation mode to AUTO",
+            "Trigger opening sensor - door should open",
+            "Wait for hold-open time - door should close",
+            "Test presence sensor - door should hold open",
+            "Test from both sides"
+          ]
+        },
+        "encoder-test": {
+          "title": "Encoder Test",
+          "steps": [
+            "Access parameter menu",
+            "Navigate to encoder count display",
+            "Push door by hand slowly",
+            "Verify count changes smoothly",
+            "Check for missing counts or noise"
+          ]
+        },
+        "motor-test": {
+          "title": "Motor Test",
+          "steps": [
+            "Disconnect motor from belt",
+            "Use jog buttons to run motor",
+            "Listen for smooth operation",
+            "Check for excessive heat",
+            "Measure current draw"
+          ]
+        },
+        "learn-cycle": {
+          "title": "Learn Cycle",
+          "steps": [
+            "Set operation mode to AUTO",
+            "Press and hold Learn button 2 seconds",
+            "Display flashes 'L'",
+            "Door closes, opens slightly, closes again",
+            "Door opens fully, pauses, closes",
+            "Display shows 'on' when complete"
+          ]
+        },
+        "save-parameters": {
+          "title": "Save Parameters",
+          "steps": [
+            "Make desired parameter changes",
+            "Press Select to confirm each change",
+            "Press Exit to return to normal mode",
+            "Parameters auto-save to EEPROM",
+            "Power cycle to verify retention"
+          ]
+        }
+      },
+      "wiring": {
+        "CN2": {
+          "description": "Encoder/Motor Connection",
+          "terminals": {
+            "1": "Encoder A",
+            "2": "Encoder B",
+            "3": "Encoder GND",
+            "4": "Motor U",
+            "5": "Motor V",
+            "6": "Motor W"
+          }
+        },
+        "CN7": {
+          "description": "Power Input",
+          "terminals": {
+            "L": "Line (120/240VAC)",
+            "N": "Neutral",
+            "GND": "Ground"
+          }
+        },
+        "fuses": {
+          "F1": "Main power fuse",
+          "F2": "Motor fuse",
+          "F3": "24V accessory fuse"
+        }
+      }
+    },
+    "besam-sl500": {
+      "manufacturer": "Besam",
+      "model": "SL500",
+      "type": "sliding",
+      "manuals": [
+        {
+          "name": "SL500.pdf",
+          "drive_id": null
+        }
+      ],
+      "symptoms": {
+        "display-not-lighting": {
+          "title": "Display Not Lighting / Extinguished",
+          "steps": [
+            "Check mains power at power supply unit",
+            "Verify power supply cable connection to main control unit",
+            "Check for blown fuses (10AT rated)",
+            "Perform a RESET using operation mode selector",
+            "If display remains off, replace main control unit or power supply"
+          ],
+          "parts": [
+            {
+              "name": "Power Supply Unit PSU 150",
+              "confidence": 0.7
+            },
+            {
+              "name": "Main Control Unit MCU",
+              "confidence": 0.6
+            }
+          ]
+        },
+        "door-wont-move": {
+          "title": "Door Won't Move",
+          "steps": [
+            "Check operation mode selector is not in OFF position",
+            "Check display for error codes (E1-E8)",
+            "Disconnect mains power, manually push door to verify no mechanical binding",
+            "Check floor guide for debris, sand, or stones",
+            "Verify motor and encoder cables are connected",
+            "Check Motor Type configuration parameter matches installed motor",
+            "Test activation sensors"
+          ],
+          "parts": [
+            {
+              "name": "Drive Unit",
+              "confidence": 0.5
+            },
+            {
+              "name": "Main Control Unit MCU",
+              "confidence": 0.5
+            },
+            {
+              "name": "Encoder Cable",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "sensor-error-e1": {
+          "title": "E1 Sensor Errors",
+          "steps": [
+            "Check monitoring output connections for all sensors",
+            "Verify inner activation unit test pulse (error 19)",
+            "Check fire alarm connections (error 20)",
+            "Verify stop impulse connections (error 30)",
+            "Check side presence sensor connections (error 31)",
+            "Verify presence sensor connections (error 32)",
+            "Replace faulty monitored activation unit if connections OK"
+          ],
+          "parts": [
+            {
+              "name": "Motion Sensor",
+              "confidence": 0.6
+            },
+            {
+              "name": "Presence Sensor",
+              "confidence": 0.6
+            },
+            {
+              "name": "Activation Unit",
+              "confidence": 0.5
+            }
+          ]
+        },
+        "emergency-unit-error-e2": {
+          "title": "E2 Emergency Unit Errors",
+          "steps": [
+            "Check battery voltage - charge or replace if low (error 21)",
+            "Verify battery cables are connected and not short circuited (error 25)",
+            "Check battery internal thermal fuse",
+            "Verify door can open to fully open position (error 26 - timeout)",
+            "Check for high friction or jammed door preventing emergency test",
+            "Replace escape route unit if battery measurement wrong"
+          ],
+          "parts": [
+            {
+              "name": "Battery",
+              "confidence": 0.8
+            },
+            {
+              "name": "Escape Route Unit",
+              "confidence": 0.5
+            },
+            {
+              "name": "Main Control Unit MCU",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "electronic-unit-error-e3": {
+          "title": "E3 Electronic Unit Errors",
+          "steps": [
+            "RESET the operator first for all E3 errors",
+            "Check for flashing or extinguished LED on electronic units",
+            "Error 00 (RAM): RESET, replace unit with flashing LED if persists",
+            "Error 01 (ROM): RESET, replace unit with flashing LED if persists",
+            "Error 02 (EEPROM): Download default parameters, RESET, replace MCU if persists",
+            "Error 14 (Lock Current): Check correct lock installed, replace lock or MCU",
+            "Error 17 (Hardware Watchdog): RESET, replace MCU if persists",
+            "Error 22 (24V Overcurrent): Check connected sensors and accessories",
+            "Error 24 (Learn): Check door can complete full open/close cycle"
+          ],
+          "parts": [
+            {
+              "name": "Main Control Unit MCU",
+              "confidence": 0.7
+            },
+            {
+              "name": "Electronic Unit",
+              "confidence": 0.5
+            },
+            {
+              "name": "Power Supply Unit PSU 150",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "motor-encoder-error-e4": {
+          "title": "E4 Motor/Encoder Errors",
+          "steps": [
+            "Verify encoder cable is connected (error 03, 09)",
+            "Verify motor cable is connected (error 03, 04)",
+            "Check Motor Type configuration parameter",
+            "Inspect cables for damage",
+            "Replace encoder cable if damaged (error 09)",
+            "RESET and retest"
+          ],
+          "parts": [
+            {
+              "name": "Encoder Cable",
+              "confidence": 0.7
+            },
+            {
+              "name": "Motor Cable",
+              "confidence": 0.5
+            },
+            {
+              "name": "Main Control Unit MCU",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "lock-error-e5": {
+          "title": "E5 Lock Errors",
+          "steps": [
+            "Check lock is operating without friction (error 07)",
+            "Verify Hold Force parameter is set correctly",
+            "Verify Lock Release parameter is set correctly",
+            "Make sure door can move first 9/16 inch (14mm) from closed",
+            "Check lock mounting and alignment"
+          ],
+          "parts": [
+            {
+              "name": "Electric Lock LDP/LD",
+              "confidence": 0.8
+            },
+            {
+              "name": "Main Control Unit MCU",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "communication-error-e6": {
+          "title": "E6 Communication Errors",
+          "steps": [
+            "Push Learn button for 2 seconds to re-recognize modules",
+            "RESET the operator",
+            "Error 12: Motor control processor - replace MCU if persists",
+            "Error 13: Door control processor - replace MCU if persists",
+            "Error 36: Escape route unit - replace escape route unit if persists",
+            "Error 37: I/O unit - replace I/O unit if persists",
+            "Error 51: Web unit - replace web unit if persists",
+            "Error 53: Operation mode selector - check connections, replace if persists"
+          ],
+          "parts": [
+            {
+              "name": "Main Control Unit MCU",
+              "confidence": 0.6
+            },
+            {
+              "name": "I/O Unit IOU",
+              "confidence": 0.5
+            },
+            {
+              "name": "Operation Mode Selector",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "motor-temperature-high-e7": {
+          "title": "E7 Motor Temperature High",
+          "steps": [
+            "If motor is warm, set door to OPEN mode and wait at least 1 minute",
+            "Reduce speed parameters",
+            "Increase Hold Open Time parameter",
+            "Check if heavy-duty motor was replaced with normal duty motor",
+            "If motor was replaced, wait 5 minutes in OPEN mode",
+            "Check for mechanical friction increasing motor load"
+          ],
+          "parts": [
+            {
+              "name": "Motor/Drive Unit",
+              "confidence": 0.6
+            },
+            {
+              "name": "Main Control Unit MCU",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "door-hard-to-move": {
+          "title": "Door Hard to Move Manually",
+          "steps": [
+            "Disconnect mains power and unlock all mechanical locks",
+            "Pull door manually over complete sliding track",
+            "Check floor guide for sand, stones, rubbish",
+            "Check if door is jamming on floor or sweeps",
+            "Clean floor guide thoroughly",
+            "Adjust door leaf height/depth if rubbing",
+            "Replace wear parts if necessary"
+          ],
+          "parts": [
+            {
+              "name": "Floor Guide",
+              "confidence": 0.5
+            },
+            {
+              "name": "Hanger Rollers",
+              "confidence": 0.5
+            },
+            {
+              "name": "Door Sweeps",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "learn-cycle-failure": {
+          "title": "Learn Cycle Failure (Error 24)",
+          "steps": [
+            "Verify door can make a full open/close cycle manually",
+            "Check for high friction - clean track and guide",
+            "Check if door is jammed or obstructed",
+            "Verify all sensors are connected",
+            "Check lock is releasing properly",
+            "Run new Learn cycle after clearing obstruction"
+          ],
+          "parts": [
+            {
+              "name": "Floor Guide",
+              "confidence": 0.4
+            },
+            {
+              "name": "Electric Lock",
+              "confidence": 0.4
+            },
+            {
+              "name": "Main Control Unit MCU",
+              "confidence": 0.3
+            }
+          ]
+        }
+      },
+      "errorCodes": {
+        "E1-19": {
+          "meaning": "Inner Impulse Error - no test answer from activation unit",
+          "action": "Check monitoring output connections, replace inner activation unit"
+        },
+        "E1-20": {
+          "meaning": "Fire Impulse Error - no test answer from fire alarm",
+          "action": "Check fire alarm connections"
+        },
+        "E1-30": {
+          "meaning": "Stop Impulse Error - no test answer from stop impulse",
+          "action": "Check monitoring output connections"
+        },
+        "E1-31": {
+          "meaning": "Side Presence Impulse Error",
+          "action": "Check connections, replace side presence activation unit"
+        },
+        "E1-32": {
+          "meaning": "Presence Impulse Error",
+          "action": "Check connections, replace presence activation unit"
+        },
+        "E2-21": {
+          "meaning": "Emergency Unit Error - low battery voltage",
+          "action": "Charge or replace battery, replace escape route unit or MCU"
+        },
+        "E2-25": {
+          "meaning": "Battery Error - disconnected, short circuit, or thermal fuse blown",
+          "action": "Check cables, charge/replace battery, replace MCU"
+        },
+        "E2-26": {
+          "meaning": "Emergency Action Timeout - door prevented from opening",
+          "action": "Ensure door can open to fully open position"
+        },
+        "E3-00": {
+          "meaning": "RAM Error",
+          "action": "RESET, replace unit with flashing/extinguished LED"
+        },
+        "E3-01": {
+          "meaning": "ROM Error",
+          "action": "RESET, replace unit with flashing/extinguished LED"
+        },
+        "E3-02": {
+          "meaning": "EEPROM Error",
+          "action": "Download default parameters, RESET, replace MCU"
+        },
+        "E3-05": {
+          "meaning": "Ambient Temperature Error",
+          "action": "RESET, replace MCU if persists"
+        },
+        "E3-08": {
+          "meaning": "A/D Converter Error",
+          "action": "RESET, replace unit with flashing/extinguished LED"
+        },
+        "E3-10": {
+          "meaning": "Register Error",
+          "action": "RESET, replace unit with flashing/extinguished LED"
+        },
+        "E3-11": {
+          "meaning": "OS Error - internal program error",
+          "action": "RESET, replace unit with flashing/extinguished LED"
+        },
+        "E3-14": {
+          "meaning": "Lock Current Error - lock defective",
+          "action": "Check correct lock installed, replace lock or MCU"
+        },
+        "E3-17": {
+          "meaning": "Hardware Watchdog Error - cannot disable motor bridge",
+          "action": "RESET, replace MCU"
+        },
+        "E3-18": {
+          "meaning": "EEPROM Critical Write Error",
+          "action": "RESET, replace MCU"
+        },
+        "E3-22": {
+          "meaning": "24V Over Current - auxiliary output overloaded",
+          "action": "Check connected sensors and accessories, RESET"
+        },
+        "E3-23": {
+          "meaning": "Lock Circuit Error - cannot disconnect lock with relay",
+          "action": "RESET, replace MCU"
+        },
+        "E3-24": {
+          "meaning": "Learn Error - Learn cycle timed out",
+          "action": "Check door can complete full cycle, check for friction/jamming"
+        },
+        "E3-27": {
+          "meaning": "LDB/LDE Lock Error",
+          "action": "Check lock installation, verify limit switches working, replace lock"
+        },
+        "E3-33": {
+          "meaning": "Flash Code Error - serious programming error",
+          "action": "RESET, replace MCU"
+        },
+        "E3-34": {
+          "meaning": "Output Enable Error - safety circuit test failing",
+          "action": "RESET, replace MCU"
+        },
+        "E3-35": {
+          "meaning": "Link Voltage Error",
+          "action": "RESET, replace MCU"
+        },
+        "E3-41": {
+          "meaning": "Brake Chopper Error",
+          "action": "RESET, replace MCU"
+        },
+        "E4-03": {
+          "meaning": "Encoder Error - encoder/cable/motor damaged or wrong motor type",
+          "action": "Check cables, verify Motor Type configuration"
+        },
+        "E4-04": {
+          "meaning": "Motor Current Error - motor/encoder cable damaged",
+          "action": "Check cables, verify Motor Type configuration"
+        },
+        "E4-09": {
+          "meaning": "Encoder Cable Error",
+          "action": "Check encoder cable, replace if damaged"
+        },
+        "E5-07": {
+          "meaning": "Lock Failure - door prevented from opening first 14mm",
+          "action": "Check lock operates without friction, verify Hold Force and Lock Release parameters"
+        },
+        "E6-12": {
+          "meaning": "Motor Control Communication Error",
+          "action": "Push Learn 2 sec, RESET, replace MCU"
+        },
+        "E6-13": {
+          "meaning": "Door Control Communication Error",
+          "action": "Push Learn 2 sec, RESET, replace MCU"
+        },
+        "E6-36": {
+          "meaning": "Escape Route Communication Error",
+          "action": "Push Learn 2 sec, RESET, replace escape route unit"
+        },
+        "E6-37": {
+          "meaning": "I/O Communication Error",
+          "action": "Push Learn 2 sec, RESET, replace I/O unit"
+        },
+        "E6-51": {
+          "meaning": "Web Communication Error",
+          "action": "Push Learn 2 sec, RESET, replace web unit"
+        },
+        "E6-52": {
+          "meaning": "Hi-O Communication Error",
+          "action": "Push Learn 2 sec, RESET, replace Hi-O unit"
+        },
+        "E6-53": {
+          "meaning": "Operation Mode Selector Communication Error",
+          "action": "Push Learn 2 sec, check connections, replace selector"
+        },
+        "E6-54": {
+          "meaning": "External Communication Error - external bus malfunction",
+          "action": "Push Learn 2 sec, RESET, replace MCU"
+        },
+        "E7-16": {
+          "meaning": "Motor Temperature High - duty cycle too high",
+          "action": "Set to OPEN mode, wait 1+ min, reduce speeds, increase Hold Open Time"
+        },
+        "E8-49": {
+          "meaning": "EEPROM Non-critical Write Error - cannot write log info",
+          "action": "RESET, replace MCU if logging needed"
+        },
+        "E8-50": {
+          "meaning": "EEPROM Access Error - queue full",
+          "action": "Reduce events to log in Event Log configuration"
+        }
+      },
+      "testProcedures": {
+        "learn-cycle": {
+          "title": "Learn Cycle",
+          "steps": [
+            "Set Program Selector to AUTO position",
+            "Connect all accessories with well-adjusted sensors",
+            "Connect main power plug to control unit",
+            "Door will move to closed position with low speed if open",
+            "Push Learn button (LB) for 2 seconds - display flashes 'L'",
+            "Door closes, opens slightly, closes again (detects lock type)",
+            "Door opens fully (calculates friction), pauses 4-10 sec",
+            "Door closes (calculates weight and adjusts speed)",
+            "Display shows 'on' when complete",
+            "If 'P' + digits shown, manually adjust indicated parameters"
+          ]
+        },
+        "factory-reset": {
+          "title": "Factory Reset / Default Parameters",
+          "steps": [
+            "Push Learn/Exit button for 10 seconds",
+            "Display will flash 'L' while holding",
+            "When 'on' is displayed, default parameters are restored",
+            "Run new Learn cycle after reset"
+          ]
+        },
+        "parameter-adjustment": {
+          "title": "Parameter Adjustment",
+          "steps": [
+            "Push Select button - display shows rotating test pattern",
+            "Verify all 7 segments light in both display windows",
+            "Push Select again - displays parameter ID (two digits)",
+            "Use Up/Down buttons to select desired parameter",
+            "Push Select to see current value (flashing digits)",
+            "Use Up/Down to adjust within allowed range",
+            "Push Select to confirm new value",
+            "Push Exit or wait 10 seconds to return to normal 'on'"
+          ]
+        },
+        "lock-function-test": {
+          "title": "Lock Function Test (LDP or LDB)",
+          "steps": [
+            "Set operation mode selector to EXIT",
+            "Door should open and close without sound from lock",
+            "Set operation mode selector to OFF",
+            "Try to open door by pulling - should not open",
+            "Set back to EXIT",
+            "Listen for two clicks (LDB) or one click (LDP) indicating unlock",
+            "Door should now open and close without lock sound"
+          ]
+        },
+        "module-recognition": {
+          "title": "Module Recognition",
+          "steps": [
+            "Push Learn/Exit for 1 second (not 2)",
+            "Each connected electronic module will be recognized",
+            "Operation mode selector will be recognized",
+            "Use after replacing or adding any electronic unit"
+          ]
+        }
+      },
+      "wiring": {
+        "mains": {
+          "description": "Mains Power Connection",
+          "specs": "Single phase 50/60Hz, 100V-10% to 240V+10%, Fuse 10AT",
+          "terminals": {
+            "L": "Line (Hot)",
+            "N": "Neutral",
+            "GND": "Ground - MUST be properly grounded"
+          }
+        },
+        "sensors": {
+          "description": "Activation Unit Connections",
+          "connections": {
+            "terminals_15_16_17": "Outer Impulse (Motion Sensor) - +24V, 0V, Motion NO",
+            "terminals_1_5_7": "Inner Impulse (Motion Sensor) - +24V, 0V, Motion NO",
+            "terminals_8_9_14": "Presence Impulse - +24V, 0V, Presence NO",
+            "terminals_1_3": "Break-out Switches (NO)"
+          }
+        },
+        "accessories": {
+          "description": "Optional Accessories",
+          "items": {
+            "IOU": "I/O Unit P/N 1007779 - Fire alarm, error indication, Open/Close, Nurse function",
+            "LDP": "Electric Lock Fail Safe P/N 1008354",
+            "LD": "Electric Lock Fail Secure P/N 1008167"
+          }
+        }
+      },
+      "parameters": {
+        "00": {
+          "name": "High Speed Opening",
+          "range": "0.33-2.30 ft/s (10-70 cm/s)",
+          "default": "2.3 (70)"
+        },
+        "01": {
+          "name": "Low Speed",
+          "range": "0.16-2.30 ft/s (5-70 cm/s)",
+          "default": "2.3 (70)"
+        },
+        "02": {
+          "name": "High Speed Closing",
+          "range": "0.33-2.30 ft/s (10-70 cm/s)",
+          "default": "0.43 (13)"
+        },
+        "03": {
+          "name": "Hold Open Time",
+          "range": "00-60 sec",
+          "default": "20"
+        },
+        "04": {
+          "name": "Key Hold Open Time",
+          "range": "00-60 sec",
+          "default": "70"
+        },
+        "05": {
+          "name": "Lock Configuration",
+          "range": "No lock(00)/LDP(01)/LD(02)",
+          "default": "00"
+        },
+        "06": {
+          "name": "Lock Release",
+          "range": "Off(00)/On(01)",
+          "default": "00"
+        },
+        "07": {
+          "name": "Presence Input 1 Config",
+          "range": "NO(00)/NC(01)",
+          "default": "00"
+        },
+        "08": {
+          "name": "Presence Input 2 Config",
+          "range": "NO(00)/NC(01)",
+          "default": "00"
+        },
+        "10": {
+          "name": "Emergency Unit Monitoring",
+          "range": "Off(00)/On(01)",
+          "default": "00"
+        },
+        "11": {
+          "name": "Partial Open Position",
+          "range": "00-99%",
+          "default": "70"
+        },
+        "12": {
+          "name": "Opening Direction",
+          "range": "CW(00)/CCW(01)",
+          "default": "00"
+        },
+        "13": {
+          "name": "Hold Force",
+          "range": "0.0-13.5 lbf (00-60N)",
+          "default": "0.0 (00)"
+        },
+        "15": {
+          "name": "Run Program",
+          "range": "Smooth(01) to Max Performance(05)",
+          "default": "05"
+        }
+      }
+    },
+    "besam-unislide": {
+      "manufacturer": "Besam",
+      "model": "Unislide (Legacy)",
+      "type": "sliding",
+      "manuals": [
+        {
+          "name": "Besam Unislide OLD.pdf",
+          "drive_id": null,
+          "note": "Scanned document - limited text extraction"
+        }
+      ],
+      "symptoms": {
+        "general-troubleshooting": {
+          "title": "General Troubleshooting (Legacy System)",
+          "steps": [
+            "NOTE: This is a legacy Besam system - manual is scanned images",
+            "Check power supply at main board",
+            "Verify motor connections",
+            "Check encoder/feedback system",
+            "Inspect belt and mechanical components",
+            "Test sensors manually",
+            "For detailed procedures, refer to physical manual"
+          ],
+          "parts": [
+            {
+              "name": "Control Board",
+              "confidence": 0.5
+            },
+            {
+              "name": "Motor Assembly",
+              "confidence": 0.5
+            },
+            {
+              "name": "Drive Belt",
+              "confidence": 0.4
+            }
+          ]
+        }
+      },
+      "errorCodes": {},
+      "testProcedures": {},
+      "wiring": {},
+      "note": "Legacy system - detailed diagnostics require physical manual review. PDF is scanned images without extractable text."
+    },
+    "besam-powerglide": {
+      "manufacturer": "Besam",
+      "model": "Power Glide AMD II (1999)",
+      "type": "sliding",
+      "manuals": [
+        {
+          "name": "Besam Power Glide AMD II _1999 (Resized).pdf",
+          "drive_id": null,
+          "note": "Scanned document - limited text extraction"
+        }
+      ],
+      "symptoms": {
+        "general-troubleshooting": {
+          "title": "General Troubleshooting (Legacy System)",
+          "steps": [
+            "NOTE: This is a legacy 1999 Besam system - manual is scanned images",
+            "Check power supply connections",
+            "Verify motor and drive system",
+            "Check AMD II controller board",
+            "Inspect mechanical components",
+            "Test activation sensors",
+            "For detailed procedures, refer to physical manual"
+          ],
+          "parts": [
+            {
+              "name": "AMD II Controller",
+              "confidence": 0.5
+            },
+            {
+              "name": "Motor Assembly",
+              "confidence": 0.5
+            },
+            {
+              "name": "Drive Components",
+              "confidence": 0.4
+            }
+          ]
+        }
+      },
+      "errorCodes": {},
+      "testProcedures": {},
+      "wiring": {},
+      "note": "Legacy 1999 system - detailed diagnostics require physical manual review. PDF is scanned images without extractable text."
+    },
+    "besam-sw200i": {
+      "manufacturer": "Besam",
+      "model": "SW200i",
+      "type": "swing",
+      "manuals": [
+        {
+          "name": "SW200i Install Manual Rev 3.0.pdf",
+          "drive_id": null
+        }
+      ],
+      "symptoms": {
+        "door-wont-open": {
+          "title": "Door Does Not Open / Motor Does Not Start",
+          "steps": [
+            "Check control switch is not set to OFF - change setting if needed",
+            "Verify electrical power is present - check power switch",
+            "Test activation unit by strapping impulse inputs",
+            "Check that presence detection is not activated - ensure no objects in detection zone",
+            "Verify KILL is not activated - deactivate KILL if active",
+            "Check potentiometer SPTE is turned to 0\u00b0",
+            "If motor starts but door doesn't move: check mechanical lock is unlocked",
+            "Check for objects jammed beneath the door",
+            "Check if electric striking plate is binding - select lock release, adjust striking",
+            "Verify arm system has not come loose - tighten if needed"
+          ],
+          "parts": [
+            {
+              "name": "Activation Unit/Sensor",
+              "confidence": 0.5
+            },
+            {
+              "name": "Control Unit CU-200",
+              "confidence": 0.4
+            },
+            {
+              "name": "Arm System",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "door-wont-close": {
+          "title": "Door Does Not Close",
+          "steps": [
+            "Check control switch is not set to HOLD - change to AUTO or EXIT",
+            "Verify presence impulse is not being activated - remove objects from detection zone",
+            "Check for objects jammed beneath the door - remove any obstructions"
+          ],
+          "parts": [
+            {
+              "name": "Presence Sensor",
+              "confidence": 0.5
+            },
+            {
+              "name": "Control Unit CU-200",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "unknown-spring-tension": {
+          "title": "Operator Has Unknown Spring Pre-tension",
+          "steps": [
+            "Turn up potentiometer SPTE until door stop can be loosened",
+            "Remove the door stop and the arm system",
+            "Unplug electrical power and let spring close",
+            "Unplug the motor plug",
+            "Mount drive arm and find 0 pre-tension by moving back and forth",
+            "Loosen the arm",
+            "Connect the motor plug",
+            "Turn SPTE pot to 180\u00b0 and wait until spindle stops turning",
+            "Connect electrical power - operator will tension spring to factory 720\u00b0",
+            "Mount door stop against closing stop block",
+            "Turn SPTE to 0\u00b0 - operator is now factory set",
+            "Proceed to adjust open stop position per section 12"
+          ],
+          "parts": [
+            {
+              "name": "Transmission Unit",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "kill-impulse-active": {
+          "title": "Kill Impulse Active (1 flash, 10s pause)",
+          "steps": [
+            "LED shows: One 0.3s flash, then 10 second pause, repeating",
+            "Make a kill reset",
+            "Reset kill switch",
+            "Reset fire alarm if connected"
+          ],
+          "parts": []
+        },
+        "external-24v-error": {
+          "title": "24V DC External Error (1 flash, 2s pause)",
+          "steps": [
+            "LED shows: One 0.3s flash, then 2 second pause, repeating",
+            "Check for short circuit on 24VDC accessories",
+            "Inspect sensor wiring for damage"
+          ],
+          "parts": [
+            {
+              "name": "Sensors/Accessories",
+              "confidence": 0.6
+            }
+          ]
+        },
+        "sensor-monitoring-error": {
+          "title": "Sensor Monitoring Error (1 flash, 2s pause)",
+          "steps": [
+            "LED shows: One 0.3s flash, then 2 second pause, repeating",
+            "Check for broken monitored sensor",
+            "Verify sensor connections",
+            "Replace faulty sensor"
+          ],
+          "parts": [
+            {
+              "name": "Monitored Sensor",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "control-unit-defective": {
+          "title": "Control Unit Defective (3 flashes)",
+          "steps": [
+            "LED shows: Three 0.3s flashes, then pause, repeating",
+            "Replace control unit CU-200"
+          ],
+          "parts": [
+            {
+              "name": "Control Unit CU-200",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "encoder-error": {
+          "title": "Encoder Error (4 flashes)",
+          "steps": [
+            "LED shows: Four 0.3s flashes, then pause, repeating",
+            "Check the encoder cable connections",
+            "Open and close the door manually",
+            "Check automatic function after manual operation",
+            "If still not functioning, replace drive unit"
+          ],
+          "parts": [
+            {
+              "name": "Encoder Cable",
+              "confidence": 0.6
+            },
+            {
+              "name": "Drive Unit",
+              "confidence": 0.7
+            }
+          ]
+        },
+        "locking-device-defective": {
+          "title": "Locking Device Defective (5 flashes)",
+          "steps": [
+            "LED shows: Five 0.3s flashes, then pause, repeating",
+            "Check for short circuit in locking device",
+            "Replace locking device if shorted",
+            "If not the lock, replace EXU-SI board"
+          ],
+          "parts": [
+            {
+              "name": "Locking Device",
+              "confidence": 0.7
+            },
+            {
+              "name": "EXU-SI Board",
+              "confidence": 0.5
+            }
+          ]
+        },
+        "sync-cable-error": {
+          "title": "Sync Cable Error - Double Door Only (6 flashes)",
+          "steps": [
+            "LED shows: Six 0.3s flashes, then pause, repeating",
+            "Check sync cable is connected (double door installations)",
+            "Replace sync cable if defective"
+          ],
+          "parts": [
+            {
+              "name": "Sync Cable",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "slave-control-defective": {
+          "title": "Slave Control Unit Defective - Double Door Only (7 flashes)",
+          "steps": [
+            "LED shows: Seven 0.3s flashes, then pause, repeating",
+            "Check the flash frequency on the SLAVE LED",
+            "Take action based on SLAVE error code per this troubleshooting guide",
+            "Replace slave control unit if needed"
+          ],
+          "parts": [
+            {
+              "name": "Slave Control Unit",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "motor-overheated": {
+          "title": "Motor Overheated (8 flashes)",
+          "steps": [
+            "LED shows: Eight 0.3s flashes, then pause, repeating",
+            "Wait for the motor to cool down",
+            "Check for mechanical binding causing motor strain",
+            "Reduce duty cycle if possible"
+          ],
+          "parts": [
+            {
+              "name": "Motor/Drive Unit",
+              "confidence": 0.5
+            }
+          ]
+        },
+        "blocked-door-constant-impulse": {
+          "title": "Blocked Door with Constant Impulse (9 flashes)",
+          "steps": [
+            "LED shows: Nine 0.3s flashes, then pause, repeating",
+            "Toggle impulse to reset",
+            "Check for mechanical obstruction",
+            "Verify sensor is not stuck in activate state"
+          ],
+          "parts": [
+            {
+              "name": "Sensor",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "learn-required": {
+          "title": "Learn Required or Learn Failed (10 flashes)",
+          "steps": [
+            "LED shows: Ten 0.3s flashes, then pause, repeating",
+            "Settings have been made that require a new learn cycle",
+            "Or the previous learn cycle failed",
+            "Check setup and arm configuration",
+            "Perform new learn cycle"
+          ],
+          "parts": []
+        }
+      },
+      "errorCodes": {
+        "1-flash-10s": {
+          "meaning": "Kill impulse active",
+          "action": "Make kill reset, reset kill switch or fire alarm"
+        },
+        "1-flash-2s": {
+          "meaning": "24V DC external error OR sensor monitoring error",
+          "action": "Check for short circuit or broken monitored sensor"
+        },
+        "3-flashes": {
+          "meaning": "Control unit defective",
+          "action": "Replace control unit CU-200"
+        },
+        "4-flashes": {
+          "meaning": "Encoder error",
+          "action": "Check encoder cable, manually cycle door, replace drive unit if needed"
+        },
+        "5-flashes": {
+          "meaning": "Locking device or EXU-SI board defective",
+          "action": "Check for short in lock, replace lock or EXU-SI"
+        },
+        "6-flashes": {
+          "meaning": "Sync cable not connected or defective (double door)",
+          "action": "Connect or replace sync cable"
+        },
+        "7-flashes": {
+          "meaning": "Slave control unit defective (double door)",
+          "action": "Check slave LED, troubleshoot slave, replace if needed"
+        },
+        "8-flashes": {
+          "meaning": "Motor overheated",
+          "action": "Wait for motor to cool down"
+        },
+        "9-flashes": {
+          "meaning": "Blocked door with constant impulse",
+          "action": "Toggle impulse"
+        },
+        "10-flashes": {
+          "meaning": "Learn required or learn failed",
+          "action": "Check setup, perform new learn"
+        }
+      },
+      "testProcedures": {
+        "learn-cycle": {
+          "title": "Learn Cycle",
+          "steps": [
+            "Ensure arm system is properly mounted and adjusted",
+            "Verify door stop is in correct position",
+            "Turn SPTE potentiometer to 0\u00b0",
+            "Press the LEARN button on CU-200",
+            "Status LED starts to blink",
+            "Let door complete full open/close cycle without touching",
+            "LED stops blinking when learn is complete"
+          ]
+        },
+        "change-parameter-group": {
+          "title": "Change Parameter Group",
+          "steps": [
+            "Disconnect mains plug",
+            "Press and hold LEARN button while connecting mains plug",
+            "Watch ERROR LED - it will illuminate for 3s, off 1s, on 5s, off 5s, on 1s",
+            "Release LEARN button after the 5 seconds (LED is out)",
+            "ERROR LED flashes to show current group number",
+            "Push LEARN button once to increment to next group",
+            "When desired group reached, disconnect mains plug",
+            "Next power-on will use new group settings"
+          ]
+        },
+        "revert-backcheck-latch-defaults": {
+          "title": "Revert Back-Check and Latch-Check to Defaults",
+          "steps": [
+            "Disconnect mains plug",
+            "Press and hold LEARN button while connecting mains plug",
+            "Watch ERROR LED",
+            "Release LEARN button after 3 seconds (LED is out)",
+            "BACK CHECK, LATCH CHECK, and OPEN POSITION revert to defaults",
+            "Disconnect mains plug",
+            "Next power connection uses default values"
+          ]
+        },
+        "spring-pretension-adjustment": {
+          "title": "Spring Pre-tension Adjustment (SPTE)",
+          "steps": [
+            "Factory set is 360\u00b0 - normally no adjustment needed",
+            "Ensure CLTQ and POAS potentiometers are at 0\u00b0",
+            "Loosen door stop arm",
+            "Turn SPTE clockwise until door opens to 45\u00b0",
+            "Loosen drive arm fixing screw",
+            "Move door toward open to reduce tension, toward closed to increase",
+            "Tighten drive arm",
+            "Turn SPTE to 0\u00b0",
+            "Open door to required position + ~15mm by turning SPTE clockwise",
+            "Mount door stop arm close to open stop block",
+            "Turn SPTE to 0\u00b0",
+            "Push LEARN button and let door complete learn cycle",
+            "Max allowable spring pre-tension is 720\u00b0"
+          ]
+        },
+        "classification-change": {
+          "title": "Change Classification (Low Energy / Full Power)",
+          "steps": [
+            "Disconnect mains plug",
+            "Press LEARN button while connecting mains plug",
+            "Watch ERROR LED: 3s on, 1s off, 5s on, 5s off, 1s on",
+            "Release LEARN button after second 5s has passed",
+            "LED flashes to show current classification (1=Full Power, 2=Low Energy)",
+            "Push LEARN button to cycle to next classification",
+            "Disconnect mains plug when desired classification shown",
+            "Perform learn procedure after classification change"
+          ]
+        }
+      },
+      "wiring": {
+        "mains": {
+          "description": "Mains Power Connection",
+          "terminals": {
+            "White": "Neutral",
+            "Black": "Hot (Live)",
+            "Green": "Ground",
+            "Red": "DO NOT CONNECT"
+          }
+        },
+        "cu200-terminals": {
+          "description": "CU-200 Control Unit Terminals",
+          "connections": {
+            "+24VDC": "24V positive for sensors",
+            "0VDC/GND": "Ground/negative",
+            "LOUT": "Lock-out for OPD/OPS",
+            "OPD/OPS": "Overhead presence detection/Mat safety",
+            "XIMP": "Inner impulse controlled input",
+            "IIMP": "Inner impulse",
+            "KICK": "Kick plate input",
+            "PBO": "Panic breakout"
+          }
+        },
+        "dip-switches": {
+          "description": "DIP Switch Functions",
+          "switches": {
+            "PAG": "Push & Go enable",
+            "MAT": "Safety mat enable (requires new learn after change)",
+            "SOS": "Stop on stall",
+            "AD": "Activation delay 2s",
+            "AS1-AS4": "Arm system selection"
+          }
+        },
+        "potentiometers": {
+          "description": "Adjustment Potentiometers",
+          "pots": {
+            "SPTE": "Spring pre-tension (0-720\u00b0)",
+            "OPSP": "Opening speed (2-12 seconds)",
+            "CLSP": "Closing speed (4-12 seconds)",
+            "POAS": "Power assist",
+            "CLTQ": "Extended closing torque",
+            "HOT": "Hold open time (1.5-30 seconds)",
+            "KHOT": "Key hold open time (5-12 seconds)"
+          }
+        }
+      },
+      "parameters": {
+        "opening_speed": {
+          "name": "Opening Speed (OPSP)",
+          "range": "2-12 seconds",
+          "default": "varies by group"
+        },
+        "closing_speed": {
+          "name": "Closing Speed (CLSP)",
+          "range": "4-12 seconds",
+          "default": "varies by group"
+        },
+        "hold_open_time": {
+          "name": "Hold Open Time (HOT)",
+          "range": "1.5-30 seconds",
+          "default": "5 seconds"
+        },
+        "key_hold_open": {
+          "name": "Key Hold Open Time (KHOT)",
+          "range": "5-12 seconds",
+          "default": "varies"
+        },
+        "spring_pretension": {
+          "name": "Spring Pre-tension (SPTE)",
+          "range": "0-720\u00b0",
+          "default": "360\u00b0"
+        }
+      },
+      "maintenance": {
+        "intervals": {
+          "push_arm_kit": {
+            "part": "330000271",
+            "low_traffic": "24 months",
+            "medium_traffic": "12 months",
+            "high_traffic": "6 months"
+          },
+          "pull_arm_kit": {
+            "part": "330000272",
+            "low_traffic": "24 months",
+            "medium_traffic": "12 months",
+            "high_traffic": "6 months"
+          },
+          "stop_arm_kit": {
+            "part": "330000276",
+            "low_traffic": "24 months",
+            "medium_traffic": "12 months",
+            "high_traffic": "6 months"
+          },
+          "micro_switch_kit": {
+            "part": "330000275",
+            "low_traffic": "24 months",
+            "medium_traffic": "12 months",
+            "high_traffic": "6 months"
+          },
+          "transmission_unit": {
+            "part": "331007291",
+            "all_traffic": "60 months"
+          },
+          "control_unit": {
+            "part": "331008346",
+            "all_traffic": "60 months"
+          }
+        }
+      }
+    },
+    "besam-swingmaster": {
+      "manufacturer": "Besam",
+      "model": "Swingmaster 300/400",
+      "type": "swing",
+      "manuals": [
+        {
+          "name": "Besam_Swingmaster_Manual300400.pdf",
+          "drive_id": null
+        }
+      ],
+      "symptoms": {
+        "door-wont-open": {
+          "title": "Door Won't Open",
+          "steps": [
+            "Disconnect all detectors for testing",
+            "Place jumpers across terminals 15-16, 17-18, 19-20",
+            "Activate door with jumper across terminals 13 and 14",
+            "Check for 110 VAC at Terminals 3 (NEU) and 5 (HOT)",
+            "Check 3AT main fuse (single PCB) or 7A fuse (dual PCB) for continuity",
+            "Check both 1.5A control fuses for continuity",
+            "Inspect PCB for physical damage or burnt components",
+            "Verify CAM switches are in correct position per CAM chart",
+            "Check switch harness wiring to plugs"
+          ],
+          "parts": [
+            {
+              "name": "Main Fuse 3AT/7A",
+              "confidence": 0.6
+            },
+            {
+              "name": "Control Fuse 1.5A",
+              "confidence": 0.5
+            },
+            {
+              "name": "PCB",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "motor-not-running": {
+          "title": "Motor Not Running (Motor Windings Test)",
+          "steps": [
+            "Unplug motor from PCB",
+            "Short white and black motor leads together",
+            "Manually open door",
+            "Release door carefully to prevent glass breakage",
+            "Observe closing speed:",
+            "- If extremely slow: motor windings OK",
+            "- If door slams closed: motor windings are open - replace motor",
+            "Note: PCB relay will still engage in both cases"
+          ],
+          "parts": [
+            {
+              "name": "Motor",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "motor-fuses-blown": {
+          "title": "Motor Fuses Blown (Dual PCB)",
+          "steps": [
+            "On dual PCB systems, check 3AT fuses in fuse towers",
+            "Test fuses for continuity with power disconnected",
+            "Replace blown fuses",
+            "If fuses blow again, check motor for short"
+          ],
+          "parts": [
+            {
+              "name": "Motor Fuse 3AT",
+              "confidence": 0.9
+            },
+            {
+              "name": "Motor",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "door-holds-open": {
+          "title": "Door Holds Open / Won't Close",
+          "steps": [
+            "Check for short in PCB activate circuit",
+            "Check for mechanical problem with operator",
+            "If PCB circuit shorted: return PCB to Besam for repair",
+            "If mechanical issue: return operator to Besam for repair"
+          ],
+          "parts": [
+            {
+              "name": "PCB",
+              "confidence": 0.6
+            },
+            {
+              "name": "Operator Mechanism",
+              "confidence": 0.5
+            }
+          ]
+        },
+        "door-opens-slow": {
+          "title": "Door Opens Slow",
+          "steps": [
+            "Door may be operating in back check speed",
+            "Check for mispositioned CAM",
+            "Check back-check switch function with ohm meter (power off)",
+            "Adjust or replace back-check switch if defective"
+          ],
+          "parts": [
+            {
+              "name": "Back-Check Switch",
+              "confidence": 0.7
+            },
+            {
+              "name": "CAM",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "door-closes-slow": {
+          "title": "Door Closes Slow",
+          "steps": [
+            "Check PCB relay contacts for pitting or sticking",
+            "Replace relay or return PCB to Besam for repair",
+            "Check if operating in latch speed - test latch switch with ohm meter",
+            "Replace latch switch if defective",
+            "Verify closing resistor R-1 value matches operator type"
+          ],
+          "parts": [
+            {
+              "name": "PCB Relay",
+              "confidence": 0.6
+            },
+            {
+              "name": "Latch Switch",
+              "confidence": 0.5
+            },
+            {
+              "name": "Resistor R-1",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "no-speed-control-door-slams": {
+          "title": "No Speed Control / Door Slams Open",
+          "steps": [
+            "Short in motor drive circuits suspected",
+            "Return PCB to Besam for repair"
+          ],
+          "parts": [
+            {
+              "name": "PCB",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "door-stops-backcheck-recycles": {
+          "title": "Door Stops at Back-Check and Recycles",
+          "steps": [
+            "Check back-check speed adjustment - may be too low",
+            "Verify back-check switch is contacting CAM properly",
+            "Check for broken wire to back-check switch",
+            "Verify harness wiring is correct"
+          ],
+          "parts": [
+            {
+              "name": "Back-Check Switch",
+              "confidence": 0.6
+            },
+            {
+              "name": "Wiring Harness",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "door-closes-fast": {
+          "title": "Door Closes Fast",
+          "steps": [
+            "Check closing resistor R-1 value",
+            "Match resistor value to operator type",
+            "Replace resistor if incorrect value"
+          ],
+          "parts": [
+            {
+              "name": "Resistor R-1",
+              "confidence": 0.8
+            }
+          ]
+        }
+      },
+      "errorCodes": {},
+      "testProcedures": {
+        "troubleshoot-pcb": {
+          "title": "PCB Troubleshooting Setup",
+          "steps": [
+            "Disconnect all detectors",
+            "Place jumper across terminals 15-16",
+            "Place jumper across terminals 17-18",
+            "Place jumper across terminals 19-20",
+            "Activate door by placing jumper across terminals 13 and 14",
+            "Observe door operation to isolate fault"
+          ]
+        },
+        "motor-winding-test": {
+          "title": "Motor Winding Test",
+          "steps": [
+            "DISCONNECT MAINS POWER",
+            "Unplug motor connector from PCB",
+            "Short white and black motor leads together",
+            "Manually push door to open position",
+            "Carefully release door (watch for glass)",
+            "If door closes very slowly: windings OK",
+            "If door slams closed: windings open - replace motor"
+          ]
+        },
+        "switch-continuity-test": {
+          "title": "Switch Continuity Test",
+          "steps": [
+            "DISCONNECT MAINS POWER",
+            "Use ohm meter to test switch function",
+            "Test back-check switch at correct CAM position",
+            "Test latch switch at correct CAM position",
+            "Verify switches open and close at proper positions"
+          ]
+        },
+        "handing-conversion-300": {
+          "title": "300 Series Handing Conversion",
+          "steps": [
+            "Remove operator from header",
+            "Remove switch cover and disconnect switch harness from PCB",
+            "Remove CAM and CAM shaft",
+            "Reinstall CAM 180\u00b0 opposite per CAM Chart No. 1",
+            "Rewire switches and reinstall switch cover",
+            "Reinstall operator",
+            "Plug motor into opposite connector",
+            "Check panic breakaway function by pushing door in panic direction"
+          ]
+        }
+      },
+      "wiring": {
+        "power-terminals": {
+          "description": "Power Connection Terminals",
+          "terminals": {
+            "3": "Neutral (NEU) - 110VAC",
+            "5": "Hot (HOT) - 110VAC"
+          }
+        },
+        "control-terminals": {
+          "description": "Control Terminals",
+          "terminals": {
+            "13-14": "Door activation (jumper to test)",
+            "15-16": "Detector input 1 (jumper when testing)",
+            "17-18": "Detector input 2 (jumper when testing)",
+            "19-20": "Detector input 3 (jumper when testing)"
+          }
+        },
+        "fuses": {
+          "description": "Fuse Specifications",
+          "fuses": {
+            "main_single": "3AT (single PCB)",
+            "main_dual": "7A (dual PCB)",
+            "control": "1.5A (two fuses for 24VDC regulated and 15-20VDC unregulated)",
+            "motor_dual": "3AT in fuse towers (dual PCB only)"
+          }
+        }
+      },
+      "models": {
+        "300": "Overhead concealed, double acting, spring return, non-handed",
+        "305": "Same as 300 with light closing spring",
+        "350": "Surface mounted, 135\u00b0 rotation, double acting",
+        "355": "Same as 350 with light closing spring",
+        "400": "Overhead concealed, factory handed, single acting (spring open to panic)",
+        "405": "Same as 400 with light closing spring",
+        "450": "Surface mounted, 135\u00b0 rotation, single acting",
+        "455": "Same as 450 with light closing spring"
+      },
+      "note": "300 Series is no longer manufactured. When using lockout relay (like BEA LO-21), hold voltage may need to be increased. On 455 operators with lockout, set hold voltage to ~12VDC."
+    },
+    "horton-c4190-folding": {
+      "manufacturer": "Horton",
+      "model": "C4190 Folding",
+      "display_name": "Horton C4190 Folding Door (Bi-Fold)",
+      "type": "folding",
+      "series": [
+        "4000",
+        "7000"
+      ],
+      "control_board": "C4160-2",
+      "manuals": [
+        {
+          "name": "Horton C4190 Setup Instructions for Swing & Folding Doors",
+          "form": "H-SW",
+          "date": "JAN2001"
+        }
+      ],
+      "symptoms": {
+        "no-power": {
+          "title": "No Power / No Voltage",
+          "keywords": [
+            "no power",
+            "dead",
+            "won't turn on",
+            "no lights",
+            "nothing"
+          ],
+          "steps": [
+            "Check power supply at CN1 input for 120VAC",
+            "With line voltage present, move to 5-pin power supply lace",
+            "Probe through back of plug with VOM - check pins 1&2 for +120VDC",
+            "Check pins 3&4 for +24VDC",
+            "Move meter leads to 5-pin plug at control and confirm voltages"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "parts": [
+            {
+              "name": "Fuse F1/F2/F3",
+              "confidence": 0.4
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "no-voltage-no-operation-f2": {
+          "title": "No Voltage at CN2 Pins 1&2 (Check F2)",
+          "keywords": [
+            "fuse",
+            "F2",
+            "no motor voltage",
+            "120v missing"
+          ],
+          "steps": [
+            "Disconnect 120VAC plug, disconnect 5-pin power supply plug, disconnect motor leads",
+            "Replace fuse F2",
+            "Check motor for frame short or shorted motor - if OK proceed",
+            "Reestablish 120VAC and confirm fuse status",
+            "Reestablish 5-pin plug and confirm fuse status",
+            "If fuse is blown - control is most likely bad",
+            "If fuse is good, reestablish motor connection and test operation"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "parts": [
+            {
+              "name": "Fuse F2",
+              "confidence": 0.5
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.4
+            },
+            {
+              "name": "Motor",
+              "confidence": 0.2
+            }
+          ]
+        },
+        "no-voltage-no-operation-f1-f3": {
+          "title": "No Voltage at CN2 Pins 3&4 (Check F1 & F3)",
+          "keywords": [
+            "fuse",
+            "F1",
+            "F3",
+            "no 24v",
+            "24vdc missing",
+            "low voltage"
+          ],
+          "steps": [
+            "Disconnect 120VAC plug, disconnect 5-pin power supply plug",
+            "Disconnect 2-pin motor plug at CN2, remove 12-pin input plug at CN2",
+            "Replace low voltage fuse",
+            "Check low voltage activation circuit for possible shorts in 24VDC wiring",
+            "Check for chafing at frame to door cords or frame to header connections",
+            "Reestablish 120VAC and confirm fuse status",
+            "If fuse is blown - control is most likely bad",
+            "If fuse is good, reestablish CN2 input connection and 2-pin motor plug, test operation"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "parts": [
+            {
+              "name": "Fuse F1",
+              "confidence": 0.4
+            },
+            {
+              "name": "Fuse F3",
+              "confidence": 0.4
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "voltage-present-no-operation": {
+          "title": "Voltage Present, No Operation",
+          "keywords": [
+            "power on",
+            "lights on",
+            "won't move",
+            "no response",
+            "won't activate"
+          ],
+          "steps": [
+            "Confirm D3 (TGL - green) circuit light is ON - if not, check toggle circuit",
+            "Quick check: jump pins 5 & 6 of CN2 to test toggle circuit internally",
+            "Confirm D2 (SAF - red) Safety Circuit light is OFF",
+            "Activate door with external sensor - D1 (ACT - green) should light",
+            "If no D1 light: malfunction in circuit or wiring - jump pins 2 & 3 at CN2 to confirm",
+            "Confirm SPEED pot (Open Speed) is turned up enough to drive door open"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "leds": {
+            "D1": {
+              "color": "green",
+              "label": "ACT",
+              "pin": "CN2 pin 2"
+            },
+            "D2": {
+              "color": "red",
+              "label": "SAF",
+              "pin": "CN2 pin 4"
+            },
+            "D3": {
+              "color": "green",
+              "label": "TGL",
+              "pin": "CN2 pin 5"
+            },
+            "D4": {
+              "color": "orange",
+              "label": "SNR",
+              "pin": "CN2 pin 9"
+            }
+          },
+          "parts": [
+            {
+              "name": "Activation Sensor",
+              "confidence": 0.4
+            },
+            {
+              "name": "Toggle Switch",
+              "confidence": 0.3
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.2
+            }
+          ]
+        },
+        "high-speed-no-control": {
+          "title": "Voltage Present, High Speed, No Speed Control",
+          "keywords": [
+            "runaway",
+            "full speed",
+            "no speed control",
+            "can't adjust speed",
+            "slams"
+          ],
+          "steps": [
+            "This usually indicates a blown or shorted MOSFET transistor",
+            "Control must be replaced",
+            "See Section 1 or cover for test point locations before condemning"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "parts": [
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "door-drifts-closed": {
+          "title": "Door Drifts Back / Won't Hold Open",
+          "keywords": [
+            "drifts",
+            "won't stay open",
+            "closes by itself",
+            "hold open",
+            "drifting"
+          ],
+          "steps": [
+            "Cycle the door and hold the activation button",
+            "Door should open fully - after 10-12 seconds the yellow HOLD indicator should come on",
+            "At this point the door will begin drifting slowly back toward closed position",
+            "Adjust HOLD pot R32 to stop the drift and allow door to slowly seek open position",
+            "Release activation button and allow door to close",
+            "Cycle again - door should now maintain full open position without drifting",
+            "Yellow HOLD indicator comes on after Stop-n-Seek input (see section 7)"
+          ],
+          "manual_ref": "Section 4, H-SW.3",
+          "adjustments": [
+            "HOLD (R32)"
+          ],
+          "parts": [
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.2
+            }
+          ]
+        },
+        "door-opens-too-slow": {
+          "title": "Door Opens Too Slowly",
+          "keywords": [
+            "slow open",
+            "sluggish",
+            "takes too long to open"
+          ],
+          "steps": [
+            "Apply jumper between pins 2 and 3 of CN2 terminal block to activate door to open",
+            "Set HOLD pot R32 fully counter-clockwise",
+            "Apply line power and cycle the door",
+            "Door should open smoothly and quickly, then close after a brief delay",
+            "Activate door again and adjust opening characteristics:",
+            "SPEED pot R35 - clockwise to increase open speed",
+            "CHECK pot R30 - clockwise to increase check speed (after open check switch)",
+            "ACCEL pot R38 - clockwise to increase motor acceleration"
+          ],
+          "manual_ref": "Section 3, H-SW.2",
+          "adjustments": [
+            "SPEED (R35)",
+            "CHECK (R30)",
+            "ACCEL (R38)"
+          ],
+          "parts": []
+        },
+        "door-closes-too-slow": {
+          "title": "Door Closes Too Slowly",
+          "keywords": [
+            "slow close",
+            "takes forever to close",
+            "closing speed"
+          ],
+          "steps": [
+            "Locate Closing Speed adjustment knob on operator",
+            "Rotate COUNTER-CLOCKWISE to increase closing speed",
+            "Suggested setting: 4 seconds minimum close time",
+            "FOLDING DOOR NOTE: Maximum closing speed is 1 ft/second per ANSI 156.10",
+            "Closing force for folding doors shall not exceed 30 ft.lb (133N) at any point"
+          ],
+          "manual_ref": "Section 3, H-SW.2 & Appendix A3, H-SW.9",
+          "adjustments": [
+            "Closing Speed"
+          ],
+          "parts": []
+        },
+        "excessive-opening-force": {
+          "title": "Excessive Opening Force",
+          "keywords": [
+            "too much force",
+            "hard to stop",
+            "force",
+            "pushes too hard",
+            "ANSI",
+            "compliance"
+          ],
+          "steps": [
+            "Set the LIMIT pot R54 fully clockwise (this is mandatory on series 7000)",
+            "For series 4000, LIMIT adjustment is optional but highly recommended for safety",
+            "Have a helper use Horton's C1435 door pressure scale at the strike rail",
+            "Cycle the door and turn LIMIT pot R54 counter-clockwise to set maximum opening force",
+            "Low energy (4000LE): Max force 15 lb (6.8kg) per ANSI 156.19",
+            "Power operated (7000/4000): Max force 35-50 lb (15.9-22.7kg) per ANSI 156.10",
+            "NOTE: If limiting force is set very light, door may have difficulty opening in windy conditions"
+          ],
+          "manual_ref": "Section 6, H-SW.3",
+          "adjustments": [
+            "LIMIT (R54)"
+          ],
+          "compliance": {
+            "standard": "ANSI 156.10",
+            "folding_opening_force": "Max 40 ft.lb (180N) through last 10 deg from open check",
+            "folding_closing_force": "Max 30 ft.lb (133N) at any point in closing cycle",
+            "low_energy_force": "Max 15 ft.lb (67N) at any point"
+          },
+          "parts": [
+            {
+              "name": "C1435 Pressure Scale",
+              "confidence": 0.0,
+              "note": "Test tool, not replacement part"
+            }
+          ]
+        },
+        "panels-binding": {
+          "title": "Folding Panels Binding or Rubbing",
+          "keywords": [
+            "binding",
+            "rubbing",
+            "sticking",
+            "panels",
+            "folding",
+            "stuck"
+          ],
+          "steps": [
+            "Check track for debris or damage",
+            "Inspect pivot hinges between panels for wear or misalignment",
+            "Verify panels are properly aligned in track",
+            "Check that power arm is positioned correctly (should be ~95 deg or less at full open)",
+            "Inspect weather seals for interference",
+            "Check floor guide/track for obstructions",
+            "For dual controls: verify C4196 harness connections between operators"
+          ],
+          "manual_ref": "Section 2 & 11, H-SW.2, H-SW.5",
+          "parts": [
+            {
+              "name": "Track/Guide",
+              "confidence": 0.4
+            },
+            {
+              "name": "Pivot Hinge",
+              "confidence": 0.3
+            },
+            {
+              "name": "Weather Seal",
+              "confidence": 0.2
+            }
+          ]
+        },
+        "breakout-not-working": {
+          "title": "Breakout Not Working (Emergency Egress)",
+          "keywords": [
+            "breakout",
+            "emergency",
+            "egress",
+            "won't break out",
+            "panic"
+          ],
+          "steps": [
+            "Verify C4024-3 breakout cam is installed on center pivot",
+            "Factory setting: Switch falls onto cam flat when door is 10 deg from full open",
+            "For center pivot hinging units with breakout: cam provides additional functionality",
+            "Safety: If breakout stop should fail, the cam prevents closing force from exceeding limits",
+            "Check that breakout hardware is not binding or damaged",
+            "Test breakout function with power OFF to verify mechanical operation"
+          ],
+          "manual_ref": "Section 2, H-SW.2",
+          "parts": [
+            {
+              "name": "C4024-3 Breakout Cam",
+              "confidence": 0.5
+            },
+            {
+              "name": "Breakout Hardware",
+              "confidence": 0.4
+            }
+          ]
+        },
+        "uneven-panel-travel": {
+          "title": "Uneven Panel Travel (Dual Controls)",
+          "keywords": [
+            "uneven",
+            "out of sync",
+            "one side",
+            "dual",
+            "pair",
+            "not synchronized"
+          ],
+          "steps": [
+            "For simultaneous operators (pairs): verify both controls are set up identically",
+            "Check C4196 harness connection between operators",
+            "The power supply harness C3959-4 is used instead of C3959-1 on pairs",
+            "Connect CN4 on each control to the other control (for pairs only)",
+            "Verify both operators have identical pot settings",
+            "Check that both cam settings match (Section 2)"
+          ],
+          "manual_ref": "Section 11, H-SW.5",
+          "wiring_note": "C4196 harness is ONLY used on SIMULTANEOUS OPERATORS",
+          "parts": [
+            {
+              "name": "C4196 Harness",
+              "confidence": 0.4
+            },
+            {
+              "name": "C3959-4 Power Supply Harness",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "obstruction-not-detected": {
+          "title": "Obstruction Not Detected / Door Doesn't Reverse",
+          "keywords": [
+            "won't reverse",
+            "doesn't stop",
+            "obstruction",
+            "safety",
+            "hits people"
+          ],
+          "steps": [
+            "Place an obstruction between the closed door and open check position (around 80 deg)",
+            "Cycle the door and adjust OBST pot R56 clockwise until HOLD indicator lights",
+            "Door should stop when obstruction is encountered",
+            "With hold-open adjustment made in Section 4, any obstruction will stop the door",
+            "Door holds open until time delay expires and all safety devices clear",
+            "Then door will close"
+          ],
+          "manual_ref": "Section 7, H-SW.3-4",
+          "adjustments": [
+            "OBST (R56)"
+          ],
+          "parts": [
+            {
+              "name": "Safety Sensor",
+              "confidence": 0.3
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.2
+            }
+          ]
+        },
+        "lock-not-releasing": {
+          "title": "Lock Not Releasing / Lock Delay Issues",
+          "keywords": [
+            "lock",
+            "won't unlock",
+            "stuck locked",
+            "lock delay",
+            "mag lock",
+            "strike"
+          ],
+          "steps": [
+            "If lock relay is used, remove jumper JB3 (black, typically marked)",
+            "This inserts a 0.25 second delay to allow lock to release before door moves",
+            "If lock (magnetic locks) requires more than 0.25 seconds to release:",
+            "Locate resistor R17 on control board and carefully cut it out",
+            "This increases unlock delay to about 0.75 seconds",
+            "Should allow proper operation with all locks",
+            "Wire lock to Horton C3881 auxiliary relay module as per diagram 11380.4",
+            "Connect C3881 to CN2 as shown",
+            "NOTE: Control will provide power for most 25VDC magnetic locks and strikes",
+            "Do NOT use on 12 volt DC locks (see diagram 11380.3 for other lock types)"
+          ],
+          "manual_ref": "Section 8 & 10, H-SW.4",
+          "jumpers": [
+            "JB3"
+          ],
+          "parts": [
+            {
+              "name": "C3881 Lock Control Module",
+              "confidence": 0.4
+            },
+            {
+              "name": "Magnetic Lock",
+              "confidence": 0.3
+            },
+            {
+              "name": "Electric Strike",
+              "confidence": 0.3
+            }
+          ]
+        }
+      },
+      "adjustments": {
+        "SPEED": {
+          "pot": "R35",
+          "function": "Open Speed - sets the open speed of the operator from start to open check",
+          "direction": "Clockwise to increase"
+        },
+        "CHECK": {
+          "pot": "R30",
+          "function": "Open Check Speed - sets speed after open check switch falls onto cam flat (approx 80 deg)",
+          "direction": "Clockwise to increase"
+        },
+        "ACCEL": {
+          "pot": "R38",
+          "function": "Open Acceleration - sets motor acceleration to open speed setting",
+          "direction": "Clockwise to increase"
+        },
+        "DACCL": {
+          "pot": "R36",
+          "function": "Open Deceleration - determines how quickly door slows after open check switch trips",
+          "direction": "Clockwise to increase (slower transition)"
+        },
+        "HOLD": {
+          "pot": "R32",
+          "function": "Hold Voltage - controls hold-open voltage after 10-12 second delay from activate or Stop-n-Seek input",
+          "direction": "Clockwise to increase"
+        },
+        "DELAY": {
+          "pot": "R46",
+          "function": "Time Delay - sets desired time delay and check devices for proper operation",
+          "direction": "Clockwise to increase"
+        },
+        "L.OUT": {
+          "pot": "R22",
+          "function": "Lock Out Time Delay - sets length of time to ignore safety sensor during door closing",
+          "direction": "Clockwise to increase",
+          "note": "Orange LOCK OUT indicator stays on until door completely closes"
+        },
+        "LIMIT": {
+          "pot": "R54",
+          "function": "Current Limiting - sets amount of opening force",
+          "direction": "COUNTER-clockwise to increase opening force"
+        },
+        "OBST": {
+          "pot": "R56",
+          "function": "Obstruction sensitivity - sets response to obstruction",
+          "direction": "Clockwise to increase sensitivity"
+        },
+        "Closing Speed": {
+          "pot": "On operator housing",
+          "function": "Controls door closing speed",
+          "direction": "COUNTER-clockwise to increase speed",
+          "note": "Folding: Max 1 ft/second per ANSI 156.10"
+        }
+      },
+      "jumpers": {
+        "JB1": {
+          "function": "Push-N-Go",
+          "default": "Normally left in place",
+          "remove_to": "Disable Push-N-Go feature",
+          "note": "Push-N-Go is normally on for low energy (series 7000) applications and turned off otherwise"
+        },
+        "JB2": {
+          "function": "TSTOP (Touch Stop)",
+          "remove_to": "Disable touch stop - door reopens if obstruction encountered before close check",
+          "note": "Remove JB2 to disable this feature"
+        },
+        "JB3": {
+          "function": "Lock Delay",
+          "default": "In place (no delay)",
+          "remove_to": "Enable 0.25 second lock release delay",
+          "note": "Remove if using lock relay to allow lock to release before door starts moving"
+        }
+      },
+      "wiring": {
+        "power": {
+          "CN1": "120VAC 15A input",
+          "voltage": "120VAC 60Hz"
+        },
+        "CN2_terminals": {
+          "1": "+24VDC",
+          "2": "ACTUATE (D1 ACT green)",
+          "3": "COMMON",
+          "4": "SAFETY (D2 SAF red)",
+          "5": "TOGGLE (D3 TGL green)",
+          "6": "COMMON",
+          "7": "+24VDC",
+          "8": "StNrRsm (Stop-N-Resume)",
+          "9": "StopNSeek (D4 SNR orange)",
+          "10": "UNLOCK",
+          "11": "LOCK",
+          "12": "OPEN"
+        },
+        "CN3": "24VAC power supply",
+        "CN4": "Connect to second control (pairs only)",
+        "dual_control_note": "For pairs: use C4196 harness and C3959-4 power supply harness instead of C3959-1"
+      },
+      "sensors": {
+        "C1802": {
+          "type": "Approach Sensor",
+          "model": "VGO-37/87",
+          "voltage": "12-24 VAC"
+        },
+        "C1884": {
+          "type": "Approach Sensor",
+          "model": "Eagle"
+        },
+        "C1788": {
+          "type": "Approach/Recycle Sensor",
+          "model": "D38"
+        },
+        "C1545": {
+          "type": "Threshold Presence Detector"
+        }
+      },
+      "compliance": {
+        "standard": "ANSI 156.10",
+        "opening_force": "Max 40 ft.lb (180N) through last 10 deg (open check), measured 1\" from lock edge on swing doors and 1\" from lead edge of FS leaf",
+        "closing_force_folding": "Max 30 ft.lb (133N) at any point in the closing cycle",
+        "closing_speed_folding": "Maximum 1 ft/second",
+        "opening_speed": "Door shall not open in less than 1.5 seconds from start to open check",
+        "cam_settings": {
+          "open_check": "Adjust for switch to fall onto cam flat when door is 10 deg from full open",
+          "close_check": "Adjust for switch to fall flat when door is 10 deg from full closed",
+          "breakout": "C4024-3 provides additional safety if breakout stop should fail"
+        },
+        "low_energy_156.19": {
+          "force_limit": "Max 15 ft.lb (67N) applied at any point",
+          "kinetic_energy": "Max 1.25 lb-ft (1.69Nm)"
+        },
+        "power_failure": "Manual pressure not to exceed 15 lb ft (111N) at point 1\" from latch edge"
+      }
+    },
+    "horton-c4190-swing": {
+      "manufacturer": "Horton",
+      "model": "C4190 Swing",
+      "display_name": "Horton C4190 Swing Door",
+      "type": "swing",
+      "series": [
+        "4000",
+        "4000LE",
+        "7000"
+      ],
+      "control_board": "C4160-2",
+      "manuals": [
+        {
+          "name": "Horton C4190 Setup Instructions for Swing & Folding Doors",
+          "form": "H-SW",
+          "date": "JAN2001"
+        }
+      ],
+      "symptoms": {
+        "no-power": {
+          "title": "No Power / No Voltage",
+          "keywords": [
+            "no power",
+            "dead",
+            "won't turn on",
+            "no lights",
+            "nothing"
+          ],
+          "steps": [
+            "Check power supply at CN1 input for 120VAC",
+            "With line voltage present, move to 5-pin power supply lace",
+            "Probe through back of plug with VOM - check pins 1&2 for +120VDC",
+            "Check pins 3&4 for +24VDC",
+            "Move meter leads to 5-pin plug at control and confirm voltages"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "parts": [
+            {
+              "name": "Fuse F1/F2/F3",
+              "confidence": 0.4
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "no-voltage-no-operation-f2": {
+          "title": "No Voltage at CN2 Pins 1&2 (Check F2)",
+          "keywords": [
+            "fuse",
+            "F2",
+            "no motor voltage",
+            "120v missing"
+          ],
+          "steps": [
+            "Disconnect 120VAC plug, disconnect 5-pin power supply plug, disconnect motor leads",
+            "Replace fuse F2",
+            "Check motor for frame short or shorted motor - if OK proceed",
+            "Reestablish 120VAC and confirm fuse status",
+            "Reestablish 5-pin plug and confirm fuse status",
+            "If fuse is blown - control is most likely bad",
+            "If fuse is good, reestablish motor connection and test operation"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "parts": [
+            {
+              "name": "Fuse F2",
+              "confidence": 0.5
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.4
+            },
+            {
+              "name": "Motor",
+              "confidence": 0.2
+            }
+          ]
+        },
+        "no-voltage-no-operation-f1-f3": {
+          "title": "No Voltage at CN2 Pins 3&4 (Check F1 & F3)",
+          "keywords": [
+            "fuse",
+            "F1",
+            "F3",
+            "no 24v",
+            "24vdc missing",
+            "low voltage"
+          ],
+          "steps": [
+            "Disconnect 120VAC plug, disconnect 5-pin power supply plug",
+            "Disconnect 2-pin motor plug at CN2, remove 12-pin input plug at CN2",
+            "Replace low voltage fuse",
+            "Check low voltage activation circuit for possible shorts in 24VDC wiring",
+            "Check for chafing at frame to door cords or frame to header connections",
+            "Reestablish 120VAC and confirm fuse status",
+            "If fuse is blown - control is most likely bad",
+            "If fuse is good, reestablish CN2 input connection and 2-pin motor plug, test operation"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "parts": [
+            {
+              "name": "Fuse F1",
+              "confidence": 0.4
+            },
+            {
+              "name": "Fuse F3",
+              "confidence": 0.4
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "voltage-present-no-operation": {
+          "title": "Voltage Present, No Operation",
+          "keywords": [
+            "power on",
+            "lights on",
+            "won't move",
+            "no response",
+            "won't activate"
+          ],
+          "steps": [
+            "Confirm D3 (TGL - green) circuit light is ON - if not, check toggle circuit",
+            "Quick check: jump pins 5 & 6 of CN2 to test toggle circuit internally",
+            "Confirm D2 (SAF - red) Safety Circuit light is OFF",
+            "Activate door with external sensor - D1 (ACT - green) should light",
+            "If no D1 light: malfunction in circuit or wiring - jump pins 2 & 3 at CN2 to confirm",
+            "Confirm SPEED pot (Open Speed) is turned up enough to drive door open"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "leds": {
+            "D1": {
+              "color": "green",
+              "label": "ACT",
+              "pin": "CN2 pin 2"
+            },
+            "D2": {
+              "color": "red",
+              "label": "SAF",
+              "pin": "CN2 pin 4"
+            },
+            "D3": {
+              "color": "green",
+              "label": "TGL",
+              "pin": "CN2 pin 5"
+            },
+            "D4": {
+              "color": "orange",
+              "label": "SNR",
+              "pin": "CN2 pin 9"
+            }
+          },
+          "parts": [
+            {
+              "name": "Activation Sensor",
+              "confidence": 0.4
+            },
+            {
+              "name": "Toggle Switch",
+              "confidence": 0.3
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.2
+            }
+          ]
+        },
+        "high-speed-no-control": {
+          "title": "Voltage Present, High Speed, No Speed Control",
+          "keywords": [
+            "runaway",
+            "full speed",
+            "no speed control",
+            "can't adjust speed",
+            "slams"
+          ],
+          "steps": [
+            "This usually indicates a blown or shorted MOSFET transistor",
+            "Control must be replaced",
+            "See Section 1 or cover for test point locations before condemning"
+          ],
+          "manual_ref": "Appendix B, H-SW.10",
+          "parts": [
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "door-drifts-closed": {
+          "title": "Door Drifts Back / Won't Hold Open",
+          "keywords": [
+            "drifts",
+            "won't stay open",
+            "closes by itself",
+            "hold open",
+            "drifting"
+          ],
+          "steps": [
+            "Cycle the door and hold the activation button",
+            "Door should open fully - after 10-12 seconds the yellow HOLD indicator should come on",
+            "At this point the door will begin drifting slowly back toward closed position",
+            "Adjust HOLD pot R32 to stop the drift and allow door to slowly seek open position",
+            "Release activation button and allow door to close",
+            "Cycle again - door should now maintain full open position without drifting",
+            "Yellow HOLD indicator comes on after Stop-n-Seek input (see section 7)"
+          ],
+          "manual_ref": "Section 4, H-SW.3",
+          "adjustments": [
+            "HOLD (R32)"
+          ],
+          "parts": [
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.2
+            }
+          ]
+        },
+        "door-opens-too-slow": {
+          "title": "Door Opens Too Slowly",
+          "keywords": [
+            "slow open",
+            "sluggish",
+            "takes too long to open"
+          ],
+          "steps": [
+            "Apply jumper between pins 2 and 3 of CN2 terminal block to activate door to open",
+            "Set HOLD pot R32 fully counter-clockwise",
+            "Apply line power and cycle the door",
+            "Door should open smoothly and quickly, then close after a brief delay",
+            "Activate door again and adjust opening characteristics:",
+            "SPEED pot R35 - clockwise to increase open speed",
+            "CHECK pot R30 - clockwise to increase check speed (after open check switch)",
+            "ACCEL pot R38 - clockwise to increase motor acceleration"
+          ],
+          "manual_ref": "Section 3, H-SW.2",
+          "adjustments": [
+            "SPEED (R35)",
+            "CHECK (R30)",
+            "ACCEL (R38)"
+          ],
+          "parts": []
+        },
+        "door-closes-too-slow": {
+          "title": "Door Closes Too Slowly",
+          "keywords": [
+            "slow close",
+            "takes forever to close",
+            "closing speed"
+          ],
+          "steps": [
+            "Locate Closing Speed adjustment knob on operator",
+            "Rotate COUNTER-CLOCKWISE to increase closing speed",
+            "Suggested setting: 4 seconds minimum close time",
+            "Refer to ANSI chart for proper closing time based on door leaf width",
+            "36\" (914mm) door: 2.0-2.3 sec",
+            "42\" (1067mm) door: 2.3-2.7 sec",
+            "48\" (1219mm) door: 2.8-3.2 sec"
+          ],
+          "manual_ref": "Section 3, H-SW.2 & Appendix A3, H-SW.9",
+          "adjustments": [
+            "Closing Speed"
+          ],
+          "parts": []
+        },
+        "excessive-opening-force": {
+          "title": "Excessive Opening Force",
+          "keywords": [
+            "too much force",
+            "hard to stop",
+            "force",
+            "pushes too hard",
+            "ANSI",
+            "compliance"
+          ],
+          "steps": [
+            "Set the LIMIT pot R54 fully clockwise (this is mandatory on series 7000)",
+            "For series 4000, LIMIT adjustment is optional but highly recommended for safety",
+            "Have a helper use Horton's C1435 door pressure scale at the strike rail",
+            "Cycle the door and turn LIMIT pot R54 counter-clockwise to set maximum opening force",
+            "Low energy (4000LE): Max force 15 lb (6.8kg) per ANSI 156.19",
+            "Power operated (7000/4000): Max force 35-50 lb (15.9-22.7kg) per ANSI 156.10",
+            "NOTE: If limiting force is set very light, door may have difficulty opening in windy conditions"
+          ],
+          "manual_ref": "Section 6, H-SW.3",
+          "adjustments": [
+            "LIMIT (R54)"
+          ],
+          "compliance": {
+            "standard": "ANSI 156.10 / 156.19",
+            "swing_opening_force": "Max 40 ft.lb (180N) through last 10 deg from open check",
+            "swing_closing_force": "Max 40 ft.lb (180N) at any point in closing cycle",
+            "low_energy_force": "Max 15 ft.lb (67N) at any point"
+          },
+          "parts": [
+            {
+              "name": "C1435 Pressure Scale",
+              "confidence": 0.0,
+              "note": "Test tool, not replacement part"
+            }
+          ]
+        },
+        "obstruction-not-detected": {
+          "title": "Obstruction Not Detected / Door Doesn't Reverse",
+          "keywords": [
+            "won't reverse",
+            "doesn't stop",
+            "obstruction",
+            "safety",
+            "hits people"
+          ],
+          "steps": [
+            "Place an obstruction between the closed door and open check position (around 80 deg)",
+            "Cycle the door and adjust OBST pot R56 clockwise until HOLD indicator lights",
+            "Door should stop when obstruction is encountered",
+            "With hold-open adjustment made in Section 4, any obstruction will stop the door",
+            "Door holds open until time delay expires and all safety devices clear",
+            "Then door will close"
+          ],
+          "manual_ref": "Section 7, H-SW.3-4",
+          "adjustments": [
+            "OBST (R56)"
+          ],
+          "parts": [
+            {
+              "name": "Safety Sensor",
+              "confidence": 0.3
+            },
+            {
+              "name": "C4160-2 Control Board",
+              "confidence": 0.2
+            }
+          ]
+        },
+        "false-obstruction": {
+          "title": "False Obstruction / Door Hangs Up",
+          "keywords": [
+            "false trigger",
+            "stops for no reason",
+            "hangs up",
+            "phantom obstruction"
+          ],
+          "steps": [
+            "If presence detector is installed on swing side of door, response will occur ~1 second after obstruction",
+            "This prevents false response from wind gusts",
+            "If door 'hangs up' with presence detector: increase HOLD adjustment R32 sufficiently",
+            "This allows door to creep slowly after encountering an obstruction",
+            "Check that LIMIT adjustment is not set very light (may need higher force in adverse conditions)",
+            "See Section 6 for LIMIT adjustment"
+          ],
+          "manual_ref": "Section 7, H-SW.4",
+          "adjustments": [
+            "OBST (R56)",
+            "HOLD (R32)",
+            "LIMIT (R54)"
+          ],
+          "parts": [
+            {
+              "name": "Presence Detector",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "lock-not-releasing": {
+          "title": "Lock Not Releasing / Lock Delay Issues",
+          "keywords": [
+            "lock",
+            "won't unlock",
+            "stuck locked",
+            "lock delay",
+            "mag lock",
+            "strike"
+          ],
+          "steps": [
+            "If lock relay is used, remove jumper JB3 (black, typically marked)",
+            "This inserts a 0.25 second delay to allow lock to release before door moves",
+            "If lock (magnetic locks) requires more than 0.25 seconds to release:",
+            "Locate resistor R17 on control board and carefully cut it out",
+            "This increases unlock delay to about 0.75 seconds",
+            "Should allow proper operation with all locks",
+            "Wire lock to Horton C3881 auxiliary relay module as per diagram 11380.4",
+            "Connect C3881 to CN2 as shown",
+            "NOTE: Control will provide power for most 25VDC magnetic locks and strikes",
+            "Do NOT use on 12 volt DC locks (see diagram 11380.3 for other lock types)"
+          ],
+          "manual_ref": "Section 8 & 10, H-SW.4",
+          "jumpers": [
+            "JB3"
+          ],
+          "parts": [
+            {
+              "name": "C3881 Lock Control Module",
+              "confidence": 0.4
+            },
+            {
+              "name": "Magnetic Lock",
+              "confidence": 0.3
+            },
+            {
+              "name": "Electric Strike",
+              "confidence": 0.3
+            }
+          ]
+        },
+        "deceleration-too-fast": {
+          "title": "Door Slows Down Too Fast When Opening",
+          "keywords": [
+            "jerky",
+            "sudden stop",
+            "deceleration",
+            "slows too fast"
+          ],
+          "steps": [
+            "If door slows down too fast when switching from open speed to open check:",
+            "Adjust DACCL pot R36 - may need to be turned down (counter-clockwise)",
+            "DACCL (Open Deceleration) determines how quickly door slows after open check switch engages",
+            "Rotate clockwise to increase deceleration (slower transition)",
+            "NOTE: Horton recommends DACCL be left at maximum on all low-energy installations",
+            "Also recommended where Swing-Stop or Stop-and-Resume features are used"
+          ],
+          "manual_ref": "Section 5, H-SW.3",
+          "adjustments": [
+            "DACCL (R36)"
+          ],
+          "parts": []
+        }
+      },
+      "adjustments": {
+        "SPEED": {
+          "pot": "R35",
+          "function": "Open Speed - sets the open speed of the operator from start to open check",
+          "direction": "Clockwise to increase"
+        },
+        "CHECK": {
+          "pot": "R30",
+          "function": "Open Check Speed - sets speed after open check switch falls onto cam flat (approx 80 deg)",
+          "direction": "Clockwise to increase"
+        },
+        "ACCEL": {
+          "pot": "R38",
+          "function": "Open Acceleration - sets motor acceleration to open speed setting",
+          "direction": "Clockwise to increase"
+        },
+        "DACCL": {
+          "pot": "R36",
+          "function": "Open Deceleration - determines how quickly door slows after open check switch trips",
+          "direction": "Clockwise to increase (slower transition)"
+        },
+        "HOLD": {
+          "pot": "R32",
+          "function": "Hold Voltage - controls hold-open voltage after 10-12 second delay from activate or Stop-n-Seek input",
+          "direction": "Clockwise to increase"
+        },
+        "DELAY": {
+          "pot": "R46",
+          "function": "Time Delay - sets desired time delay and check devices for proper operation",
+          "direction": "Clockwise to increase"
+        },
+        "L.OUT": {
+          "pot": "R22",
+          "function": "Lock Out Time Delay - sets length of time to ignore safety sensor during door closing",
+          "direction": "Clockwise to increase",
+          "note": "Orange LOCK OUT indicator stays on until door completely closes"
+        },
+        "LIMIT": {
+          "pot": "R54",
+          "function": "Current Limiting - sets amount of opening force",
+          "direction": "COUNTER-clockwise to increase opening force"
+        },
+        "OBST": {
+          "pot": "R56",
+          "function": "Obstruction sensitivity - sets response to obstruction",
+          "direction": "Clockwise to increase sensitivity"
+        },
+        "Closing Speed": {
+          "pot": "On operator housing",
+          "function": "Controls door closing speed",
+          "direction": "COUNTER-clockwise to increase speed",
+          "note": "Suggested setting: 4 seconds minimum"
+        }
+      },
+      "jumpers": {
+        "JB1": {
+          "function": "Push-N-Go",
+          "default": "Normally left in place",
+          "remove_to": "Disable Push-N-Go feature",
+          "note": "Push-N-Go is normally on for low energy (series 7000) applications and turned off otherwise"
+        },
+        "JB2": {
+          "function": "TSTOP (Touch Stop)",
+          "remove_to": "Disable touch stop - door reopens if obstruction encountered before close check",
+          "note": "Remove JB2 to disable this feature"
+        },
+        "JB3": {
+          "function": "Lock Delay",
+          "default": "In place (no delay)",
+          "remove_to": "Enable 0.25 second lock release delay",
+          "note": "Remove if using lock relay to allow lock to release before door starts moving"
+        }
+      },
+      "wiring": {
+        "power": {
+          "CN1": "120VAC 15A input",
+          "voltage": "120VAC 60Hz"
+        },
+        "CN2_terminals": {
+          "1": "+24VDC",
+          "2": "ACTUATE (D1 ACT green)",
+          "3": "COMMON",
+          "4": "SAFETY (D2 SAF red)",
+          "5": "TOGGLE (D3 TGL green)",
+          "6": "COMMON",
+          "7": "+24VDC",
+          "8": "StNrRsm (Stop-N-Resume)",
+          "9": "StopNSeek (D4 SNR orange)",
+          "10": "UNLOCK",
+          "11": "LOCK",
+          "12": "OPEN"
+        },
+        "CN3": "24VAC power supply",
+        "CN4": "Connect to second control (pairs only)"
+      },
+      "sensors": {
+        "C1802": {
+          "type": "Approach Sensor",
+          "model": "VGO-37/87",
+          "voltage": "12-24 VAC"
+        },
+        "C1884": {
+          "type": "Approach Sensor",
+          "model": "Eagle"
+        },
+        "C1788": {
+          "type": "Approach/Recycle Sensor",
+          "model": "D38"
+        },
+        "C1545": {
+          "type": "Threshold Presence Detector"
+        },
+        "C1829": {
+          "type": "Swing Area Presence Detector"
+        },
+        "C1879": {
+          "type": "Swing Area Presence Detector"
+        },
+        "C8420-36": {
+          "type": "Door Mounted Presence Sensor",
+          "note": "Optional, mounted on swing area side"
+        }
+      },
+      "compliance": {
+        "standard": "ANSI 156.10",
+        "opening_force": "Max 40 ft.lb (180N) through last 10 deg (open check), measured 1\" from lock edge on swing doors and 1\" from lead edge of FS leaf",
+        "closing_force": "Max 40 ft.lb (180N) at any point in the closing cycle, measured 1\" from lock edge of the door",
+        "opening_speed": "Door shall not open in less than 1.5 seconds from start to open check (80 deg or more)",
+        "closing_speed_chart": {
+          "36_inch": "2.0-2.3 sec",
+          "42_inch": "2.3-2.7 sec",
+          "48_inch": "2.8-3.2 sec"
+        },
+        "time_delay_minimum": {
+          "approach_side_sensors": "1.5-2 sec",
+          "swing_safety_sensors": "4 sec",
+          "knowing_act_momentary": "5 sec (Horton recommended)"
+        },
+        "low_energy_156.19": {
+          "force_limit": "Max 15 ft.lb (67N) applied at any point",
+          "kinetic_energy": "Max 1.25 lb-ft (1.69Nm)",
+          "opening_closing_times": "See chart in manual"
+        },
+        "power_failure": "Manual pressure not to exceed 15 lb ft (111N) at point 1\" from latch edge"
+      }
+    }
+  }
+}

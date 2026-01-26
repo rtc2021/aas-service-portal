@@ -1,0 +1,1755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Door Browser • AAS Portal</title>
+</head>
+<body style="margin:0;background:#070a0f;">
+<!--
+  AAS DOOR BROWSER v1.4
+  Automatic Access Solutions • Unified Door View
+  
+  Merges data from:
+  - Door Registry (primary source) - Name, Parent ID, Customer, Address, Mfg, Model
+  - Door Master (inspection data) - Status, Last Inspection, Technician, Results
+  - Asset Lookup (Parent ID → Customer Name resolution)
+  
+  Features:
+  - Robust column name handling (Door ID, Door Id, DoorID, etc.)
+  - Root name resolution (walks parent chain for customer)
+  - Squarespace soft-nav safe (global guard + AbortController)
+  - Scored search with field weighting
+  - Filter by Customer, Manufacturer, Status, Door Type
+  - Service Page link uses Name (for /service?id=)
+  - Inspection link uses Name (for /door?id= - matches Door Master key)
+-->
+
+<div id="aasDoorBrowser">
+  <!-- Animated Background -->
+  <div class="db-bg" aria-hidden="true"></div>
+
+  <!-- Screen Reader Announcements -->
+  <div id="dbAnnounce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="db-shell">
+    <!-- Header -->
+    <header class="db-header">
+      <div class="db-header__top">
+        <a href="/tech/command" class="db-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Command Center
+        </a>
+      </div>
+      
+      <div class="db-header__main">
+        <div class="db-header__title-row">
+          <div class="db-header__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"/>
+              <path d="M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/>
+              <circle cx="15" cy="12" r="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="db-header__title">Door Browser</h1>
+            <p class="db-header__sub">Search and filter all doors across locations</p>
+          </div>
+        </div>
+        
+        <div class="db-header__stats">
+          <div class="db-stat-pill">
+            <span id="dbTotalCount">—</span> doors
+          </div>
+          <div class="db-stat-pill">
+            <span id="dbFilteredCount">—</span> shown
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Search & Filters -->
+    <section class="db-controls">
+      <div class="db-search">
+        <svg class="db-search__icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/>
+        </svg>
+        <input 
+          type="search" 
+          id="dbSearch" 
+          class="db-search__input" 
+          placeholder="Search doors, customers, addresses, manufacturers..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <div class="db-search__loading" aria-hidden="true">
+          <div class="db-spinner"></div>
+        </div>
+        <button id="dbClearSearch" class="db-search__clear" type="button" aria-label="Clear search">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="db-filters">
+        <div class="db-filter">
+          <label for="dbFilterCustomer" class="db-filter__label">Customer</label>
+          <select id="dbFilterCustomer" class="db-filter__select">
+            <option value="">All Customers</option>
+          </select>
+        </div>
+        
+        <div class="db-filter">
+          <label for="dbFilterMfg" class="db-filter__label">Manufacturer</label>
+          <select id="dbFilterMfg" class="db-filter__select">
+            <option value="">All Manufacturers</option>
+          </select>
+        </div>
+        
+        <div class="db-filter">
+          <label for="dbFilterStatus" class="db-filter__label">Status</label>
+          <select id="dbFilterStatus" class="db-filter__select">
+            <option value="">All Statuses</option>
+          </select>
+        </div>
+        
+        <div class="db-filter">
+          <label for="dbFilterType" class="db-filter__label">Door Type</label>
+          <select id="dbFilterType" class="db-filter__select">
+            <option value="">All Types</option>
+          </select>
+        </div>
+
+        <button id="dbClearFilters" class="db-btn db-btn--ghost">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+          </svg>
+          Reset
+        </button>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="db-results">
+      <div id="dbLoading" class="db-loading">
+        <div class="db-spinner db-spinner--lg"></div>
+        <p>Loading door data...</p>
+      </div>
+      
+      <div id="dbEmpty" class="db-empty" style="display:none;">
+        <div class="db-empty__icon">🚪</div>
+        <p class="db-empty__title">No doors found</p>
+        <p class="db-empty__hint">Try adjusting your search or filters</p>
+      </div>
+      
+      <div id="dbGrid" class="db-grid"></div>
+      
+      <div id="dbLoadMore" class="db-load-more" style="display:none;">
+        <button id="dbLoadMoreBtn" class="db-btn db-btn--primary">
+          Load More
+          <span id="dbRemainingCount"></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="db-footer">
+      <div class="db-footer__brand">
+        <div class="db-footer__dot"></div>
+        <span>Automatic Access Solutions</span>
+      </div>
+      <p class="db-footer__version">Door Browser v1.4.1</p>
+    </footer>
+  </div>
+</div>
+
+<style>
+/* ============================================
+   AAS DOOR BROWSER v1.4
+   Dark glass aesthetic matching Command Center
+   ============================================ */
+
+#aasDoorBrowser {
+  --db-bg: #070a0f;
+  --db-surface: #0d1117;
+  --db-glass: rgba(13, 17, 23, 0.72);
+  --db-glass-border: rgba(255, 255, 255, 0.08);
+  --db-glass-border-hover: rgba(255, 255, 255, 0.14);
+  --db-text: rgba(255, 255, 255, 0.92);
+  --db-text-muted: rgba(255, 255, 255, 0.60);
+  --db-text-faint: rgba(255, 255, 255, 0.40);
+  --db-primary: #6ea8fe;
+  --db-primary-glow: rgba(110, 168, 254, 0.12);
+  --db-success: #63e6be;
+  --db-success-glow: rgba(99, 230, 190, 0.12);
+  --db-warning: #ffd43b;
+  --db-warning-glow: rgba(255, 212, 59, 0.12);
+  --db-danger: #ff6b6b;
+  --db-pink: #f783ac;
+  --db-pink-glow: rgba(247, 131, 172, 0.12);
+  --db-radius-sm: 8px;
+  --db-radius-md: 12px;
+  --db-radius-lg: 16px;
+  --db-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --db-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#aasDoorBrowser {
+  position: relative;
+  min-height: 100vh;
+  background: var(--db-bg);
+  color: var(--db-text);
+  font-family: var(--db-font);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#aasDoorBrowser *, #aasDoorBrowser *::before, #aasDoorBrowser *::after {
+  box-sizing: border-box;
+}
+
+#aasDoorBrowser .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Background */
+.db-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(247, 131, 172, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(110, 168, 254, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #070a0f 0%, #0a0e14 100%);
+}
+
+.db-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+}
+
+/* Shell */
+.db-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* Header */
+.db-header {
+  padding: 24px 0 32px;
+}
+
+.db-header__top {
+  margin-bottom: 24px;
+}
+
+.db-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--db-text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.db-back:hover {
+  color: var(--db-primary);
+}
+
+.db-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+.db-header__main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.db-header__title-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.db-header__icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--db-pink-glow);
+  border-radius: var(--db-radius-md);
+  color: var(--db-pink);
+}
+
+.db-header__icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.db-header__title {
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 0%, var(--db-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.db-header__sub {
+  color: var(--db-text-muted);
+  font-size: 16px;
+  margin: 4px 0 0;
+}
+
+.db-header__stats {
+  display: flex;
+  gap: 12px;
+}
+
+.db-stat-pill {
+  padding: 10px 18px;
+  background: var(--db-glass);
+  border: 1px solid var(--db-glass-border);
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--db-text-muted);
+}
+
+.db-stat-pill span {
+  color: var(--db-text);
+}
+
+/* Controls */
+.db-controls {
+  margin-bottom: 32px;
+}
+
+.db-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--db-glass);
+  border: 1px solid var(--db-glass-border);
+  border-radius: var(--db-radius-lg);
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+}
+
+.db-search:focus-within {
+  border-color: rgba(247, 131, 172, 0.35);
+  box-shadow: 0 0 0 4px rgba(247, 131, 172, 0.08);
+}
+
+.db-search__icon {
+  width: 20px;
+  height: 20px;
+  color: var(--db-text-faint);
+  flex-shrink: 0;
+}
+
+.db-search:focus-within .db-search__icon {
+  color: var(--db-pink);
+}
+
+.db-search__input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--db-text);
+  font-size: 16px;
+  font-family: inherit;
+  min-width: 0;
+}
+
+.db-search__input::placeholder {
+  color: var(--db-text-faint);
+}
+
+.db-search__loading {
+  display: none;
+}
+
+.db-search.is-loading .db-search__loading {
+  display: flex;
+}
+
+.db-search__clear {
+  display: none;
+  padding: 4px;
+  background: none;
+  border: none;
+  color: var(--db-text-faint);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.db-search__clear:hover {
+  color: var(--db-text);
+  background: rgba(255,255,255,0.08);
+}
+
+.db-search__clear svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.db-search.has-value .db-search__clear {
+  display: block;
+}
+
+.db-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--db-glass-border);
+  border-top-color: var(--db-pink);
+  border-radius: 50%;
+  animation: dbSpin 0.8s linear infinite;
+}
+
+.db-spinner--lg {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+@keyframes dbSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Filters */
+.db-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.db-filter {
+  flex: 1;
+  min-width: 160px;
+  max-width: 220px;
+}
+
+.db-filter__label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--db-text-faint);
+  margin-bottom: 6px;
+}
+
+.db-filter__select {
+  width: 100%;
+  padding: 10px 32px 10px 14px;
+  background: var(--db-glass);
+  border: 1px solid var(--db-glass-border);
+  border-radius: var(--db-radius-sm);
+  color: var(--db-text);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: all 0.15s ease;
+}
+
+.db-filter__select:hover {
+  border-color: var(--db-glass-border-hover);
+}
+
+.db-filter__select:focus {
+  outline: none;
+  border-color: var(--db-pink);
+}
+
+.db-filter__select option {
+  background: var(--db-surface);
+  color: var(--db-text);
+}
+
+/* Buttons */
+.db-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--db-radius-sm);
+  border: 1px solid var(--db-glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--db-text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.db-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--db-glass-border-hover);
+}
+
+.db-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.db-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.db-btn--primary {
+  background: var(--db-pink-glow);
+  border-color: rgba(247, 131, 172, 0.3);
+  color: var(--db-pink);
+}
+
+.db-btn--primary:hover {
+  background: rgba(247, 131, 172, 0.2);
+  border-color: rgba(247, 131, 172, 0.4);
+}
+
+/* Results */
+.db-results {
+  min-height: 400px;
+}
+
+.db-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.db-loading p {
+  margin: 20px 0 0;
+  color: var(--db-text-muted);
+}
+
+.db-empty {
+  padding: 80px 24px;
+  text-align: center;
+  background: var(--db-glass);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: var(--db-radius-lg);
+}
+
+.db-empty__icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.db-empty__title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--db-text-muted);
+}
+
+.db-empty__hint {
+  font-size: 14px;
+  color: var(--db-text-faint);
+  margin: 8px 0 0;
+}
+
+/* Grid */
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 720px) {
+  .db-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Door Card */
+.db-card {
+  position: relative;
+  background: var(--db-glass);
+  border: 1px solid var(--db-glass-border);
+  border-radius: var(--db-radius-md);
+  padding: 20px;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.db-card:hover {
+  border-color: var(--db-glass-border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--db-shadow);
+}
+
+.db-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.db-card__id {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--db-text);
+  margin: 0;
+}
+
+.db-card__id mark {
+  background: rgba(247, 131, 172, 0.25);
+  color: inherit;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.db-card__badges {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.db-badge {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.db-badge--status {
+  background: var(--db-success-glow);
+  color: var(--db-success);
+}
+
+.db-badge--status[data-status="fail"],
+.db-badge--status[data-status="failed"] {
+  background: rgba(255, 107, 107, 0.12);
+  color: var(--db-danger);
+}
+
+.db-badge--status[data-status="pending"],
+.db-badge--status[data-status="scheduled"] {
+  background: var(--db-warning-glow);
+  color: var(--db-warning);
+}
+
+.db-badge--inspection {
+  background: var(--db-primary-glow);
+  color: var(--db-primary);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.db-badge--inspection:hover {
+  background: rgba(110, 168, 254, 0.2);
+}
+
+.db-card__customer {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--db-text);
+  margin: 0 0 4px;
+}
+
+.db-card__customer mark {
+  background: rgba(247, 131, 172, 0.25);
+  color: inherit;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.db-card__location {
+  font-size: 13px;
+  color: var(--db-text-muted);
+  margin: 0 0 12px;
+}
+
+.db-card__location mark {
+  background: rgba(247, 131, 172, 0.25);
+  color: inherit;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.db-card__details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+}
+
+.db-card__detail {
+  font-size: 13px;
+}
+
+.db-card__detail-label {
+  color: var(--db-text-faint);
+  margin-right: 6px;
+}
+
+.db-card__detail-value {
+  color: var(--db-text-muted);
+}
+
+.db-card__detail-value mark {
+  background: rgba(247, 131, 172, 0.25);
+  color: inherit;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.db-card__actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--db-glass-border);
+}
+
+.db-card__action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--db-glass-border);
+  border-radius: var(--db-radius-sm);
+  color: var(--db-text);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.db-card__action:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--db-glass-border-hover);
+}
+
+.db-card__action--primary {
+  background: var(--db-pink-glow);
+  border-color: rgba(247, 131, 172, 0.2);
+  color: var(--db-pink);
+}
+
+.db-card__action--primary:hover {
+  background: rgba(247, 131, 172, 0.2);
+  border-color: rgba(247, 131, 172, 0.3);
+}
+
+.db-card__action svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Load More */
+.db-load-more {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.db-load-more span {
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+/* Footer */
+.db-footer {
+  margin-top: 64px;
+  padding: 28px 0;
+  border-top: 1px solid var(--db-glass-border);
+  text-align: center;
+}
+
+.db-footer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--db-text-muted);
+}
+
+.db-footer__dot {
+  width: 8px;
+  height: 8px;
+  background: var(--db-pink);
+  border-radius: 50%;
+}
+
+.db-footer__version {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--db-text-faint);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .db-shell {
+    padding: 0 16px 60px;
+  }
+  
+  .db-header__main {
+    flex-direction: column;
+  }
+  
+  .db-header__icon {
+    width: 52px;
+    height: 52px;
+  }
+  
+  .db-header__icon svg {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .db-header__stats {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .db-filter {
+    min-width: 140px;
+    max-width: none;
+    flex: 1 1 calc(50% - 6px);
+  }
+  
+  .db-card__details {
+    grid-template-columns: 1fr;
+  }
+  
+  .db-card__actions {
+    flex-direction: column;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  const root = document.getElementById('aasDoorBrowser');
+  if (!root) return;
+
+  // ============================
+  // GLOBAL GUARD (Squarespace soft-nav safe)
+  // ============================
+  const GLOBAL = window.__AAS_DOOR_BROWSER__ || (window.__AAS_DOOR_BROWSER__ = {
+    bound: false,
+    aborter: null,
+    activeRoot: null,
+  });
+  GLOBAL.activeRoot = root;
+
+  // ============================
+  // CONFIG
+  // ============================
+  const CONFIG = {
+    VERSION: '1.4.1',
+    PAGE_SIZE: 24,
+    DEBOUNCE_MS: 200,
+    CACHE_TTL_MS: 1000 * 60 * 30, // 30 min
+    FETCH_TIMEOUT_MS: 15000,
+    MAX_PARENT_DEPTH: 8,
+  };
+
+  // ============================
+  // DATA SOURCES (CORRECTED URLs)
+  // ============================
+  const DATA_SOURCES = {
+    // Door Registry - primary source (Name, Parent ID, Customer, Address, Mfg, Model)
+    doorRegistry: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTcpq972LhvEzo3MA_iJzFeF7vJ1a7qudjvd3ooqxrfho-SZ7p1kvP0943VXsCfHWywDknQ-BHzC2Og/pub?output=csv',
+    
+    // Asset Lookup - resolves Asset ID and Parent ID to names (CORRECT gid!)
+    assetLookup: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaL-Cagmos7f4rCojgOROSm_Zs8Gnl41nvUUN8hXJIrDyGdv4eYhtJKq56lMRK9euN0TvFNOj_rszM/pub?gid=1081180871&single=true&output=csv',
+    
+    // Door Master - inspection data (Status, Last Inspection, Technician, Notes)
+    doorMaster: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaL-Cagmos7f4rCojgOROSm_Zs8Gnl41nvUUN8hXJIrDyGdv4eYhtJKq56lMRK9euN0TvFNOj_rszM/pub?gid=2106704799&single=true&output=csv',
+  };
+
+  const CACHE_KEY = 'aas_door_browser_v141_';
+
+  // ============================
+  // UTILITIES
+  // ============================
+  const str = {
+    clean: (s) => (s ?? '').toString().trim(),
+    escape: (s) => (s ?? '').toString()
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;'),
+  };
+
+  const $ = (sel, ctx = root) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = root) => Array.from(ctx.querySelectorAll(sel));
+
+  function debounce(fn, ms) {
+    let t;
+    return function(...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), ms);
+    };
+  }
+
+  function normSearch(v) {
+    let s = str.clean(v).toLowerCase();
+    try { s = s.normalize('NFKD'); } catch(e) {}
+    return s
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function withCacheBust(url) {
+    const u = str.clean(url);
+    if (!u) return u;
+    const join = u.indexOf('?') > -1 ? '&' : '?';
+    return u + join + 't=' + Date.now();
+  }
+
+  function announce(msg) {
+    const a = $('#dbAnnounce');
+    if (a) a.textContent = str.clean(msg);
+  }
+
+  // Robust field picker - tries multiple column name variations
+  function pick(obj, keys) {
+    for (const k of keys) {
+      const v = obj && obj[k];
+      if (v != null && str.clean(v)) return str.clean(v);
+    }
+    return '';
+  }
+
+  // ============================
+  // CSV PARSING
+  // ============================
+  function parseCSV(text) {
+    const t = (text || '').replace(/^\uFEFF/, '');
+    const out = [];
+    let row = [];
+    let cur = '';
+    let inQ = false;
+
+    for (let i = 0; i < t.length; i++) {
+      const c = t[i];
+      const n = t[i + 1];
+
+      if (c === '"' && inQ && n === '"') { cur += '"'; i++; continue; }
+      if (c === '"') { inQ = !inQ; continue; }
+      if (!inQ && c === ',') { row.push(cur); cur = ''; continue; }
+      if (!inQ && (c === '\n' || c === '\r')) {
+        if (c === '\r' && n === '\n') i++;
+        row.push(cur); cur = '';
+        if (row.some(v => str.clean(v))) out.push(row);
+        row = [];
+        continue;
+      }
+      cur += c;
+    }
+
+    row.push(cur);
+    if (row.some(v => str.clean(v))) out.push(row);
+    return out;
+  }
+
+  function csvToObjects(text) {
+    const rows = parseCSV(text);
+    if (!rows.length) return [];
+
+    const rawHeaders = rows.shift().map(h => str.clean(h) || 'Column');
+    const headers = [];
+    const seen = new Map();
+    rawHeaders.forEach(h => {
+      const n = (seen.get(h) || 0) + 1;
+      seen.set(h, n);
+      headers.push(n === 1 ? h : (h + ' ' + n));
+    });
+
+    return rows.map(cells => {
+      const obj = {};
+      headers.forEach((h, i) => { obj[h] = str.clean(cells[i]); });
+      return obj;
+    }).filter(o => Object.values(o).some(v => str.clean(v)));
+  }
+
+  // ============================
+  // CACHE
+  // ============================
+  function readCache(key) {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY + key);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || !parsed.ts || !parsed.text) return null;
+      if (Date.now() - parsed.ts > CONFIG.CACHE_TTL_MS) return null;
+      return parsed.text;
+    } catch(e) { return null; }
+  }
+
+  function writeCache(key, text) {
+    try { localStorage.setItem(CACHE_KEY + key, JSON.stringify({ ts: Date.now(), text })); }
+    catch(e) {}
+  }
+
+  async function fetchText(url, { signal, timeoutMs = CONFIG.FETCH_TIMEOUT_MS } = {}) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+
+    const onAbort = () => ctrl.abort();
+    if (signal) signal.addEventListener('abort', onAbort, { once: true });
+
+    try {
+      const res = await fetch(withCacheBust(url), { cache: 'no-store', signal: ctrl.signal });
+      if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+      return await res.text();
+    } finally {
+      clearTimeout(timer);
+      if (signal) signal.removeEventListener('abort', onAbort);
+    }
+  }
+
+  async function fetchCSV(key, signal) {
+    const url = DATA_SOURCES[key];
+    if (!url) return [];
+    
+    const cached = readCache(key);
+    if (cached) return csvToObjects(cached);
+
+    try {
+      const text = await fetchText(url, { signal });
+      writeCache(key, text);
+      return csvToObjects(text);
+    } catch(e) {
+      console.error('[DoorBrowser] fetchCSV failed:', key, e);
+      return [];
+    }
+  }
+
+  // ============================
+  // STATE
+  // ============================
+  let allDoors = [];
+  let filteredDoors = [];
+  let displayedCount = 0;
+  let isLoaded = false;
+  let assetLookupMap = new Map();
+
+  // ============================
+  // ASSET LOOKUP (ROBUST)
+  // ============================
+  function buildAssetLookup(rows) {
+    const map = new Map();
+
+    rows.forEach(r => {
+      const assetId = pick(r, ['Asset ID', 'Asset Id', 'AssetID', 'ID', 'Id']);
+      if (!assetId) return;
+
+      const assetName = pick(r, ['Asset Name', 'Name', 'Asset', 'Location Name']);
+      const parentId = pick(r, ['Parent Asset ID', 'Parent ID', 'Parent Id', 'ParentID']);
+      const parentName = pick(r, ['Parent Asset Name', 'Parent Name', 'Parent']);
+
+      map.set(String(assetId), {
+        id: String(assetId),
+        name: assetName || '',
+        parentId: parentId || '',
+        parentName: parentName || '',
+      });
+    });
+
+    return map;
+  }
+
+  function resolveAssetName(assetId) {
+    if (!assetId) return '';
+    const info = assetLookupMap.get(String(assetId));
+    return info ? (info.name || '') : '';
+  }
+
+  // Walk up the parent chain to get root/top-level name
+  function resolveRootName(startId) {
+    let cur = String(startId || '');
+    let lastName = '';
+    const seen = new Set();
+
+    for (let i = 0; i < CONFIG.MAX_PARENT_DEPTH; i++) {
+      if (!cur || seen.has(cur)) break;
+      seen.add(cur);
+
+      const info = assetLookupMap.get(cur);
+      if (!info) break;
+
+      if (info.name) lastName = info.name;
+      cur = info.parentId ? String(info.parentId) : '';
+    }
+
+    return lastName || '';
+  }
+
+  // ============================
+  // MERGE DOOR DATA
+  // ============================
+  function mergeDoorData(doorRegistryRows, doorMasterRows) {
+    // Door Master lookup by Door ID (human-readable like MH-1.42/43)
+    const masterMap = new Map();
+    (doorMasterRows || []).forEach(r => {
+      const doorId = pick(r, ['Door ID', 'Door Id', 'DoorID', 'Name', 'ID', 'Id']);
+      if (!doorId) return;
+      masterMap.set(String(doorId).toUpperCase(), r);
+    });
+
+    const doors = [];
+    const seenPrimaryKeys = new Set();
+    const seenDoorIds = new Set();
+
+    (doorRegistryRows || []).forEach((row, idx) => {
+      // Registry identity fields (robust picking)
+      const name = pick(row, ['Name', 'Door Name', 'Asset Name', 'Door']);
+      const doorId = pick(row, ['Door ID', 'Door Id', 'DoorID', 'Door #', 'Door Number']);
+      const assetId = pick(row, ['Asset ID', 'Asset Id', 'AssetID']);
+      const parentId = pick(row, ['Parent ID', 'Parent Id', 'ParentID', 'Parent Asset ID']);
+
+      const primaryKey = (name || assetId || doorId || ('ROW_' + idx)).toUpperCase();
+      if (seenPrimaryKeys.has(primaryKey)) return;
+      seenPrimaryKeys.add(primaryKey);
+
+      if (doorId) seenDoorIds.add(String(doorId).toUpperCase());
+      if (name) seenDoorIds.add(String(name).toUpperCase());
+
+      // Match to Door Master using NAME (not numeric Door ID)
+      // Door Master uses human-readable IDs like MH-1.42/43
+      const masterRow =
+        masterMap.get(String(name || '').toUpperCase()) ||
+        masterMap.get(String(doorId || '').toUpperCase()) ||
+        {};
+
+      // Resolve names via Asset Lookup
+      const assetName = resolveAssetName(assetId);
+      const parentName = resolveAssetName(parentId);
+      const rootName = resolveRootName(parentId);
+
+      // Customer priority: root name > parent name > direct Customer field
+      const customerRaw = pick(row, ['Customer', 'Customer Name', 'Account', 'Client']);
+      const customer = rootName || parentName || customerRaw || '';
+
+      const address = pick(row, ['Address', 'Site Address', 'Location Address']);
+      const doorLocation = pick(row, ['Door Location', 'Door location', 'Location', 'Site', 'Area']);
+      const doorType = pick(row, ['Door Type', 'Type']);
+      const manufacturer = pick(row, ['Manufacturer', 'Mfr', 'Make']);
+      const model = pick(row, ['Model']);
+
+      // Inspection/status from Door Master
+      const status = pick(masterRow, ['Status']);
+      const lastInspection = pick(masterRow, ['Last Inspection', 'LastInspection', 'Last Insp']);
+      const technician = pick(masterRow, ['Technician', 'Tech']);
+      const notes = pick(masterRow, ['Notes', 'Note']);
+      const results = pick(masterRow, ['Results', 'Result']);
+      const limblePmLink = pick(masterRow, ['Limble PM Link', 'PM Link']);
+      const aaadm = pick(masterRow, ['AAADM']);
+
+      const hasInspectionData = !!(status || lastInspection || results || technician || notes || aaadm);
+
+      // Site line (parent if different from customer)
+      const site = parentName && parentName !== customer ? parentName : '';
+
+      const door = {
+        // Identity - NAME is the primary ID (matches Door Master)
+        id: name || doorId || assetId || ('Door ' + (idx + 1)),
+        name: name || '',
+        doorId: doorId || '',  // Numeric ID from Registry (e.g., 3-814)
+        assetId: assetId || '',
+        assetName: assetName || '',
+
+        parentId: parentId || '',
+        parentName: parentName || '',
+        rootName: rootName || '',
+
+        // Location
+        customer: customer || '',
+        site: site || '',
+        address: address || '',
+        doorLocation: doorLocation || '',
+
+        // Equipment
+        manufacturer: manufacturer || '',
+        model: model || '',
+        doorType: doorType || '',
+
+        // Inspection
+        status: status || '',
+        lastInspection: lastInspection || '',
+        technician: technician || '',
+        notes: notes || '',
+        results: results || '',
+        aaadm: aaadm || '',
+        limblePmLink: limblePmLink || '',
+
+        // Links
+        qrUrl: pick(row, ['QR URL', 'QR Link']) || pick(masterRow, ['QR Link']) || '',
+        docs: pick(row, ['Docs', 'Manual', 'Documentation']) || '',
+        hasInspectionData,
+
+        // Search text (precomputed)
+        searchText: '',
+      };
+
+      door.searchText = normSearch([
+        door.id, door.name, door.doorId, door.assetId, door.assetName,
+        door.customer, door.site, door.address, door.doorLocation,
+        door.manufacturer, door.model, door.doorType,
+        door.status, door.technician, door.notes,
+        door.parentId, door.parentName, door.rootName
+      ].join(' '));
+
+      doors.push(door);
+    });
+
+    // Add master-only doors not present in registry
+    (doorMasterRows || []).forEach(r => {
+      const doorId = pick(r, ['Door ID', 'Door Id', 'DoorID']);
+      if (!doorId) return;
+
+      const key = String(doorId).toUpperCase();
+      if (seenDoorIds.has(key)) return;
+
+      const status = pick(r, ['Status']);
+      const lastInspection = pick(r, ['Last Inspection', 'LastInspection']);
+      const technician = pick(r, ['Technician', 'Tech']);
+      const notes = pick(r, ['Notes', 'Note']);
+      const aaadm = pick(r, ['AAADM']);
+
+      const door = {
+        id: doorId,
+        name: doorId,  // For master-only, name = doorId
+        doorId: '',
+        assetId: '',
+        assetName: '',
+        parentId: '',
+        parentName: '',
+        rootName: '',
+
+        customer: pick(r, ['Location', 'Customer', 'Site']) || '',
+        site: '',
+        address: '',
+        doorLocation: pick(r, ['Location']) || '',
+
+        manufacturer: '',
+        model: '',
+        doorType: '',
+
+        status,
+        lastInspection,
+        technician,
+        notes,
+        results: pick(r, ['Results']) || '',
+        aaadm,
+        limblePmLink: pick(r, ['Limble PM Link']) || '',
+
+        qrUrl: pick(r, ['QR Link', 'QR URL']) || '',
+        docs: '',
+        hasInspectionData: true,
+        searchText: '',
+      };
+
+      door.searchText = normSearch([
+        door.id, door.customer, door.doorLocation,
+        door.status, door.technician, door.notes
+      ].join(' '));
+
+      doors.push(door);
+    });
+
+    return doors;
+  }
+
+  // ============================
+  // FILTER OPTIONS
+  // ============================
+  function extractFilterOptions(doors) {
+    const customers = new Set();
+    const manufacturers = new Set();
+    const statuses = new Set();
+    const types = new Set();
+
+    doors.forEach(d => {
+      if (d.customer) customers.add(d.customer);
+      if (d.manufacturer) manufacturers.add(d.manufacturer);
+      if (d.status) statuses.add(d.status);
+      if (d.doorType) types.add(d.doorType);
+    });
+
+    return {
+      customers: Array.from(customers).sort((a,b) => a.localeCompare(b)),
+      manufacturers: Array.from(manufacturers).sort((a,b) => a.localeCompare(b)),
+      statuses: Array.from(statuses).sort((a,b) => a.localeCompare(b)),
+      types: Array.from(types).sort((a,b) => a.localeCompare(b)),
+    };
+  }
+
+  function resetSelectOptions(selectEl) {
+    if (!selectEl) return;
+    while (selectEl.options.length > 1) selectEl.remove(1);
+  }
+
+  function populateFilters(options) {
+    const customerSelect = $('#dbFilterCustomer');
+    const mfgSelect = $('#dbFilterMfg');
+    const statusSelect = $('#dbFilterStatus');
+    const typeSelect = $('#dbFilterType');
+
+    resetSelectOptions(customerSelect);
+    resetSelectOptions(mfgSelect);
+    resetSelectOptions(statusSelect);
+    resetSelectOptions(typeSelect);
+
+    options.customers.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      customerSelect.appendChild(opt);
+    });
+
+    options.manufacturers.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m;
+      opt.textContent = m;
+      mfgSelect.appendChild(opt);
+    });
+
+    options.statuses.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s;
+      statusSelect.appendChild(opt);
+    });
+
+    options.types.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = t;
+      typeSelect.appendChild(opt);
+    });
+  }
+
+  // ============================
+  // SEARCH + FILTERING (SCORED)
+  // ============================
+  function scoreDoor(door, queryNorm, tokens) {
+    if (!tokens.length) return 0;
+    const text = door.searchText;
+
+    let score = 0;
+
+    // Phrase boost
+    if (queryNorm && text.includes(queryNorm)) score += 8;
+
+    for (const t of tokens) {
+      if (!t) continue;
+
+      const idNorm = normSearch(door.id);
+      const nameNorm = normSearch(door.name);
+      const customerNorm = normSearch(door.customer);
+      const mfgNorm = normSearch(door.manufacturer);
+
+      if (idNorm.includes(t) || nameNorm.includes(t)) score += 12;
+      else if (customerNorm.includes(t)) score += 8;
+      else if (mfgNorm.includes(t)) score += 6;
+      else if (text.includes(t)) score += 2;
+    }
+
+    return score;
+  }
+
+  function applyFilters() {
+    const searchRaw = $('#dbSearch')?.value || '';
+    const queryNorm = normSearch(searchRaw);
+    const tokens = queryNorm ? queryNorm.split(' ').filter(t => t.length >= 2) : [];
+
+    const customer = $('#dbFilterCustomer')?.value || '';
+    const mfg = $('#dbFilterMfg')?.value || '';
+    const status = $('#dbFilterStatus')?.value || '';
+    const type = $('#dbFilterType')?.value || '';
+
+    const scored = [];
+
+    for (const door of allDoors) {
+      if (customer && door.customer !== customer) continue;
+      if (mfg && door.manufacturer !== mfg) continue;
+      if (status && door.status !== status) continue;
+      if (type && door.doorType !== type) continue;
+
+      if (tokens.length) {
+        const s = scoreDoor(door, queryNorm, tokens);
+        if (s <= 0) continue;
+        scored.push({ door, s });
+      } else {
+        scored.push({ door, s: 0 });
+      }
+    }
+
+    if (tokens.length) {
+      scored.sort((a, b) => b.s - a.s);
+    }
+
+    filteredDoors = scored.map(x => x.door);
+
+    displayedCount = 0;
+    renderResults();
+    updateCounts();
+    announce(filteredDoors.length ? (filteredDoors.length + ' doors shown') : 'No doors found');
+  }
+
+  // ============================
+  // RENDERING
+  // ============================
+  function highlightMatch(text, query) {
+    if (!text || !query) return str.escape(text || '');
+    
+    const tokens = normSearch(query).split(' ').filter(t => t.length >= 2);
+    if (!tokens.length) return str.escape(text);
+
+    const pattern = tokens
+      .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('|');
+    
+    const raw = str.clean(text);
+    const re = new RegExp(`(${pattern})`, 'gi');
+    
+    let out = '';
+    let last = 0;
+    let m;
+
+    while ((m = re.exec(raw)) !== null) {
+      out += str.escape(raw.slice(last, m.index));
+      out += '<mark>' + str.escape(m[0]) + '</mark>';
+      last = m.index + m[0].length;
+    }
+    out += str.escape(raw.slice(last));
+    return out;
+  }
+
+  function renderDoorCard(door, query) {
+    const statusAttr = door.status ? `data-status="${str.escape(door.status.toLowerCase())}"` : '';
+    
+    // CRITICAL: Use door.name for /door?id= (Door Master key is the human-readable name)
+    const inspectionId = door.name || door.id;
+    
+    const inspectionBadge = door.hasInspectionData 
+      ? `<a href="/door?id=${encodeURIComponent(inspectionId)}" class="db-badge db-badge--inspection" title="View inspection data">Inspection</a>`
+      : '';
+    
+    const statusBadge = door.status 
+      ? `<span class="db-badge db-badge--status" ${statusAttr}>${str.escape(door.status)}</span>`
+      : '';
+
+    const details = [];
+    
+    if (door.doorLocation) {
+      details.push(`<div class="db-card__detail"><span class="db-card__detail-label">Location:</span><span class="db-card__detail-value">${highlightMatch(door.doorLocation, query)}</span></div>`);
+    }
+    if (door.doorType) {
+      details.push(`<div class="db-card__detail"><span class="db-card__detail-label">Type:</span><span class="db-card__detail-value">${highlightMatch(door.doorType, query)}</span></div>`);
+    }
+    if (door.manufacturer) {
+      details.push(`<div class="db-card__detail"><span class="db-card__detail-label">Mfg:</span><span class="db-card__detail-value">${highlightMatch(door.manufacturer, query)}</span></div>`);
+    }
+    if (door.model) {
+      details.push(`<div class="db-card__detail"><span class="db-card__detail-label">Model:</span><span class="db-card__detail-value">${highlightMatch(door.model, query)}</span></div>`);
+    }
+    if (door.lastInspection) {
+      details.push(`<div class="db-card__detail"><span class="db-card__detail-label">Last Insp:</span><span class="db-card__detail-value">${str.escape(door.lastInspection)}</span></div>`);
+    }
+    if (door.technician) {
+      details.push(`<div class="db-card__detail"><span class="db-card__detail-label">Tech:</span><span class="db-card__detail-value">${highlightMatch(door.technician, query)}</span></div>`);
+    }
+    if (door.aaadm) {
+      details.push(`<div class="db-card__detail"><span class="db-card__detail-label">AAADM:</span><span class="db-card__detail-value">${str.escape(door.aaadm)}</span></div>`);
+    }
+
+    // Build location line
+    const locationParts = [door.site, door.doorLocation, door.address].filter(Boolean);
+    const location = locationParts.join(' • ');
+
+    // Service page uses door.name
+    const serviceId = door.name || door.id;
+
+    return `
+      <article class="db-card">
+        <header class="db-card__header">
+          <h3 class="db-card__id">${highlightMatch(door.name || door.id, query)}</h3>
+          <div class="db-card__badges">
+            ${statusBadge}
+            ${inspectionBadge}
+          </div>
+        </header>
+        
+        <p class="db-card__customer">${highlightMatch(door.customer || 'Unknown Customer', query)}</p>
+        ${location ? `<p class="db-card__location">${highlightMatch(location, query)}</p>` : ''}
+        
+        ${details.length ? `<div class="db-card__details">${details.join('')}</div>` : ''}
+        
+        <div class="db-card__actions">
+          <a href="/service?id=${encodeURIComponent(serviceId)}" class="db-card__action db-card__action--primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+            </svg>
+            Service Page
+          </a>
+          ${door.hasInspectionData ? `
+            <a href="/door?id=${encodeURIComponent(inspectionId)}" class="db-card__action">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                <rect x="9" y="3" width="6" height="4" rx="1"/>
+                <path d="M9 12h6m-6 4h4"/>
+              </svg>
+              Inspection
+            </a>
+          ` : ''}
+        </div>
+      </article>
+    `;
+  }
+
+  function renderResults() {
+    const grid = $('#dbGrid');
+    const loading = $('#dbLoading');
+    const empty = $('#dbEmpty');
+    const loadMore = $('#dbLoadMore');
+    const query = $('#dbSearch')?.value || '';
+
+    if (!grid || !loading || !empty || !loadMore) return;
+
+    if (!isLoaded) {
+      loading.style.display = 'flex';
+      empty.style.display = 'none';
+      grid.innerHTML = '';
+      loadMore.style.display = 'none';
+      return;
+    }
+
+    loading.style.display = 'none';
+
+    if (!filteredDoors.length) {
+      empty.style.display = 'block';
+      grid.innerHTML = '';
+      loadMore.style.display = 'none';
+      return;
+    }
+
+    empty.style.display = 'none';
+
+    const toShow = filteredDoors.slice(0, displayedCount + CONFIG.PAGE_SIZE);
+    displayedCount = toShow.length;
+
+    grid.innerHTML = toShow.map(door => renderDoorCard(door, query)).join('');
+
+    const remaining = filteredDoors.length - displayedCount;
+    if (remaining > 0) {
+      loadMore.style.display = 'flex';
+      const rem = $('#dbRemainingCount');
+      if (rem) rem.textContent = `(${remaining} more)`;
+    } else {
+      loadMore.style.display = 'none';
+    }
+  }
+
+  function updateCounts() {
+    const total = $('#dbTotalCount');
+    const filtered = $('#dbFilteredCount');
+    if (total) total.textContent = allDoors.length.toLocaleString();
+    if (filtered) filtered.textContent = filteredDoors.length.toLocaleString();
+  }
+
+  // ============================
+  // EVENTS
+  // ============================
+  function bindEventsOnce() {
+    if (root.dataset.bound === '1') return;
+    root.dataset.bound = '1';
+
+    const searchInput = $('#dbSearch');
+    const searchWrap = $('.db-search');
+    const clearSearchBtn = $('#dbClearSearch');
+    const loadMoreBtn = $('#dbLoadMoreBtn');
+
+    const customerSel = $('#dbFilterCustomer');
+    const mfgSel = $('#dbFilterMfg');
+    const statusSel = $('#dbFilterStatus');
+    const typeSel = $('#dbFilterType');
+    const resetBtn = $('#dbClearFilters');
+
+    if (!searchInput || !searchWrap) return;
+
+    const handleSearch = debounce(() => {
+      searchWrap.classList.remove('is-loading');
+      applyFilters();
+    }, CONFIG.DEBOUNCE_MS);
+
+    searchInput.addEventListener('input', (e) => {
+      const hasValue = str.clean(e.target.value).length > 0;
+      searchWrap.classList.toggle('has-value', hasValue);
+      if (hasValue) searchWrap.classList.add('is-loading');
+      handleSearch();
+    });
+
+    clearSearchBtn && clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchWrap.classList.remove('has-value', 'is-loading');
+      applyFilters();
+      searchInput.focus();
+    });
+
+    customerSel && customerSel.addEventListener('change', applyFilters);
+    mfgSel && mfgSel.addEventListener('change', applyFilters);
+    statusSel && statusSel.addEventListener('change', applyFilters);
+    typeSel && typeSel.addEventListener('change', applyFilters);
+
+    resetBtn && resetBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchWrap.classList.remove('has-value', 'is-loading');
+      if (customerSel) customerSel.value = '';
+      if (mfgSel) mfgSel.value = '';
+      if (statusSel) statusSel.value = '';
+      if (typeSel) typeSel.value = '';
+      applyFilters();
+    });
+
+    loadMoreBtn && loadMoreBtn.addEventListener('click', () => {
+      renderResults();
+    });
+  }
+
+  // ============================
+  // INIT
+  // ============================
+  async function init() {
+    bindEventsOnce();
+
+    // Abort previous load if soft-nav re-inits
+    if (GLOBAL.aborter) {
+      try { GLOBAL.aborter.abort(); } catch(e) {}
+    }
+    GLOBAL.aborter = new AbortController();
+
+    isLoaded = false;
+    renderResults();
+    announce('Loading door data…');
+
+    try {
+      const [doorRegistryRows, assetLookupRows, doorMasterRows] = await Promise.all([
+        fetchCSV('doorRegistry', GLOBAL.aborter.signal),
+        fetchCSV('assetLookup', GLOBAL.aborter.signal),
+        fetchCSV('doorMaster', GLOBAL.aborter.signal).catch(() => []),
+      ]);
+
+      console.log('[DoorBrowser v1.4] Loaded:', {
+        doorRegistry: doorRegistryRows.length,
+        assetLookup: assetLookupRows.length,
+        doorMaster: doorMasterRows.length,
+      });
+
+      // Build asset lookup map
+      assetLookupMap = buildAssetLookup(assetLookupRows);
+      console.log('[DoorBrowser v1.4] Asset lookup map size:', assetLookupMap.size);
+
+      // Merge (registry is PRIMARY)
+      allDoors = mergeDoorData(doorRegistryRows, doorMasterRows);
+      filteredDoors = [...allDoors];
+      isLoaded = true;
+
+      console.log('[DoorBrowser v1.4] Merged doors:', allDoors.length);
+      if (allDoors.length > 0) {
+        console.log('[DoorBrowser v1.4] Sample door:', allDoors[0]);
+      }
+
+      // Populate filters
+      populateFilters(extractFilterOptions(allDoors));
+
+      // Initial render
+      updateCounts();
+      renderResults();
+      announce('Door data loaded.');
+
+    } catch(err) {
+      console.error('[DoorBrowser v1.4] Init error:', err);
+      isLoaded = true;
+      allDoors = [];
+      filteredDoors = [];
+      updateCounts();
+      renderResults();
+      announce('Error loading door data.');
+    }
+  }
+
+  // Boot (Squarespace safe)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+  
+  // Squarespace soft-nav events
+  document.addEventListener('turbolinks:load', init);
+  document.addEventListener('site:afterContentUpdate', init);
+})();
+</script></body></html>

@@ -1,0 +1,14 @@
+{
+  "name": "aas-portal",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AAS Tech & Customer Portal",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo \"No build step \u2014 deploying static /public\""
+  },
+  "dependencies": {
+    "@netlify/functions": "^2.8.0"
+  }
+}
