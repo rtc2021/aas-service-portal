@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Work Summary • AAS Portal</title>
+</head>
+<body style="margin:0;background:#0b1220;">
+<style>
+/* =========================
+   Workdash (NO STICKY) Theme
+   COMPLETE-only / Status removed
+   ========================= */
+
+#workdash{
+  --wd-bg: #0b1220;
+  --wd-surface: rgba(255,255,255,.04);
+  --wd-surface2: rgba(255,255,255,.06);
+  --wd-border: rgba(255,255,255,.10);
+  --wd-border2: rgba(255,255,255,.16);
+  --wd-text: rgba(255,255,255,.92);
+  --wd-muted: rgba(255,255,255,.60);
+  --wd-accent: #6ea8fe;
+
+  color: var(--wd-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+
+#workdash, #workdash *{ box-sizing: border-box; }
+
+/* Wrapper */
+#workdash.workdash-wrapper{
+  padding: clamp(16px, 2.5vw, 28px);
+  border-radius: 18px;
+  border: 1px solid var(--wd-border);
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+  box-shadow: 0 30px 80px rgba(0,0,0,.35);
+  backdrop-filter: blur(10px);
+}
+
+/* Title */
+#workdash .workdash-title{
+  font-size: clamp(28px, 3vw, 44px);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  margin: 2px 0 18px;
+}
+
+/* Filters */
+#workdash .workdash-filters{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+#workdash .wd-daterange{
+  grid-column: span 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+#workdash .wd-date-label{
+  font-size: 12px;
+  letter-spacing: .02em;
+  color: var(--wd-muted);
+}
+
+/* Inputs/selects */
+#workdash .wd-input,
+#workdash .wd-select{
+  height: 44px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--wd-border);
+  background: rgba(0,0,0,.18);
+  color: var(--wd-text);
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+#workdash .wd-input::placeholder{ color: rgba(255,255,255,.40); }
+
+#workdash .wd-input:focus,
+#workdash .wd-select:focus{
+  outline: none;
+  border-color: rgba(110,168,254,.60);
+  box-shadow: 0 0 0 4px rgba(110,168,254,.18);
+  background: rgba(0,0,0,.26);
+}
+
+/* Select arrow */
+#workdash .wd-select{
+  appearance: none;
+  padding-right: 38px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(255,255,255,.65) 50%),
+    linear-gradient(135deg, rgba(255,255,255,.65) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+/* Table wrap */
+#workdash .workdash-tablewrap{
+  border: 1px solid var(--wd-border);
+  border-radius: 16px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(0,0,0,.16);
+}
+
+/* Table */
+#workdash .workdash-table{
+  width: 100%;
+  min-width: 1000px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Header (NO sticky) */
+#workdash .workdash-table thead th{
+  position: static !important;
+  background: rgba(10, 16, 32, .92);
+  backdrop-filter: blur(10px);
+
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.62);
+
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--wd-border);
+  text-align: left;
+}
+
+/* Cells */
+#workdash .workdash-table tbody td{
+  position: static !important;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  vertical-align: top;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+#workdash .workdash-table tbody tr:hover{
+  background: rgba(255,255,255,.035);
+}
+
+/* Column sizing */
+#workdash .wd-col-task{ width: 110px; }
+#workdash .wd-col-location{ width: 260px; }
+#workdash .wd-col-date{ width: 130px; }
+#workdash .wd-col-tech{
+  width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#workdash .wd-col-wo{ width: 110px; }
+
+/* Summary full */
+#workdash .wd-summary-cell{
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  color: rgba(255,255,255,.86);
+}
+
+/* WO button */
+#workdash .wd-link{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+
+  background: rgba(110,168,254,.14);
+  border: 1px solid rgba(110,168,254,.35);
+  color: rgba(255,255,255,.92);
+
+  transition: background .15s ease, transform .08s ease;
+}
+#workdash .wd-link:hover{ background: rgba(110,168,254,.22); }
+#workdash .wd-link:active{ transform: scale(.98); }
+
+/* Meta + show more */
+#workdash .workdash-meta{
+  margin-top: 10px;
+  color: var(--wd-muted);
+  font-size: 13px;
+}
+
+#workdash .wd-showmore{
+  margin-top: 10px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--wd-border2);
+  background: var(--wd-surface2);
+  color: var(--wd-text);
+  cursor: pointer;
+  font-weight: 750;
+}
+#workdash .wd-showmore[disabled]{ opacity: .55; cursor: not-allowed; }
+
+@media (max-width: 1100px){
+  #workdash .workdash-filters{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #workdash .wd-daterange{ grid-column: 1 / -1; }
+}
+@media (max-width: 640px){
+  #workdash .workdash-filters{ grid-template-columns: 1fr; }
+  #workdash .workdash-table{ min-width: 980px; }
+}/* =========================
+   Mobile: render table rows as cards
+   ========================= */
+@media (max-width: 640px){
+
+  /* Make the wrapper more solid so your site background doesn’t fight readability */
+  #workdash.workdash-wrapper{
+    background: rgba(11,18,32,.92);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Filters: already 1 column, just tighten spacing */
+  #workdash .workdash-filters{ gap: 10px; }
+  #workdash .wd-input, #workdash .wd-select{ height: 46px; }
+
+  /* Table: remove forced width so it doesn't require horizontal scrolling */
+  #workdash .workdash-table{
+    min-width: 0 !important;
+    table-layout: auto !important;
+  }
+
+  /* Hide header */
+  #workdash .workdash-table thead{ display:none; }
+
+  /* Turn rows into cards */
+  #workdash .workdash-table tbody tr{
+    display:block;
+    margin: 12px 10px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 16px;
+    background: rgba(255,255,255,.05);
+    overflow: hidden;
+  }
+
+  /* Cells become stacked sections */
+  #workdash .workdash-table tbody td{
+    display:flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  #workdash .workdash-table tbody td:last-child{ border-bottom: 0; }
+
+  /* Add labels using nth-child (matches your current column order) */
+  #workdash .workdash-table tbody td:nth-child(1)::before{ content:"Task"; }
+  #workdash .workdash-table tbody td:nth-child(2)::before{ content:"Location"; }
+  #workdash .workdash-table tbody td:nth-child(3)::before{ content:"Date"; }
+  #workdash .workdash-table tbody td:nth-child(4)::before{ content:"Tech"; }
+  #workdash .workdash-table tbody td:nth-child(5)::before{ content:"Summary"; }
+  #workdash .workdash-table tbody td:nth-child(6)::before{ content:"WO"; }
+
+  #workdash .workdash-table tbody td::before{
+    flex: 0 0 78px;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.55);
+    font-weight: 800;
+    padding-top: 2px;
+  }
+
+  /* Summary should be full-width, multi-line, and left-aligned */
+  #workdash .workdash-table tbody td:nth-child(5){
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #workdash .workdash-table tbody td:nth-child(5)::before{
+    padding-bottom: 6px;
+  }
+  #workdash .wd-summary-cell{
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  /* WO button: bigger touch target */
+  #workdash .workdash-table tbody td:nth-child(6){
+    align-items: center;
+  }
+  #workdash .wd-link{
+    padding: 10px 14px;
+    min-width: 86px;
+    justify-content: center;
+  }
+}@media (max-width: 640px){
+
+  /* STOP truncating values on mobile cards */
+  #workdash .workdash-table tbody td{
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+
+  /* specifically ensure TECH row shows fully */
+  #workdash .workdash-table tbody td:nth-child(4){
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+}
+</style>
+
+<div
+  class="workdash-wrapper"
+  id="workdash"
+  data-csv-url="https://docs.google.com/spreadsheets/d/e/2PACX-1vRaL-Cagmos7f4rCojgOROSm_Zs8Gnl41nvUUN8hXJIrDyGdv4eYhtJKq56lMRK9euN0TvFNOj_rszM/pub?gid=379834637&single=true&output=csv"
+>
+  <h1 class="workdash-title">Completed Work Orders</h1>
+
+  <div class="workdash-filters">
+    <input id="taskFilter" class="wd-input" placeholder="Filter by Task ID…" autocomplete="off" />
+    <input id="locationFilter" class="wd-input" placeholder="Filter by Location Name…" autocomplete="off" />
+    <input id="searchFilter" class="wd-input" placeholder="Search summary, tech, date…" autocomplete="off" />
+
+    <div class="wd-daterange">
+      <label class="wd-date-label" for="dateFrom">From:</label>
+      <input id="dateFrom" class="wd-input" type="date" />
+      <label class="wd-date-label" for="dateTo">To:</label>
+      <input id="dateTo" class="wd-input" type="date" />
+    </div>
+
+    <select id="techFilter" class="wd-select">
+      <option value="">Technician (All)</option>
+    </select>
+  </div>
+
+  <div class="workdash-tablewrap">
+    <table class="workdash-table">
+      <thead>
+        <tr>
+          <th class="wd-col-task">Task ID</th>
+          <th class="wd-col-location">Location Name</th>
+          <th class="wd-col-date">Service Date</th>
+          <th class="wd-col-tech">Technician</th>
+          <th class="wd-col-summary">Summary</th>
+          <th class="wd-col-wo">WO Link</th>
+        </tr>
+      </thead>
+      <tbody id="workBody"></tbody>
+    </table>
+  </div>
+
+  <p class="workdash-meta" id="workMeta">Loading completed work orders…</p>
+  <button type="button" class="wd-showmore" id="wdShowMore">Show more</button>
+</div><script>
+(function () {
+  var DEFAULT_CSV_URL =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaL-Cagmos7f4rCojgOROSm_Zs8Gnl41nvUUN8hXJIrDyGdv4eYhtJKq56lMRK9euN0TvFNOj_rszM/pub?gid=379834637&single=true&output=csv";
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function safeUrl(u) {
+    var s = String(u || "").trim();
+    if (!s) return "";
+    if (/^\s*(javascript|data|vbscript):/i.test(s)) return "";
+    if (/^(https?:)?\/\//i.test(s)) return s;
+    if (/^\/(?!\/)/.test(s)) return s;
+    return "";
+  }
+
+  function debounce(fn, ms) {
+    var t = null;
+    return function () {
+      clearTimeout(t);
+      var args = arguments;
+      t = setTimeout(function () { fn.apply(null, args); }, ms);
+    };
+  }
+
+  function detectMobile() {
+    var ua = navigator.userAgent || "";
+    return /Android|iPhone|iPad|iPod|Mobi/i.test(ua) || (window.innerWidth && window.innerWidth < 900);
+  }
+
+  function parseCSV(text) {
+    var rows = [];
+    var row = [];
+    var cur = "";
+    var inQuotes = false;
+
+    for (var i = 0; i < text.length; i++) {
+      var ch = text.charAt(i);
+
+      if (inQuotes) {
+        if (ch === '"') {
+          if (text.charAt(i + 1) === '"') { cur += '"'; i++; }
+          else inQuotes = false;
+        } else {
+          cur += ch;
+        }
+        continue;
+      }
+
+      if (ch === '"') inQuotes = true;
+      else if (ch === ",") { row.push(cur); cur = ""; }
+      else if (ch === "\n") { row.push(cur); rows.push(row); row = []; cur = ""; }
+      else if (ch === "\r") {}
+      else cur += ch;
+    }
+
+    row.push(cur);
+    rows.push(row);
+
+    while (rows.length && rows[rows.length - 1].every(function (c) { return String(c || "").trim() === ""; })) {
+      rows.pop();
+    }
+    return rows;
+  }
+
+  function normHeader(s) {
+    return String(s || "").replace(/\uFEFF/g, "").trim().toLowerCase();
+  }
+
+  function buildIndex(headerRow) {
+    var idx = {};
+    for (var i = 0; i < headerRow.length; i++) {
+      idx[normHeader(headerRow[i])] = i;
+    }
+    return idx;
+  }
+
+  function colAny(row, idx, names) {
+    for (var i = 0; i < names.length; i++) {
+      var key = normHeader(names[i]);
+      var j = idx[key];
+      if (j !== undefined) return (row[j] || "");
+    }
+    return "";
+  }
+
+  function cleanText(str) {
+    var s = String(str || "")
+      .replace(/<div[^>]*>/gi, "\n")
+      .replace(/<\/div>/gi, "")
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/&nbsp;/gi, " ")
+      .replace(/\r/g, "");
+
+    s = s.replace(/<[^>]*>/g, "");
+    s = s.replace(/\n\s*\n+/g, "\n");
+    return s.trim();
+  }
+
+  function firstName(full) {
+    var s = String(full || "").trim();
+    if (!s) return "";
+    return s.split(/\s+/)[0] || "";
+  }
+
+  function makeLocalDate(y, m, d) {
+    var dt = new Date(y, m - 1, d, 12, 0, 0, 0);
+    return isNaN(dt.getTime()) ? null : dt;
+  }
+
+  function parseAnyDate(s) {
+    if (!s) return null;
+    var v = String(s).trim();
+
+    var m = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:\D|$)/);
+    if (m) return makeLocalDate(parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10));
+
+    m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})(?:\D|$)/);
+    if (!m) return null;
+
+    var year = parseInt(m[3], 10);
+    if (year < 100) year += year >= 70 ? 1900 : 2000;
+
+    return makeLocalDate(year, parseInt(m[1], 10), parseInt(m[2], 10));
+  }
+
+  function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0); }
+  function endOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999); }
+
+  function extractTaskIdFromLink(url) {
+    if (!url) return "";
+    var m2 = String(url).match(/[?&](?:id|wo|task)=([0-9]{3,10})/i);
+    if (m2 && m2[1]) return m2[1];
+    var m1 = String(url).match(/\/([0-9]{3,10})(?:[/?#]|$)/);
+    return (m1 && m1[1]) ? m1[1] : "";
+  }
+
+  function loadText(url, cb) {
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.text(); })
+      .then(function (t) { cb(null, t); })
+      .catch(function (e) { cb(e); });
+  }
+
+  function initWorkdash() {
+    var wrapper = document.getElementById("workdash");
+    if (!wrapper) return false;
+
+    if (wrapper.getAttribute("data-wd-init") === "1") return true;
+    wrapper.setAttribute("data-wd-init", "1");
+
+    var csvUrl = wrapper.getAttribute("data-csv-url") || DEFAULT_CSV_URL;
+
+    var bodyEl = wrapper.querySelector("#workBody");
+    var metaEl = wrapper.querySelector("#workMeta");
+    var showMoreBtn = wrapper.querySelector("#wdShowMore");
+
+    var taskFilter = wrapper.querySelector("#taskFilter");
+    var locationFilter = wrapper.querySelector("#locationFilter");
+    var searchFilter = wrapper.querySelector("#searchFilter");
+    var techFilter = wrapper.querySelector("#techFilter");
+    var dateFromEl = wrapper.querySelector("#dateFrom");
+    var dateToEl = wrapper.querySelector("#dateTo");
+
+    if (!bodyEl || !metaEl) return true;
+
+    var isMobile = detectMobile();
+    var PAGE_SIZE = isMobile ? 25 : 150;
+    var MAX_RENDER = isMobile ? 200 : 2000;
+
+    var records = [];
+    var lastKey = "";
+    var lastFiltered = [];
+    var visibleLimit = PAGE_SIZE;
+
+    function getFilterKey() {
+      return [
+        taskFilter ? taskFilter.value : "",
+        locationFilter ? locationFilter.value : "",
+        searchFilter ? searchFilter.value : "",
+        techFilter ? techFilter.value : "",
+        dateFromEl ? dateFromEl.value : "",
+        dateToEl ? dateToEl.value : ""
+      ].join("||");
+    }
+
+    function applyFilters() {
+      var tk = taskFilter ? String(taskFilter.value || "").trim().toLowerCase() : "";
+      var locQ = locationFilter ? String(locationFilter.value || "").trim().toLowerCase() : "";
+      var q = searchFilter ? String(searchFilter.value || "").trim().toLowerCase() : "";
+      var techSel = techFilter ? String(techFilter.value || "").trim() : "";
+
+      var from = dateFromEl ? parseAnyDate(dateFromEl.value) : null;
+      var to = dateToEl ? parseAnyDate(dateToEl.value) : null;
+      if (from && to && to.getTime() < from.getTime()) { var tmp = from; from = to; to = tmp; }
+
+      var fromTs = from ? startOfDay(from).getTime() : null;
+      var toTs = to ? endOfDay(to).getTime() : null;
+
+      var out = [];
+      for (var i = 0; i < records.length; i++) {
+        var r = records[i];
+
+        if (tk && r.taskLower.indexOf(tk) === -1) continue;
+        if (locQ && r.locationLower.indexOf(locQ) === -1) continue;
+        if (techSel && r.techFull !== techSel) continue;
+
+        if (fromTs !== null || toTs !== null) {
+          if (!r.dateObj) continue;
+          var ts = r.dateObj.getTime();
+          if (fromTs !== null && ts < fromTs) continue;
+          if (toTs !== null && ts > toTs) continue;
+        }
+
+        if (q && r.searchBlob.indexOf(q) === -1) continue;
+        out.push(r);
+      }
+
+      out.sort(function (a, b) { return (b.dateTs || 0) - (a.dateTs || 0); });
+      return out;
+    }
+
+    function rowHTML(r) {
+      var summarySafe = escapeHtml(r.summary).replace(/\n/g, "<br>");
+      return (
+        "<tr>" +
+          "<td class='wd-col-task'>" + escapeHtml(r.task || "") + "</td>" +
+          "<td class='wd-col-location'>" + escapeHtml(r.location || "") + "</td>" +
+          "<td class='wd-col-date'>" + escapeHtml(r.dateStr || "") + "</td>" +
+          "<td class='wd-col-tech'>" + escapeHtml(r.techFirst || "") + "</td>" +
+          "<td class='wd-summary-cell'>" + summarySafe + "</td>" +
+          "<td class='wd-col-wo'>" +
+            (r.wo ? ("<a class='wd-link' href='" + escapeHtml(r.wo) + "' target='_blank' rel='noopener noreferrer'>Open</a>") : "") +
+          "</td>" +
+        "</tr>"
+      );
+    }
+
+    function renderTableOnly() {
+      var total = lastFiltered.length;
+
+      var show = visibleLimit;
+      if (show > total) show = total;
+      if (show > MAX_RENDER) show = MAX_RENDER;
+
+      var html = "";
+      for (var i = 0; i < show; i++) html += rowHTML(lastFiltered[i]);
+      bodyEl.innerHTML = html;
+
+      metaEl.textContent = "Showing " + show + " of " + total + " completed work orders";
+
+      if (!showMoreBtn) return;
+
+      if (show < total && show < MAX_RENDER) {
+        var next = PAGE_SIZE;
+        if (show + next > total) next = total - show;
+        if (show + next > MAX_RENDER) next = MAX_RENDER - show;
+
+        showMoreBtn.style.display = "inline-flex";
+        showMoreBtn.disabled = false;
+        showMoreBtn.textContent = "Show more (" + next + ")";
+      } else if (total > MAX_RENDER && show >= MAX_RENDER) {
+        showMoreBtn.style.display = "inline-flex";
+        showMoreBtn.disabled = true;
+        showMoreBtn.textContent = "Refine filters to see more";
+      } else {
+        showMoreBtn.style.display = "none";
+      }
+    }
+
+    function render(forceRecalc) {
+      var key = getFilterKey();
+      if (forceRecalc || key !== lastKey) {
+        lastKey = key;
+        lastFiltered = applyFilters();
+        visibleLimit = PAGE_SIZE;
+      }
+      renderTableOnly();
+    }
+
+    if (showMoreBtn) {
+      showMoreBtn.addEventListener("click", function () {
+        visibleLimit = visibleLimit + PAGE_SIZE;
+        if (visibleLimit > MAX_RENDER) visibleLimit = MAX_RENDER;
+        if (visibleLimit > lastFiltered.length) visibleLimit = lastFiltered.length;
+        renderTableOnly();
+      });
+    }
+
+    var scheduleRender = debounce(function () { render(true); }, isMobile ? 220 : 120);
+
+    if (taskFilter) taskFilter.addEventListener("input", scheduleRender);
+    if (locationFilter) locationFilter.addEventListener("input", scheduleRender);
+    if (searchFilter) searchFilter.addEventListener("input", scheduleRender);
+    if (techFilter) techFilter.addEventListener("change", scheduleRender);
+    if (dateFromEl) dateFromEl.addEventListener("change", scheduleRender);
+    if (dateToEl) dateToEl.addEventListener("change", scheduleRender);
+
+    metaEl.textContent = "Loading completed work orders…";
+
+    loadText(csvUrl, function (err, text) {
+      if (err) {
+        console.error(err);
+        metaEl.textContent = "Error loading completed work orders.";
+        return;
+      }
+
+      var rows = parseCSV(String(text || "").trim());
+      if (!rows.length) {
+        metaEl.textContent = "No completed work orders found.";
+        return;
+      }
+
+      var idx = buildIndex(rows[0]);
+      records = [];
+
+      for (var i = 1; i < rows.length; i++) {
+        var r = rows[i];
+
+        var woRaw = String(colAny(r, idx, ["WO Link", "WO link", "Work Order Link", "WO"])).trim();
+        var woSafe = safeUrl(woRaw);
+
+        var taskFromSheet = String(colAny(r, idx, ["Task ID", "Task Id", "Task"])).trim();
+        var taskId = taskFromSheet || extractTaskIdFromLink(woRaw);
+
+        var location = String(colAny(r, idx, ["Location Name", "Location"])).trim();
+
+        var dateStr = String(colAny(r, idx, ["Service Date", "Date"])).trim();
+        var dateObj = parseAnyDate(dateStr);
+        var dateTs = dateObj ? dateObj.getTime() : 0;
+
+        var techFull = String(colAny(r, idx, ["Technician", "Tech"])).trim();
+        var techFirst = firstName(techFull);
+
+        var summary = cleanText(colAny(r, idx, ["Summary", "Work Summary", "Notes"]));
+
+        if (!taskId && !location && !dateStr && !summary && !techFull) continue;
+
+        var searchBlob = (
+          summary + " " +
+          techFull + " " + techFirst + " " +
+          dateStr + " " +
+          taskId + " " +
+          location + " " +
+          woRaw
+        ).toLowerCase();
+
+        records.push({
+          task: taskId,
+          taskLower: String(taskId || "").toLowerCase(),
+          location: location,
+          locationLower: String(location || "").toLowerCase(),
+          dateStr: dateStr,
+          dateObj: dateObj,
+          dateTs: dateTs,
+          techFull: techFull,
+          techFirst: techFirst,
+          summary: summary,
+          wo: woSafe,
+          searchBlob: searchBlob
+        });
+      }
+
+      if (techFilter) {
+        while (techFilter.options.length > 1) techFilter.remove(1);
+
+        var seenTech = {};
+        var techs = [];
+        for (var t = 0; t < records.length; t++) {
+          var name = records[t].techFull;
+          if (name && !seenTech[name]) { seenTech[name] = true; techs.push(name); }
+        }
+        techs.sort();
+
+        for (var k = 0; k < techs.length; k++) {
+          var opt = document.createElement("option");
+          opt.value = techs[k];
+          opt.textContent = techs[k];
+          techFilter.appendChild(opt);
+        }
+      }
+
+      render(true);
+    });
+
+    return true;
+  }
+
+  // ---- Boot strategy (safe for head injection + Squarespace soft-nav) ----
+  function boot(){
+    // initWorkdash returns true if it found #workdash (or already init)
+    initWorkdash();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+
+  // Squarespace transitions
+  document.addEventListener("turbolinks:load", boot);
+  document.addEventListener("site:afterContentUpdate", boot);
+
+  // Lightweight observer: only runs until #workdash exists, then disconnects
+  try{
+    var tries = 0;
+    var mo = new MutationObserver(function(){
+      tries++;
+      if (initWorkdash() || tries > 50) { // ~50 mutations max then stop
+        try{ mo.disconnect(); }catch(e){}
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  } catch(e){}
+})();
+</script></body></html>

@@ -1,0 +1,61 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Functions configuration
+[functions]
+  node_bundler = "esbuild"
+
+# Headers for security and caching
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# Redirects for SPA routing
+[[redirects]]
+  from = "/service"
+  to = "/service/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/door"
+  to = "/door/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/tech/*"
+  to = "/tech/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/customer/*"
+  to = "/customer/:splat"
+  status = 200
+
+# Short URL for QR codes
+[[redirects]]
+  from = "/s"
+  to = "/service/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/d"
+  to = "/door/index.html"
+  status = 200
+
+# API routes
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
