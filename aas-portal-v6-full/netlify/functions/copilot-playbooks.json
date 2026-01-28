@@ -1,0 +1,2235 @@
+{
+  "metadata": {
+    "name": "AAS Portal Copilot – Door Troubleshooting Logic Tree",
+    "version": "2.0.0",
+    "last_updated": "2026-01-26",
+    "changelog": {
+      "2.0.0": "Merged comprehensive PDF guide content: added UL325 compliance, detailed potentiometer/jumper references, parameter ranges, wear item inspection, enhanced error codes, Horton C4190 swing/folding playbook additions",
+      "1.0.0": "Initial release with 8 operator models, symptom routing, learn cycles, manual hardware triage"
+    },
+    "scope": [
+      "Automatic door troubleshooting (sliding, swing, bifold, folding)",
+      "Learn / calibration cycles with step-by-step procedures",
+      "Complete error/flash code reference by model",
+      "Manual hardware quick triage (closers, panic, locks, cylinders)",
+      "PM + AAADM/ANSI compliance checks",
+      "Access control / lock integration basics",
+      "UL 325 and ANSI A156.10/A156.19 compliance verification",
+      "Wear item inspection and lifespan guidance"
+    ],
+    "supported_models": [
+      "NABCO OPUS (sliding)",
+      "Dorma ED100/ED250 (swing)",
+      "Dorma ESA II (sliding)",
+      "Besam UniSlide (sliding)",
+      "Stanley Dura-Glide Model J (sliding)",
+      "Stanley MC521/MC521 PRO (swing/bifold)",
+      "Horton C4190 (swing/folding)",
+      "Record 8000 Series (sliding/swing)"
+    ],
+    "note": "Built from AAS technician guide set including: Comprehensive Technician Field Guide, model-specific troubleshooting guides, MC521 Obstruction Error summary, and NABCO Opus Retrofit guide. Intended for portal decision trees and copilot routing."
+  },
+  "inputs": {
+    "door_type": [
+      "sliding",
+      "swing",
+      "bifold",
+      "folding",
+      "manual_or_unknown"
+    ],
+    "operator_model": [
+      "NABCO_OPUS",
+      "DORMA_ED100_ED250",
+      "DORMA_ESA_II",
+      "BESAM_UNISLIDE",
+      "STANLEY_MODEL_J",
+      "STANLEY_MC521",
+      "HORTON_C4190",
+      "RECORD_8000",
+      "UNKNOWN"
+    ],
+    "symptom": [
+      "no_power",
+      "powers_on_no_response",
+      "won_t_open",
+      "won_t_close",
+      "stays_open",
+      "drifts_open",
+      "uncontrolled_or_slams",
+      "slow_or_weak",
+      "noise_or_binding",
+      "error_code_or_led",
+      "learn_cycle_or_setup",
+      "obstruction_or_recycle",
+      "encoder_issue",
+      "motor_issue",
+      "lock_or_access_control_issue",
+      "fire_alarm_or_emergency_input",
+      "preventive_maintenance",
+      "annual_inspection",
+      "wear_item_inspection",
+      "manual_hardware_issue",
+      "compliance_check",
+      "other"
+    ],
+    "fault_code": "string (optional)",
+    "led_pattern": "string (optional, e.g., '1 flash', '4 flashes', 'WD light off', 'slow flash')",
+    "mode_switch_position": "string (optional, e.g., 'AUTO', 'OPEN', 'CLOSED', 'OFF')",
+    "recent_changes": [
+      "none",
+      "wiring_changed",
+      "handing_changed",
+      "operator_type_changed",
+      "sensor_replaced_or_rewired",
+      "lock_added_or_changed",
+      "header_opened_or_mechanical_adjustment",
+      "motor_or_encoder_replaced",
+      "new_install",
+      "retrofit_from_older_control"
+    ],
+    "site_constraints": [
+      "healthcare_patient_area",
+      "main_entry_high_traffic",
+      "secure_area_access_control",
+      "fire_rated_opening",
+      "egress_critical",
+      "none"
+    ]
+  },
+  "start_node": "SAFETY_GATE",
+  "nodes": {
+    "SAFETY_GATE": {
+      "type": "decision",
+      "prompt": "Is there an immediate safety hazard (door moving unexpectedly, egress blocked, pinch hazard, patient traffic, loose glass, exposed wiring)?",
+      "options": {
+        "yes": "MAKE_SAFE",
+        "no": "COLLECT_CONTEXT"
+      },
+      "tags": ["safety", "entry"]
+    },
+    "MAKE_SAFE": {
+      "type": "action",
+      "title": "Make the opening safe before troubleshooting",
+      "steps": [
+        "Stop the door safely using program selector / function switch to OFF or CLOSED if available.",
+        "If movement is unsafe, remove power using proper lockout/tagout practices BEFORE opening the header.",
+        "Place caution tape / signage so pedestrians do not enter the opening during work.",
+        "If egress is impacted, coordinate with the facility contact immediately and maintain a safe path of travel.",
+        "In healthcare/patient areas: minimize noise, communicate with nursing staff, maintain clear pathways.",
+        "Only bypass/disable safety devices temporarily during a controlled learn/setup step, with a technician present.",
+        "ALWAYS restore all safety devices before returning the door to service."
+      ],
+      "next": "COLLECT_CONTEXT",
+      "tags": ["safety", "policy", "critical"]
+    },
+    "COLLECT_CONTEXT": {
+      "type": "action",
+      "title": "Collect minimum info for routing",
+      "steps": [
+        "Identify door type: sliding / swing / bifold / folding / manual/unknown.",
+        "Identify operator/controller model from: label inside header, keypad/display, control board markings.",
+        "Capture the symptom category and any fault code or LED/flash pattern (count flashes and note pauses).",
+        "Note mode switch / program selector position (AUTO/OPEN/CLOSED/OFF).",
+        "Ask what changed last: wiring, sensors, handing, operator type, lock integration, motor/encoder, new install, retrofit.",
+        "Quick mechanical check: does the door move smoothly by hand with power OFF (where applicable and safe)?",
+        "Check track, rollers, guides, arm linkage for obvious wear or debris."
+      ],
+      "next": "ROUTE_BY_SYMPTOM",
+      "tags": ["intake", "diagnostics"]
+    },
+    "ROUTE_BY_SYMPTOM": {
+      "type": "router",
+      "field": "symptom",
+      "title": "Route to the right troubleshooting branch",
+      "cases": {
+        "error_code_or_led": "CAPTURE_CODE",
+        "learn_cycle_or_setup": "ROUTE_TO_LEARN_BY_MODEL",
+        "no_power": "NO_POWER_GENERIC",
+        "powers_on_no_response": "NO_RESPONSE_GENERIC",
+        "won_t_open": "WONT_OPEN_GENERIC",
+        "won_t_close": "WONT_CLOSE_GENERIC",
+        "stays_open": "STAYS_OPEN_GENERIC",
+        "drifts_open": "DRIFTS_OPEN_GENERIC",
+        "uncontrolled_or_slams": "UNCONTROLLED_GENERIC",
+        "slow_or_weak": "SLOW_GENERIC",
+        "noise_or_binding": "NOISE_GENERIC",
+        "obstruction_or_recycle": "OBSTRUCTION_GENERIC",
+        "encoder_issue": "ENCODER_GENERIC",
+        "motor_issue": "MOTOR_GENERIC",
+        "lock_or_access_control_issue": "ACCESS_CONTROL_GENERIC",
+        "fire_alarm_or_emergency_input": "FIRE_ALARM_GENERIC",
+        "preventive_maintenance": "PM_CHECKLIST",
+        "annual_inspection": "AAADM_INSPECTION",
+        "wear_item_inspection": "WEAR_ITEM_INSPECTION",
+        "manual_hardware_issue": "MANUAL_HARDWARE_ROUTER",
+        "compliance_check": "COMPLIANCE_CHECK"
+      },
+      "default": "GENERIC_FALLBACK"
+    },
+    "GENERIC_FALLBACK": {
+      "type": "action",
+      "title": "Generic fallback workflow (when symptom/model is unclear)",
+      "steps": [
+        "Confirm power and mode (AUTO/OPEN/CLOSED/OFF).",
+        "Check for active safety inputs (presence/safety beams) holding the door.",
+        "Inspect for mechanical drag (track, rollers/guides, arm linkage, hinges, weather seals).",
+        "If any settings/wiring/handing changed, run the correct model learn cycle.",
+        "If fault indicators exist, capture code/pattern and re-route to code branch.",
+        "If unresolved, escalate with: model, serial, photos, code, and what was tried."
+      ],
+      "next": "ROUTE_BY_SYMPTOM",
+      "tags": ["fallback"]
+    },
+
+    "CAPTURE_CODE": {
+      "type": "action",
+      "title": "Capture the exact fault indicator",
+      "steps": [
+        "Record the exact fault code on the display (letters/numbers) OR the LED flash count/pattern.",
+        "Note pause patterns between flash sequences (e.g., '4 flashes, pause, repeat').",
+        "Record any labels shown (e.g., 'Emergency OFF', 'Wrong Motor', 'Wrong Hand', 'Obst Learn Complete').",
+        "If dual operators are present, note which leaf/control reports the fault.",
+        "Check for slow/continuous flash patterns which may indicate different conditions (e.g., motor temp)."
+      ],
+      "next": "ROUTE_CODE_BY_MODEL",
+      "tags": ["diagnostics", "codes"]
+    },
+    "ROUTE_CODE_BY_MODEL": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Route by operator model for code lookup",
+      "cases": {
+        "NABCO_OPUS": "OPUS_CODE_TREE",
+        "DORMA_ED100_ED250": "ED100_CODE_TREE",
+        "DORMA_ESA_II": "ESAII_CODE_TREE",
+        "BESAM_UNISLIDE": "UNISLIDE_CODE_TREE",
+        "STANLEY_MODEL_J": "MODELJ_INDICATOR_TREE",
+        "STANLEY_MC521": "MC521_CODE_TREE",
+        "HORTON_C4190": "C4190_INDICATOR_TREE",
+        "RECORD_8000": "RECORD8000_CODE_TREE",
+        "UNKNOWN": "UNKNOWN_CODE_TREE"
+      },
+      "default": "UNKNOWN_CODE_TREE"
+    },
+    "UNKNOWN_CODE_TREE": {
+      "type": "action",
+      "title": "Unknown model / unknown code",
+      "steps": [
+        "Take a photo of the control board label, display, and wiring terminals.",
+        "Search inside the header for a manufacturer label (Record, Dorma, Besam, NABCO, Stanley, Horton).",
+        "Common identifiers: OPUS has rotary dial display, Besam has FS DIP switches, Record has blue/black buttons, Stanley MC521 has keypad with INDEX system.",
+        "If safe, power cycle once after checking for obvious wiring shorts/loose plugs.",
+        "Re-run 'COLLECT_CONTEXT' with the identified model, then use the model-specific code tree.",
+        "If still unknown, escalate with photos and the exact code/pattern."
+      ],
+      "next": "COLLECT_CONTEXT",
+      "tags": ["escalation", "identification"]
+    },
+
+    "ROUTE_TO_LEARN_BY_MODEL": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Learn / calibration / initial setup",
+      "cases": {
+        "NABCO_OPUS": "OPUS_LEARN",
+        "DORMA_ED100_ED250": "ED100_LEARN",
+        "DORMA_ESA_II": "ESAII_LEARN",
+        "BESAM_UNISLIDE": "UNISLIDE_LEARN",
+        "STANLEY_MODEL_J": "MODELJ_TUNE_IN",
+        "STANLEY_MC521": "MC521_FIS",
+        "RECORD_8000": "RECORD8000_LEARN",
+        "HORTON_C4190": "C4190_SETUP",
+        "UNKNOWN": "LEARN_UNKNOWN_MODEL"
+      },
+      "default": "LEARN_UNKNOWN_MODEL"
+    },
+    "LEARN_UNKNOWN_MODEL": {
+      "type": "action",
+      "title": "Learn/setup for unknown model",
+      "steps": [
+        "Do NOT guess a learn/reset procedure—incorrect learn steps can create unsafe motion.",
+        "Identify the model from labels/board markings first.",
+        "If you must move the door: switch to manual/off and verify smooth mechanical travel.",
+        "Do not leave bypassed sensors unattended.",
+        "Once model is identified, run the corresponding learn cycle in this tree."
+      ],
+      "next": "COLLECT_CONTEXT",
+      "tags": ["safety", "caution"]
+    },
+
+    "NO_POWER_GENERIC": {
+      "type": "action",
+      "title": "No power / dead control – generic triage",
+      "steps": [
+        "Verify facility power / breaker and the operator power switch position.",
+        "Use a meter to confirm 120VAC line voltage at the operator input (follow lockout/tagout rules).",
+        "Check obvious blown fuses (locations vary by model - see model-specific checks).",
+        "Inspect for loose harness plugs: motor, encoder, transformer, interface board.",
+        "Check transformer output voltage (typically 24VAC for control circuits).",
+        "If power is present but control stays dead, suspect transformer/control board failure.",
+        "Escalate with photos and voltage readings if unresolved."
+      ],
+      "next": "ROUTE_BY_MODEL_FOR_NO_POWER",
+      "tags": ["power", "electrical"]
+    },
+    "ROUTE_BY_MODEL_FOR_NO_POWER": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Model-specific no-power checks",
+      "cases": {
+        "HORTON_C4190": "C4190_NO_POWER_DETAIL",
+        "STANLEY_MODEL_J": "MODELJ_NO_POWER_DETAIL",
+        "NABCO_OPUS": "OPUS_NO_POWER_DETAIL",
+        "RECORD_8000": "RECORD8000_NO_POWER_DETAIL",
+        "BESAM_UNISLIDE": "UNISLIDE_NO_POWER_DETAIL"
+      },
+      "default": "NO_POWER_RESOLVE_OR_ESCALATE"
+    },
+    "NO_POWER_RESOLVE_OR_ESCALATE": {
+      "type": "action",
+      "title": "If still no power",
+      "steps": [
+        "If you found a tripped breaker or blown fuse: identify and correct the cause (short/ground) BEFORE re-energizing.",
+        "Do not keep cycling power repeatedly—this can damage components.",
+        "If no cause is found, escalate for board/transformer replacement guidance.",
+        "Document voltage readings at: line input, transformer primary, transformer secondary, control board."
+      ],
+      "next": "RESOLUTION_AND_DOCS"
+    },
+
+    "NO_RESPONSE_GENERIC": {
+      "type": "action",
+      "title": "Powers on but no response – generic triage",
+      "steps": [
+        "Confirm program selector / function switch is not in OFF/CLOSED-only mode.",
+        "Check emergency stop / fire alarm input status (many operators refuse to run if active).",
+        "Look for active safety/presence inputs holding the operator (beam blocked, sensor triggered).",
+        "Check for miswired sensor test/monitoring that prevents operation.",
+        "Verify activation devices (motion sensor, push plate, wave switch) are powered and connected to correct inputs.",
+        "Watch for LED/indicator changes when activation is triggered.",
+        "If recent wiring/sensor changes: run the model learn cycle and re-check input assignments."
+      ],
+      "next": "ROUTE_BY_MODEL_FOR_NO_RESPONSE",
+      "tags": ["inputs", "sensors", "activation"]
+    },
+    "ROUTE_BY_MODEL_FOR_NO_RESPONSE": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Model-specific no-response checks",
+      "cases": {
+        "DORMA_ED100_ED250": "ED100_NO_RESPONSE_DETAIL",
+        "DORMA_ESA_II": "ESAII_NO_RESPONSE_DETAIL",
+        "STANLEY_MODEL_J": "MODELJ_NO_RESPONSE_DETAIL",
+        "STANLEY_MC521": "MC521_NO_RESPONSE_DETAIL",
+        "RECORD_8000": "RECORD8000_NO_RESPONSE_DETAIL",
+        "NABCO_OPUS": "OPUS_NO_RESPONSE_DETAIL",
+        "BESAM_UNISLIDE": "UNISLIDE_NO_RESPONSE_DETAIL",
+        "HORTON_C4190": "C4190_NO_RESPONSE_DETAIL"
+      },
+      "default": "NO_RESPONSE_RESOLVE_OR_ESCALATE"
+    },
+    "NO_RESPONSE_RESOLVE_OR_ESCALATE": {
+      "type": "action",
+      "title": "If still no response",
+      "steps": [
+        "Capture any code/LED pattern and route to the error/code branch.",
+        "If no code exists, escalate with: voltage readings, mode switch position, input status (activation/safety), and photos of the control/wiring."
+      ],
+      "next": "CAPTURE_CODE"
+    },
+
+    "WONT_OPEN_GENERIC": {
+      "type": "action",
+      "title": "Won't open – generic triage",
+      "steps": [
+        "Confirm door is not locked/mechanically latched (especially if access control is present).",
+        "Verify lock releases BEFORE operator attempts to move door.",
+        "Check activation input: does the control register activation (LED/input indicator change)?",
+        "Check safety inputs: some systems will not open if a safety circuit is faulted/monitored incorrectly.",
+        "Mechanical: with power OFF (safe), verify door moves freely by hand.",
+        "Fix any binding/drag before adjusting electronics.",
+        "If settings/handing changed: run learn cycle."
+      ],
+      "next": "ROUTE_BY_MODEL_FOR_WONT_OPEN",
+      "tags": ["operation", "opening"]
+    },
+    "ROUTE_BY_MODEL_FOR_WONT_OPEN": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Model-specific won't-open checks",
+      "cases": {
+        "STANLEY_MODEL_J": "MODELJ_WONT_OPEN_DETAIL",
+        "STANLEY_MC521": "MC521_WONT_OPEN_DETAIL",
+        "NABCO_OPUS": "OPUS_WONT_OPEN_DETAIL",
+        "DORMA_ED100_ED250": "ED100_WONT_OPEN_DETAIL",
+        "DORMA_ESA_II": "ESAII_WONT_OPEN_DETAIL",
+        "BESAM_UNISLIDE": "UNISLIDE_WONT_OPEN_DETAIL",
+        "RECORD_8000": "RECORD8000_WONT_OPEN_DETAIL",
+        "HORTON_C4190": "C4190_WONT_OPEN_DETAIL"
+      },
+      "default": "RESOLUTION_AND_DOCS"
+    },
+
+    "WONT_CLOSE_GENERIC": {
+      "type": "action",
+      "title": "Won't close – generic triage",
+      "steps": [
+        "Check presence sensors/holding beams: if the door 'thinks' someone is in the opening, it will stay open.",
+        "Verify sensor alignment and that sensors are not detecting the door leaf itself.",
+        "Check hold-open timer settings and whether door is in PERMANENT OPEN / OPEN mode.",
+        "Check for sensor test/monitoring misconfiguration (can prevent closing).",
+        "Mechanical: debris in track/guide, warped door, arm linkage binding, closer overpowering operator.",
+        "For swing doors: ensure closer is not fighting the operator."
+      ],
+      "next": "ROUTE_BY_MODEL_FOR_WONT_CLOSE",
+      "tags": ["closing", "sensors"]
+    },
+    "ROUTE_BY_MODEL_FOR_WONT_CLOSE": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Model-specific won't-close checks",
+      "cases": {
+        "DORMA_ED100_ED250": "ED100_WONT_CLOSE_DETAIL",
+        "DORMA_ESA_II": "ESAII_WONT_CLOSE_DETAIL",
+        "BESAM_UNISLIDE": "UNISLIDE_WONT_CLOSE_DETAIL",
+        "RECORD_8000": "RECORD8000_WONT_CLOSE_DETAIL",
+        "NABCO_OPUS": "OPUS_WONT_CLOSE_DETAIL",
+        "HORTON_C4190": "C4190_WONT_CLOSE_DETAIL",
+        "STANLEY_MODEL_J": "MODELJ_WONT_CLOSE_DETAIL",
+        "STANLEY_MC521": "MC521_WONT_CLOSE_DETAIL"
+      },
+      "default": "RESOLUTION_AND_DOCS"
+    },
+
+    "STAYS_OPEN_GENERIC": {
+      "type": "action",
+      "title": "Stays open – generic triage",
+      "steps": [
+        "Check for a stuck activation/presence input (sensor looking at moving traffic, reflections, or misaligned).",
+        "Confirm hold-open delay settings are reasonable (typical sites 5–15 seconds; match customer request).",
+        "Check if door is in PERMANENT OPEN or HOLD OPEN mode.",
+        "For swing operators: ensure closer/arm is adjusted so door can return without fighting operator.",
+        "Reduce hold-open time and re-test sensor field overlap per ANSI requirements."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["closing", "hold-open"]
+    },
+
+    "DRIFTS_OPEN_GENERIC": {
+      "type": "action",
+      "title": "Drifts open / won't stay closed – generic triage",
+      "steps": [
+        "Check for gravity or wind pressure pushing door open.",
+        "Verify door is reaching full close position during learn cycle.",
+        "Check brake/encoder calibration—door may not be 'learning' closed position correctly.",
+        "For swing doors: check closer arm tension and spring adjustment.",
+        "Model-specific: check hold/closed position settings."
+      ],
+      "next": "ROUTE_BY_MODEL_FOR_DRIFTS",
+      "tags": ["closing", "position"]
+    },
+    "ROUTE_BY_MODEL_FOR_DRIFTS": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Model-specific drift checks",
+      "cases": {
+        "HORTON_C4190": "C4190_DRIFTS_OPEN",
+        "NABCO_OPUS": "OPUS_DRIFTS_DETAIL",
+        "BESAM_UNISLIDE": "UNISLIDE_DRIFTS_DETAIL"
+      },
+      "default": "RESOLUTION_AND_DOCS"
+    },
+
+    "UNCONTROLLED_GENERIC": {
+      "type": "action",
+      "title": "Uncontrolled motion / slamming – generic triage",
+      "steps": [
+        "STOP and make safe immediately if door is moving dangerously.",
+        "Inspect mechanical drag and door travel FIRST—fix binding before adjusting electronics.",
+        "Check brake/encoder connections—uncontrolled closing/opening is often brake/encoder related.",
+        "Verify learn cycle was performed with correct conditions (e.g., motor COLD where required).",
+        "Check speed settings are within safe limits.",
+        "Reduce speeds/adjust braking within manufacturer limits, then re-test for safe force/speed.",
+        "Verify compliance with UL 325 / ANSI speed limits."
+      ],
+      "next": "ROUTE_BY_MODEL_FOR_UNCONTROLLED",
+      "tags": ["safety", "speed", "critical"]
+    },
+    "ROUTE_BY_MODEL_FOR_UNCONTROLLED": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Model-specific uncontrolled motion checks",
+      "cases": {
+        "DORMA_ED100_ED250": "ED100_UNCONTROLLED_DETAIL",
+        "DORMA_ESA_II": "ESAII_UNCONTROLLED_DETAIL",
+        "STANLEY_MODEL_J": "MODELJ_UNCONTROLLED_DETAIL",
+        "BESAM_UNISLIDE": "UNISLIDE_UNCONTROLLED_DETAIL",
+        "RECORD_8000": "RECORD8000_UNCONTROLLED_DETAIL",
+        "NABCO_OPUS": "OPUS_UNCONTROLLED_DETAIL",
+        "HORTON_C4190": "C4190_UNCONTROLLED_DETAIL",
+        "STANLEY_MC521": "MC521_UNCONTROLLED_DETAIL"
+      },
+      "default": "RESOLUTION_AND_DOCS"
+    },
+
+    "SLOW_GENERIC": {
+      "type": "action",
+      "title": "Slow / weak operation – generic triage",
+      "steps": [
+        "Mechanical FIRST: clean track, check rollers/guides, verify no rubbing or binding.",
+        "Check for high door resistance; adjust hardware before increasing speed/force.",
+        "Check motor temp protection (some operators slow/stop when motor is hot).",
+        "Verify correct door type/handing and that learn cycle is complete.",
+        "Increase speed/force only within allowed ranges and re-test for safe operation.",
+        "Check belt tension on sliding doors.",
+        "For swing doors: verify closer is not resisting operator."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["speed", "mechanical"]
+    },
+
+    "NOISE_GENERIC": {
+      "type": "action",
+      "title": "Noise / binding – generic triage",
+      "steps": [
+        "Inspect track/guides/rollers/arm linkage for wear or debris—correct mechanical issues FIRST.",
+        "Look for loose belts/pulleys, worn rollers, or damaged track cap.",
+        "Check for bottom guide wear or misalignment.",
+        "Listen for motor/gearbox noise vs. track noise (different causes).",
+        "After mechanical correction, re-run learn cycle if the system uses learned stroke/brake values.",
+        "Clean track with dry cloth; use manufacturer-approved silicone spray on rollers only if specified."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["mechanical", "maintenance"]
+    },
+
+    "OBSTRUCTION_GENERIC": {
+      "type": "action",
+      "title": "Obstruction / recycle / re-open issues – generic triage",
+      "steps": [
+        "Inspect for mechanical drag or intermittent rubbing (bottom guide, track debris, weather seals).",
+        "Verify safety sensors are aligned and not over-sensitive (or seeing the door leaf).",
+        "Check for reflective surfaces causing false sensor triggers.",
+        "If the control reports repeated recycle/reactivation warnings, reduce sensitivity or correct resistance.",
+        "Verify obstruction/stall torque settings are appropriate for door weight.",
+        "If model is MC521 and shows obstruction error 0b, route to MC521 obstruction tree."
+      ],
+      "next": "ROUTE_OBSTRUCTION_BY_MODEL",
+      "tags": ["obstruction", "safety", "recycle"]
+    },
+    "ROUTE_OBSTRUCTION_BY_MODEL": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Model-specific obstruction checks",
+      "cases": {
+        "STANLEY_MC521": "MC521_OBSTRUCTION_0B",
+        "NABCO_OPUS": "OPUS_RECYCLE_WARNING",
+        "HORTON_C4190": "C4190_OBSTRUCTION_DETAIL",
+        "BESAM_UNISLIDE": "UNISLIDE_OBSTRUCTION_DETAIL"
+      },
+      "default": "RESOLUTION_AND_DOCS"
+    },
+
+    "ENCODER_GENERIC": {
+      "type": "action",
+      "title": "Encoder issues – generic triage",
+      "steps": [
+        "With power ON, manually push door slightly—encoder LEDs should blink ON/OFF.",
+        "If no blink: check encoder cable connection and seating.",
+        "Check encoder cable polarity—some systems require specific orientation.",
+        "Reverse encoder cable leads if door learns/moves in wrong direction.",
+        "Check for damaged encoder disk or sensor inside motor housing.",
+        "After encoder correction, ALWAYS re-run learn cycle."
+      ],
+      "next": "ROUTE_ENCODER_BY_MODEL",
+      "tags": ["encoder", "motor", "electrical"]
+    },
+    "ROUTE_ENCODER_BY_MODEL": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Model-specific encoder checks",
+      "cases": {
+        "STANLEY_MODEL_J": "MODELJ_ENCODER_NO_BLINK",
+        "NABCO_OPUS": "OPUS_ENCODER_DETAIL",
+        "DORMA_ESA_II": "ESAII_INCREMENTAL_ENCODER",
+        "BESAM_UNISLIDE": "UNISLIDE_4_FLASH",
+        "STANLEY_MC521": "MC521_B1"
+      },
+      "default": "RESOLUTION_AND_DOCS"
+    },
+
+    "MOTOR_GENERIC": {
+      "type": "action",
+      "title": "Motor issues – generic triage",
+      "steps": [
+        "Motor hums but no movement: check brake circuit, brake resistor, motor brushes.",
+        "Motor overheating: put in OPEN mode, let cool 5-10 minutes, check for mechanical drag.",
+        "Motor clicking/grinding: check gearbox, belt tension, mechanical binding.",
+        "Verify motor harness connections are secure.",
+        "Check for shorted windings with meter if motor completely fails.",
+        "If motor is confirmed failed, replace motor assembly."
+      ],
+      "next": "ROUTE_MOTOR_BY_MODEL",
+      "tags": ["motor", "electrical", "mechanical"]
+    },
+    "ROUTE_MOTOR_BY_MODEL": {
+      "type": "router",
+      "field": "operator_model",
+      "title": "Model-specific motor checks",
+      "cases": {
+        "STANLEY_MODEL_J": "MODELJ_HUMS",
+        "NABCO_OPUS": "OPUS_MOTOR_DETAIL",
+        "BESAM_UNISLIDE": "UNISLIDE_SLOW_FLASH",
+        "DORMA_ED100_ED250": "ED100_E10"
+      },
+      "default": "RESOLUTION_AND_DOCS"
+    },
+
+    "ACCESS_CONTROL_GENERIC": {
+      "type": "action",
+      "title": "Lock / access control integration – generic triage",
+      "steps": [
+        "CRITICAL: Confirm the door unlocks BEFORE the operator starts to move.",
+        "Verify lock type (Fail Safe vs Fail Secure) matches wiring and operator configuration.",
+        "Fail Safe: unlocks when power is removed (use for egress).",
+        "Fail Secure: locks when power is removed (use for security).",
+        "Check relay/timer logic sequence: access device → relay → unlock → (0.5–2s delay) → operator activation.",
+        "Verify fire alarm interface cuts power to maglocks/locks during alarm per code.",
+        "If door opens but stays locked: suspect miswired relay or delay too short.",
+        "If door stays unlocked: suspect stuck relay or wrong timer mode."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["access_control", "locks", "integration"]
+    },
+
+    "FIRE_ALARM_GENERIC": {
+      "type": "action",
+      "title": "Fire alarm / emergency input active – generic triage",
+      "steps": [
+        "Identify whether a fire alarm / emergency input is active (some controls display 'FA' or 'Emergency OFF').",
+        "Verify wiring: fire alarm contacts should match operator's expected logic (Normally Closed vs Normally Open).",
+        "If fire alarm is tied in, coordinate with facility staff before altering any wiring.",
+        "NEVER disable fire alarm integration without facility approval and proper bypass procedures.",
+        "Once emergency input is cleared, power cycle and re-test normal operation.",
+        "Verify door returns to normal operation after fire alarm clears."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["life_safety", "fire_alarm", "compliance"]
+    },
+
+    "PM_CHECKLIST": {
+      "type": "action",
+      "title": "Preventive Maintenance (PM) – automatic doors",
+      "steps": [
+        "VISUAL: Check for loose fasteners, cracked covers, exposed wiring; confirm 'Automatic Door' signage on both sides.",
+        "MECHANICAL: Inspect track/guides/rollers/belt for wear; verify smooth open/close 3x; inspect swing arm/linkage.",
+        "SENSORS: Verify activation fields respond properly; test safety sensors by placing object in path; door must not close on person.",
+        "CONTROLLER/POWER: Verify power at control; clear any diagnostic codes; document settings and mode.",
+        "CLEANING: Clean track with dry cloth; use manufacturer-approved lubrication ONLY if specified.",
+        "BREAKOUT TEST: Verify panic breakout works with acceptable force (≤50 lb typical).",
+        "DOCUMENT: Serial number, location, findings, photos, parts used, settings changed."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["pm", "maintenance", "checklist"]
+    },
+
+    "AAADM_INSPECTION": {
+      "type": "action",
+      "title": "AAADM-style annual inspection walkthrough",
+      "steps": [
+        "IDENTIFY: Door type (sliding/swing/folding) and inspect for visible damage, missing signage, loose parts.",
+        "ACTIVATION TEST: Approach at walking speed—door must open promptly.",
+        "SAFETY TEST: Walk slowly through threshold—door must NOT close on you.",
+        "OBSTRUCTION TEST: Place object in path and verify door detects and remains open or reverses.",
+        "MANUAL TEST: Power OFF and confirm door moves freely by hand; test breakout function if equipped.",
+        "CYCLE TEST: Run door through 5 full cycles; confirm smooth, consistent speeds and proper latch/close.",
+        "HOLD OPEN TEST: Verify hold-open delay matches requirements.",
+        "DOCUMENT: This is a legal/liability record—complete all fields, include photos of any failures."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["inspection", "compliance", "AAADM", "legal"]
+    },
+
+    "WEAR_ITEM_INSPECTION": {
+      "type": "action",
+      "title": "Wear Item Inspection – Automatic Sliding Doors",
+      "steps": [
+        "Determine usage level: Light (<100 cycles/day), Moderate (100-300), Heavy (300+).",
+        "HANGER ROLLERS: Check for flat spots, excessive play, noise. Lifespan: Light 5-8yr, Moderate 3-5yr, Heavy 1-3yr.",
+        "TRACK CAP: Inspect for wear grooves, debris buildup, damage. Lifespan: Light 8-10yr, Moderate 5-7yr, Heavy 3-5yr.",
+        "BOTTOM GUIDES: Check for wear, proper centering, no drag. Lifespan: Light 5-7yr, Moderate 3-5yr, Heavy 1-3yr.",
+        "MOTOR & CONTROL: Listen for unusual noise, check for overheating. Lifespan: Light 8-12yr, Moderate 6-8yr, Heavy 3-5yr.",
+        "BELT & PULLEY: Check tension (typically 2 Nm), wear, alignment. Lifespan: Light 6-9yr, Moderate 4-6yr, Heavy 2-4yr.",
+        "Document condition of each item and recommend replacements as needed."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["wear", "inspection", "parts", "lifespan"]
+    },
+
+    "COMPLIANCE_CHECK": {
+      "type": "action",
+      "title": "ANSI/UL Compliance Verification",
+      "steps": [
+        "IDENTIFY STANDARD: ANSI A156.10 (Full-Power) or ANSI A156.19 (Low-Energy).",
+        "A156.10 FULL-POWER: Requires presence sensors, safety sensors, clear signage. Door must stop/reverse if obstructed.",
+        "A156.19 LOW-ENERGY: Max 15 lbf to start opening. 1 second per 10° of opening. Sensors not required if push-plate activated.",
+        "UL 325 SLIDING DOORS: Max kinetic energy 1.25 ft-lb.",
+        "UL 325 SPEED LIMITS BY WEIGHT: ≤160 lbs = 0.70 ft/s max | 161-190 lbs = 0.75 ft/s | 191-200 lbs = 0.80 ft/s | 201-220 lbs = 0.85 ft/s.",
+        "SIGNAGE: 'Automatic Door' decals required on both sides.",
+        "SENSOR ZONES: Activation and presence fields must overlap with path of travel.",
+        "Document compliance status and any corrective actions needed."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["compliance", "ANSI", "UL325", "safety"]
+    },
+
+    "MANUAL_HARDWARE_ROUTER": {
+      "type": "router",
+      "field": "door_type",
+      "title": "Manual hardware quick triage",
+      "cases": {
+        "manual_or_unknown": "MANUAL_HARDWARE_SYMPTOM",
+        "swing": "MANUAL_HARDWARE_SYMPTOM",
+        "sliding": "MANUAL_HARDWARE_SYMPTOM"
+      },
+      "default": "MANUAL_HARDWARE_SYMPTOM"
+    },
+    "MANUAL_HARDWARE_SYMPTOM": {
+      "type": "decision",
+      "prompt": "Which manual hardware issue best matches?",
+      "options": {
+        "door_slams": "CLOSER_SLAMS",
+        "door_wont_close_or_latch": "CLOSER_WONT_LATCH",
+        "oil_leak_from_closer": "CLOSER_LEAK",
+        "panic_device_sticks": "PANIC_STICK",
+        "door_bounces_open": "PANIC_BOUNCE",
+        "lock_loose_or_misaligned": "LOCK_LOOSE",
+        "cylinder_turns_no_latch": "CYLINDER_TAILPIECE",
+        "cant_rekey": "REKEY_ISSUE",
+        "other": "MANUAL_GENERIC"
+      },
+      "default": "MANUAL_GENERIC"
+    },
+    "CLOSER_SLAMS": {
+      "type": "action",
+      "title": "Closer: door slams",
+      "steps": [
+        "Reduce latching speed (controls final 10° of closing).",
+        "Reduce closing speed (should be 5-7 seconds overall).",
+        "Make small adjustments, test 3 times after each change.",
+        "Check backcheck is working to prevent violent opening.",
+        "If closer is leaking oil or cannot be adjusted, replace closer.",
+        "Inspect hinges for binding; a dragging hinge causes inconsistent closing."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["closer", "manual"]
+    },
+    "CLOSER_WONT_LATCH": {
+      "type": "action",
+      "title": "Closer: won't close fully / won't latch",
+      "steps": [
+        "Increase latching speed slightly (provides final push to latch).",
+        "Confirm closing speed is 5–7 seconds overall.",
+        "Check for hinge bind or door/frame misalignment.",
+        "Verify strike alignment and latch engagement.",
+        "Adjust strike position or hinge as needed.",
+        "Check for weatherstripping or threshold interference."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["closer", "manual"]
+    },
+    "CLOSER_LEAK": {
+      "type": "action",
+      "title": "Closer: oil leak",
+      "steps": [
+        "If oil is present around arm or body, closer must be replaced.",
+        "Leaks are NOT reliably repairable in the field.",
+        "After replacement: set closing speed, latching speed, and backcheck.",
+        "Match spring power to door size and wind load.",
+        "Test 3 full cycles before leaving."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["closer", "manual", "replacement"]
+    },
+    "PANIC_STICK": {
+      "type": "action",
+      "title": "Panic device: sticking/dragging",
+      "steps": [
+        "Check for rod adjustment issues (vertical/concealed rods) or latch wear.",
+        "Check top rod latch for wear on vertical rod devices.",
+        "Confirm strike alignment—many latch problems start at the strike.",
+        "Tighten loose hardware.",
+        "Verify device is correct for fire rating (do NOT dog fire-rated devices unless UL-listed to do so)."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["panic", "manual"]
+    },
+    "PANIC_BOUNCE": {
+      "type": "action",
+      "title": "Panic device: door bounces open / latch not engaging",
+      "steps": [
+        "Check strike/latch alignment and adjust strike position.",
+        "Confirm closer latching speed provides enough final force without slamming.",
+        "Inspect latch for wear or obstruction.",
+        "Verify door is not warped or frame is not out of plumb."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["panic", "manual"]
+    },
+    "LOCK_LOOSE": {
+      "type": "action",
+      "title": "Locks: loose hardware",
+      "steps": [
+        "Check mounting screws and through-bolts; tighten to proper fit without binding.",
+        "Confirm door prep is not stripped; repair with longer screws or wood filler if needed.",
+        "Re-test latch and key operation.",
+        "Check strike box for damage."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["lock", "manual"]
+    },
+    "CYLINDER_TAILPIECE": {
+      "type": "action",
+      "title": "Locks: cylinder turns but doesn't engage latch",
+      "steps": [
+        "Verify tailpiece/cam orientation and engagement with lock body.",
+        "Confirm correct cylinder type for the hardware: Mortise (threaded body), Rim (flat back), KIK (small plug).",
+        "Reinstall with proper alignment.",
+        "Test key function before leaving."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["lock", "cylinder", "manual"]
+    },
+    "REKEY_ISSUE": {
+      "type": "action",
+      "title": "Locks: can't rekey",
+      "steps": [
+        "Verify correct pin count for the key system.",
+        "Check pinning order matches key bitting.",
+        "For IC cores: use control key to remove core.",
+        "For standard cylinders: remove set screw to extract plug.",
+        "Always label keys and document changes for customer record.",
+        "Carry control key for common IC core systems."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["lock", "rekey", "manual"]
+    },
+    "MANUAL_GENERIC": {
+      "type": "action",
+      "title": "Manual hardware: generic triage",
+      "steps": [
+        "Identify door type: butt hinge, storefront (aluminum), hollow metal, wood, frameless glass.",
+        "Identify hardware: closer type, panic device type, lock function.",
+        "Check alignment, clearances, hinges, and strike FIRST—most issues are mechanical.",
+        "Use manufacturer templates for new installations.",
+        "Adjust closers and hardware per manufacturer specs.",
+        "Take photos and measurements before removing hardware."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["manual", "generic"]
+    },
+
+    "RESOLUTION_AND_DOCS": {
+      "type": "action",
+      "title": "Closeout: functional test + documentation",
+      "steps": [
+        "Run the door through at least 5 full cycles and verify safe operation (activation + presence + safety).",
+        "Verify the door closes and latches correctly and does not strike/drag.",
+        "Test safety sensors with object in path—door must stop or reverse.",
+        "Restore all safety devices and covers; remove tools and debris.",
+        "Confirm 'Automatic Door' signage is present on both sides.",
+        "DOCUMENT in Limble: door location, model/serial, fault code/pattern, actions taken, settings changed, parts used, before/after photos.",
+        "Communicate any limitations or follow-up needs to the facility contact and AAS office."
+      ],
+      "next": "END",
+      "tags": ["closeout", "documentation", "testing"]
+    },
+    "END": {
+      "type": "action",
+      "title": "End of flow",
+      "steps": [
+        "If the issue persists after this flow, escalate with photos, codes, and steps already attempted.",
+        "Create quote for parts/labor if return visit required.",
+        "Schedule follow-up if needed."
+      ]
+    },
+
+    "OPUS_LEARN": {
+      "type": "action",
+      "title": "NABCO OPUS – Stroke Learn / programming access",
+      "steps": [
+        "Unlock menu: Hold rotary dial ~2 seconds to unlock levels (Level 1→2→3→4).",
+        "Default password: 0045 (not changeable).",
+        "Run stroke learn: Level 2 → Stroke Learning → select YES.",
+        "Door performs full open/close sweep to set range and direction.",
+        "If display shows 'Wrong Motor!' or 'Wrong Hand!': correct Base Settings (operator type/handing) and rerun learn.",
+        "ALWAYS re-run stroke learn after changes to handing or operator type.",
+        "Key parameter categories (Level 3→4): Base Settings, Movement Settings, Optional (Push & Go, Power Close), Input, Output, History."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["learn", "NABCO_OPUS", "programming"]
+    },
+    "OPUS_NO_POWER_DETAIL": {
+      "type": "action",
+      "title": "NABCO OPUS – no power / startup notes",
+      "steps": [
+        "Verify control has correct power wiring and ground.",
+        "Ensure 120VAC wiring is isolated from low-voltage signal wiring.",
+        "Confirm motor + encoder harnesses are seated BEFORE powering on.",
+        "For retrofit from older control: brake module must be mounted on TOP of the OPUS controller—never beneath it.",
+        "If door will not calibrate or encoder LEDs do not blink when door is moved manually: check encoder plug seating and polarity.",
+        "Check transformer fuse rating is correct."
+      ],
+      "next": "NO_POWER_RESOLVE_OR_ESCALATE",
+      "tags": ["NABCO_OPUS", "power", "retrofit"]
+    },
+    "OPUS_NO_RESPONSE_DETAIL": {
+      "type": "action",
+      "title": "NABCO OPUS – powers on but won't run",
+      "steps": [
+        "Check History menu for recent errors and recycle warnings.",
+        "Verify input assignments: terminals must be assigned to activate/hold/safety/unlock as intended.",
+        "Check Input settings: set 6B, SWL to 'Normally Open' unless specific logic required.",
+        "If using Sim Pair/dual controls: verify firmware version matches on both controls.",
+        "Check CAN/sim-pair harness connections.",
+        "Power cycle after rewiring and confirming settings."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS", "inputs"]
+    },
+    "OPUS_WONT_OPEN_DETAIL": {
+      "type": "action",
+      "title": "NABCO OPUS – won't open (quick checks)",
+      "steps": [
+        "Verify door is not in lockout angles/lockout mode.",
+        "Check that required unlock input is working.",
+        "Confirm activation input is correctly assigned and wired.",
+        "Check Open Assist setting if applicable.",
+        "If recent changes were made, run stroke learn."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS"]
+    },
+    "OPUS_WONT_CLOSE_DETAIL": {
+      "type": "action",
+      "title": "NABCO OPUS – won't close (quick checks)",
+      "steps": [
+        "Check for stuck hold/safety inputs (holding beam, presence sensor).",
+        "Check Optex Holding Beam or interior activation wiring.",
+        "Check delay/hold parameters in Movement Settings.",
+        "If sensor monitoring inputs (6B/SWL) are used, verify monitoring configuration matches sensors."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS"]
+    },
+    "OPUS_UNCONTROLLED_DETAIL": {
+      "type": "action",
+      "title": "NABCO OPUS – uncontrolled motion (quick checks)",
+      "steps": [
+        "If door hums but doesn't move: check brake module installation and wiring continuity.",
+        "Brake module should be mounted on TOP of controller (retrofit guidance).",
+        "Ensure resistor is not failed and mount screw is grounded.",
+        "If encoder LEDs do not blink during manual movement: check encoder connection and polarity.",
+        "Match INT/EXT sensor plugs correctly per harness labels.",
+        "After correcting wiring, power cycle and re-run stroke learn."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS", "brake", "encoder"]
+    },
+    "OPUS_ENCODER_DETAIL": {
+      "type": "action",
+      "title": "NABCO OPUS – encoder issues",
+      "steps": [
+        "Check motor harness and encoder plug seating.",
+        "Verify correct polarity and that connector isn't reversed.",
+        "Encoder LEDs should blink when door is moved manually.",
+        "After correction, re-run stroke learn."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS", "encoder"]
+    },
+    "OPUS_MOTOR_DETAIL": {
+      "type": "action",
+      "title": "NABCO OPUS – motor issues",
+      "steps": [
+        "Motor hums but door doesn't move: check brake module installation and wiring continuity.",
+        "Ensure brake resistor is not failed.",
+        "Verify mount screw is grounded.",
+        "Check motor harness connections.",
+        "After corrections, power cycle and re-run stroke learn."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS", "motor"]
+    },
+    "OPUS_DRIFTS_DETAIL": {
+      "type": "action",
+      "title": "NABCO OPUS – drifts open/won't stay",
+      "steps": [
+        "Check Movement Settings for proper close position.",
+        "Verify stroke learn completed successfully.",
+        "Check for mechanical resistance preventing full close.",
+        "Re-run stroke learn after mechanical corrections."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS"]
+    },
+    "OPUS_CODE_TREE": {
+      "type": "decision",
+      "prompt": "NABCO OPUS – which fault is shown?",
+      "options": {
+        "recycle_warning": "OPUS_RECYCLE_WARNING",
+        "mpu_error": "OPUS_MPU_ERROR",
+        "drive_circuit_error": "OPUS_DRIVE_CIRCUIT_ERROR",
+        "communication_error": "OPUS_COMM_ERROR",
+        "sensor_error_61_62_6B_SWL": "OPUS_SENSOR_ERROR",
+        "wrong_motor_or_hand": "OPUS_WRONG_MOTOR_HAND",
+        "other_or_unknown": "UNKNOWN_CODE_TREE"
+      },
+      "default": "UNKNOWN_CODE_TREE",
+      "tags": ["NABCO_OPUS", "codes"]
+    },
+    "OPUS_RECYCLE_WARNING": {
+      "type": "action",
+      "title": "OPUS Recycle Warning (5+ back-to-back reactivations)",
+      "steps": [
+        "Check for door resistance/binding—correct mechanical drag first.",
+        "Reduce sensitivity if door is re-triggering from vibration/false detects.",
+        "Check sensor alignment—may be detecting door leaf or reflections.",
+        "After corrections, power cycle to clear warning and re-test."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS", "recycle"]
+    },
+    "OPUS_MPU_ERROR": {
+      "type": "action",
+      "title": "OPUS MPU Error (internal processing issue)",
+      "steps": [
+        "Power cycle once after verifying wiring is correct.",
+        "If MPU error repeats, escalate—control may require replacement."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS", "escalation"]
+    },
+    "OPUS_DRIVE_CIRCUIT_ERROR": {
+      "type": "action",
+      "title": "OPUS Drive Circuit Error",
+      "steps": [
+        "Check motor wiring for shorts/ground and confirm proper connections.",
+        "Inspect for electrical noise sources and ensure proper grounding.",
+        "May indicate electrical noise interference.",
+        "If persists after wiring correction, escalate for controller evaluation."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS", "electrical"]
+    },
+    "OPUS_COMM_ERROR": {
+      "type": "action",
+      "title": "OPUS Communication Error (CAN-bus / sim-pair)",
+      "steps": [
+        "Check sim-pair harness / CAN cable connections and condition.",
+        "If dual operators, verify firmware versions match on both controls.",
+        "Power cycle after corrections and re-test."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS", "communication"]
+    },
+    "OPUS_SENSOR_ERROR": {
+      "type": "action",
+      "title": "OPUS Sensor Errors (61/62/6B/SWL health check failed)",
+      "steps": [
+        "Verify monitored sensor wiring and monitoring configuration.",
+        "Check sensor health-check/test signal return.",
+        "Replace sensor if test/monitoring signal fails.",
+        "Ensure inputs like 6B/SWL are set as 'Normally Open' unless specific logic required."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["NABCO_OPUS", "sensors"]
+    },
+    "OPUS_WRONG_MOTOR_HAND": {
+      "type": "action",
+      "title": "OPUS 'Wrong Motor!' or 'Wrong Hand!' error",
+      "steps": [
+        "Correct Base Settings: verify Operator Type and Handing.",
+        "Re-run stroke learn after correcting settings.",
+        "Door should complete full open/close sweep without error."
+      ],
+      "next": "OPUS_LEARN",
+      "tags": ["NABCO_OPUS", "configuration"]
+    },
+
+    "ED100_LEARN": {
+      "type": "action",
+      "title": "Dorma ED100/250 – Learn cycle",
+      "steps": [
+        "Start with door CLOSED and motor COLD.",
+        "Hold the bottom key on the interface for ~3 seconds to initiate learn cycle.",
+        "Door cycles open and closed automatically.",
+        "When door reaches ~70°, manually set final open position and confirm.",
+        "If spring tension is insufficient, learn cycle halts with 'InF' error.",
+        "Do NOT interrupt motion during learn cycle.",
+        "If error occurs: Reset by holding bottom+top keys >3s. Factory reset: hold bottom key >8s until 'FACT SETUP'."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["learn", "DORMA_ED100_ED250", "swing"]
+    },
+    "ED100_CODE_TREE": {
+      "type": "decision",
+      "prompt": "Dorma ED100/250 – which error code is shown?",
+      "options": {
+        "E04": "ED100_E04",
+        "E10": "ED100_E10",
+        "E12": "ED100_E12",
+        "E13": "ED100_E13",
+        "E15": "ED100_E15",
+        "E73": "ED100_E73",
+        "InF": "ED100_INF",
+        "other_or_unknown": "UNKNOWN_CODE_TREE"
+      },
+      "default": "UNKNOWN_CODE_TREE",
+      "tags": ["DORMA_ED100_ED250", "codes"]
+    },
+    "ED100_E04": {
+      "type": "action",
+      "title": "ED100 E04 – Safety sensor test failure",
+      "steps": [
+        "Check test return signal wiring for monitored safety sensor.",
+        "Replace sensor if test/monitoring signal fails."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ED100_ED250", "sensors"]
+    },
+    "ED100_E10": {
+      "type": "action",
+      "title": "ED100 E10 – Motor disconnected/failed",
+      "steps": [
+        "Inspect motor wiring/connection; repair if loose or damaged.",
+        "If motor is confirmed failed, replace motor."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ED100_ED250", "motor"]
+    },
+    "ED100_E12": {
+      "type": "action",
+      "title": "ED100 E12 – EEPROM fault",
+      "steps": [
+        "Attempt reload firmware if applicable.",
+        "If persistent, replace control unit."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ED100_ED250", "control"]
+    },
+    "ED100_E13": {
+      "type": "action",
+      "title": "ED100 E13 – Overcurrent",
+      "steps": [
+        "Inspect drive amplifier and wiring.",
+        "Check for mechanical binding/door resistance.",
+        "Replace drive amplifier if needed."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ED100_ED250", "electrical"]
+    },
+    "ED100_E15": {
+      "type": "action",
+      "title": "ED100 E15 – Faulty learn cycle",
+      "steps": [
+        "Restart the learn cycle from the beginning.",
+        "Ensure door is CLOSED and motor is COLD before starting."
+      ],
+      "next": "ED100_LEARN",
+      "tags": ["DORMA_ED100_ED250", "learn"]
+    },
+    "ED100_E73": {
+      "type": "action",
+      "title": "ED100 E73 – Brake circuit fault",
+      "steps": [
+        "Retry learn cycle.",
+        "If persistent, replace control."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ED100_ED250", "brake"]
+    },
+    "ED100_INF": {
+      "type": "action",
+      "title": "ED100 'InF' – Spring tension insufficient",
+      "steps": [
+        "Adjust spring tension on the closer/arm mechanism.",
+        "Restart learn cycle after adjustment."
+      ],
+      "next": "ED100_LEARN",
+      "tags": ["DORMA_ED100_ED250", "mechanical"]
+    },
+    "ED100_NO_RESPONSE_DETAIL": {
+      "type": "action",
+      "title": "ED100/250 – learn cycle won't start / no response notes",
+      "steps": [
+        "Learn cycle won't start if: program switch not set to OFF, emergency input active, 4/4a signal active, or internal program switch disconnected.",
+        "If door opens but won't respond: check hold-open delay (too long), PERMANENT OPEN mode, or safety sensor input held active.",
+        "If unable to clear error: reset by holding bottom+top keys >3s.",
+        "Factory reset: hold bottom key >8s until 'FACT SETUP' appears."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ED100_ED250"]
+    },
+    "ED100_WONT_OPEN_DETAIL": {
+      "type": "action",
+      "title": "ED100/250 – won't open (quick checks)",
+      "steps": [
+        "Confirm not in PERMANENT OPEN or OFF modes.",
+        "Verify activation input is working.",
+        "Check emergency input and safety sensor inputs are not blocking operation."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ED100_ED250"]
+    },
+    "ED100_WONT_CLOSE_DETAIL": {
+      "type": "action",
+      "title": "ED100/250 – won't close / stays open",
+      "steps": [
+        "Check hold-open delay settings.",
+        "Check whether PERMANENT OPEN mode is enabled.",
+        "Confirm safety sensor input is not held active."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ED100_ED250"]
+    },
+    "ED100_UNCONTROLLED_DETAIL": {
+      "type": "action",
+      "title": "ED100/250 – fast/uncontrolled closing",
+      "steps": [
+        "Check brake jumper setting (incorrect jumper can cause uncontrolled closing).",
+        "IMPORTANT: Confirm learn cycle was NOT completed with a hot motor.",
+        "Rerun learn with motor COLD."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ED100_ED250", "safety"]
+    },
+
+    "ESAII_LEARN": {
+      "type": "action",
+      "title": "Dorma ESA II – Learn cycle procedure",
+      "steps": [
+        "Power on system; screen shows status and elapsed time.",
+        "Hold SET + RESET, then release RESET while continuing to hold SET.",
+        "When 'Setup Request' appears, use UP/DOWN to confirm monitored sensor and lock type.",
+        "Lock configurations: No Lock / Fail Secure / Fail Safe.",
+        "System cycles door to full CLOSE, then full OPEN to learn stroke.",
+        "Learns: speed, acceleration, braking, hold time, and obstruction sensitivity.",
+        "Success message: 'Obst Learn Complete'."
+      ],
+      "parameter_ranges": {
+        "hold_open_time": "1.5 to 180 seconds",
+        "opening_speed": "0.4 to 3.0 in/sec",
+        "closing_speed": "Up to 12 in/sec",
+        "force_limit": "70 lbs max",
+        "accel_brake_ramp": "Range 0 to 9"
+      },
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["learn", "DORMA_ESA_II", "sliding"]
+    },
+    "ESAII_CODE_TREE": {
+      "type": "decision",
+      "prompt": "Dorma ESA II – which message/error best matches?",
+      "options": {
+        "doesnt_start_learn": "ESAII_DOESNT_START_LEARN",
+        "learn_fails_midway": "ESAII_LEARN_FAILS",
+        "lock_not_detected": "ESAII_LOCK_NOT_DETECTED",
+        "uncontrolled_closing": "ESAII_UNCONTROLLED_CLOSING",
+        "emergency_off": "ESAII_EMERGENCY_OFF",
+        "incremental_encoder_error": "ESAII_INCREMENTAL_ENCODER",
+        "other_or_unknown": "UNKNOWN_CODE_TREE"
+      },
+      "default": "UNKNOWN_CODE_TREE",
+      "tags": ["DORMA_ESA_II", "codes"]
+    },
+    "ESAII_DOESNT_START_LEARN": {
+      "type": "action",
+      "title": "ESA II – Doesn't start learn",
+      "steps": [
+        "Safety beams may be active—disconnect sensors during learn or press UP to bypass per on-screen option.",
+        "After learn, reconnect sensors and verify full monitored safety function."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II"]
+    },
+    "ESAII_LEARN_FAILS": {
+      "type": "action",
+      "title": "ESA II – Learn fails midway",
+      "steps": [
+        "An obstruction or sensor trigger may have stopped learn.",
+        "Press UP to override and continue the cycle if appropriate.",
+        "If recurring, correct mechanical drag/sensor alignment and restart learn."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II"]
+    },
+    "ESAII_LOCK_NOT_DETECTED": {
+      "type": "action",
+      "title": "ESA II – Lock not detected",
+      "steps": [
+        "Check lock wiring to CN12.",
+        "Verify Fail Safe/Secure logic matches actual lock type.",
+        "Re-run setup/learn after correcting."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II", "locks"]
+    },
+    "ESAII_UNCONTROLLED_CLOSING": {
+      "type": "action",
+      "title": "ESA II – Uncontrolled closing",
+      "steps": [
+        "Brake may not be calibrated or encoder may be reversed.",
+        "Restart learn and verify encoder wiring direction/polarity.",
+        "If issue persists, inspect motor/encoder plug wiring."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II", "safety"]
+    },
+    "ESAII_EMERGENCY_OFF": {
+      "type": "action",
+      "title": "ESA II – Emergency OFF",
+      "steps": [
+        "Release/clear emergency input.",
+        "Restart learn sequence if needed."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II"]
+    },
+    "ESAII_INCREMENTAL_ENCODER": {
+      "type": "action",
+      "title": "ESA II – Incremental encoder error",
+      "steps": [
+        "Motor plug may be miswired.",
+        "Reverse encoder leads and retry.",
+        "After correction, re-run learn cycle."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II", "encoder"]
+    },
+    "ESAII_NO_RESPONSE_DETAIL": {
+      "type": "action",
+      "title": "ESA II – powers on but won't run (quick checks)",
+      "steps": [
+        "Confirm emergency input is cleared.",
+        "Confirm safety beams are not active.",
+        "Confirm lock type selection matches wiring (No Lock/Fail Secure/Fail Safe).",
+        "Re-run learn if configuration was changed."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II"]
+    },
+    "ESAII_WONT_OPEN_DETAIL": {
+      "type": "action",
+      "title": "ESA II – won't open (quick checks)",
+      "steps": [
+        "Verify lock is detected and releases.",
+        "Check CN12 wiring and lock logic.",
+        "Check activation inputs and safety sensor monitoring."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II"]
+    },
+    "ESAII_WONT_CLOSE_DETAIL": {
+      "type": "action",
+      "title": "ESA II – won't close (quick checks)",
+      "steps": [
+        "Check presence/safety beams are not active.",
+        "Verify braking/encoder calibration via learn cycle."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II"]
+    },
+    "ESAII_UNCONTROLLED_DETAIL": {
+      "type": "action",
+      "title": "ESA II – uncontrolled motion",
+      "steps": [
+        "Restart learn and verify encoder wiring.",
+        "Uncontrolled closing is often brake/encoder related.",
+        "Inspect for mechanical drag or obstruction during learn."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["DORMA_ESA_II"]
+    },
+
+    "UNISLIDE_LEARN": {
+      "type": "action",
+      "title": "Besam UniSlide – Startup & learn cycle",
+      "steps": [
+        "For initial start: DISCONNECT sensors/accessories at terminals 1–16 FIRST.",
+        "Power OFF; set FS selector 1 (motor direction: CCW/CW) and FS selector 2 (lock behavior: Fail Safe/Secure).",
+        "Power ON; press Learn button (LB) for ~2 seconds.",
+        "Door opens/closes slowly to learn stroke and limits.",
+        "Reconnect sensors, activation units, and program selector.",
+        "After FS or potentiometer changes, press Learn button briefly again to accept new values.",
+        "Re-test all monitored sensors and safety functions before returning to service."
+      ],
+      "potentiometers": {
+        "HSO": "High speed opening (0.10–0.70 m/s)",
+        "HSC": "High speed closing (0.10–0.70 m/s)",
+        "LS": "Low speed (0.05–0.70 m/s)",
+        "POP": "Partial open position (0–100%)",
+        "KTD": "Key hold open delay (0–60 sec)",
+        "TD": "General hold open time (0–60 sec)"
+      },
+      "function_selectors": {
+        "FS1": "Motor direction (CCW/CW)",
+        "FS2": "Lock logic (Fail Safe/Fail Secure)",
+        "FS3": "Lock release enable",
+        "FS4": "Sensor logic (Normally Open/Closed)",
+        "FS5": "Emergency Unit (Electrical/Mechanical)",
+        "FS6": "Emergency monitor (enabled/disabled)",
+        "FS7": "Sensor monitor (enabled/disabled)",
+        "FS8": "Hold force closed (0 N / 45 N)"
+      },
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["learn", "BESAM_UNISLIDE", "sliding"]
+    },
+    "UNISLIDE_CODE_TREE": {
+      "type": "decision",
+      "prompt": "Besam UniSlide – what LED flash pattern is shown?",
+      "options": {
+        "1_flash": "UNISLIDE_1_FLASH",
+        "2_flashes": "UNISLIDE_2_FLASH",
+        "3_flashes": "UNISLIDE_3_FLASH",
+        "4_flashes": "UNISLIDE_4_FLASH",
+        "5_flashes": "UNISLIDE_5_FLASH",
+        "slow_flash_motor_temp": "UNISLIDE_SLOW_FLASH",
+        "other_or_unknown": "UNKNOWN_CODE_TREE"
+      },
+      "default": "UNKNOWN_CODE_TREE",
+      "tags": ["BESAM_UNISLIDE", "codes"]
+    },
+    "UNISLIDE_1_FLASH": {
+      "type": "action",
+      "title": "UniSlide 1 flash – Sensor error",
+      "steps": [
+        "Check monitoring feedback from safety/activation sensors.",
+        "Verify correct wiring and sensor monitor settings (FS7).",
+        "Replace sensor if monitoring/test signal fails."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE", "sensors"]
+    },
+    "UNISLIDE_2_FLASH": {
+      "type": "action",
+      "title": "UniSlide 2 flashes – Emergency unit",
+      "steps": [
+        "Check mechanical breakout function.",
+        "Check EXU-4 wiring (if equipped).",
+        "Verify emergency monitor setting (FS6) matches hardware."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE", "emergency"]
+    },
+    "UNISLIDE_3_FLASH": {
+      "type": "action",
+      "title": "UniSlide 3 flashes – CUF fault (RAM/ROM/EEPROM)",
+      "steps": [
+        "Attempt reset/learn cycle.",
+        "If fault persists, board may require replacement."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE", "control"]
+    },
+    "UNISLIDE_4_FLASH": {
+      "type": "action",
+      "title": "UniSlide 4 flashes – Motor/Encoder error",
+      "steps": [
+        "Check motor/encoder cables, type match, and polarity.",
+        "Re-run learn after corrections."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE", "motor", "encoder"]
+    },
+    "UNISLIDE_5_FLASH": {
+      "type": "action",
+      "title": "UniSlide 5 flashes – Lock error",
+      "steps": [
+        "Lock failed to disengage.",
+        "Verify lock mounting, wiring, and lock logic (FS2/FS3).",
+        "Confirm door unlocks before movement."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE", "locks"]
+    },
+    "UNISLIDE_SLOW_FLASH": {
+      "type": "action",
+      "title": "UniSlide slow flash – Motor temperature high",
+      "steps": [
+        "Put operator in 'OPEN' mode.",
+        "Allow motor to cool (5–10 minutes typical).",
+        "Inspect for mechanical drag that caused overheating."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE", "motor", "overheat"]
+    },
+    "UNISLIDE_NO_POWER_DETAIL": {
+      "type": "action",
+      "title": "UniSlide – no power (quick checks)",
+      "steps": [
+        "Check power input and transformer.",
+        "Verify FS DIP switch positions are valid.",
+        "Check for 3 flashes (CUF fault) which may indicate board failure."
+      ],
+      "next": "NO_POWER_RESOLVE_OR_ESCALATE",
+      "tags": ["BESAM_UNISLIDE", "power"]
+    },
+    "UNISLIDE_NO_RESPONSE_DETAIL": {
+      "type": "action",
+      "title": "UniSlide – powers on but won't run (quick checks)",
+      "steps": [
+        "Check program selector/mode position.",
+        "Verify FS4 (sensor logic NO/NC) matches connected sensors.",
+        "Check for LED flash patterns indicating specific faults."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE"]
+    },
+    "UNISLIDE_WONT_OPEN_DETAIL": {
+      "type": "action",
+      "title": "UniSlide – won't open (quick checks)",
+      "steps": [
+        "Confirm program selector/mode allows activation.",
+        "Verify activation input wiring and sensor logic setting (FS4 NO/NC) matches devices.",
+        "Check lock release enable (FS3) and lock logic (FS2)."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE"]
+    },
+    "UNISLIDE_WONT_CLOSE_DETAIL": {
+      "type": "action",
+      "title": "UniSlide – won't close (quick checks)",
+      "steps": [
+        "Check presence/holding sensors and sensor monitoring settings (FS7).",
+        "Verify hold force closed setting (FS8) if door is being forced open by wind/stack pressure.",
+        "Re-run learn after adjustments."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE"]
+    },
+    "UNISLIDE_UNCONTROLLED_DETAIL": {
+      "type": "action",
+      "title": "UniSlide – uncontrolled motion",
+      "steps": [
+        "Verify motor direction setting (FS1) is correct.",
+        "Re-run learn—incorrect limits/brake learn can cause harsh motion.",
+        "Inspect belt tension (verify 2 Nm torque) and track cleanliness.",
+        "Correct mechanical causes first."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE", "safety"]
+    },
+    "UNISLIDE_OBSTRUCTION_DETAIL": {
+      "type": "action",
+      "title": "UniSlide – obstruction issues",
+      "steps": [
+        "Check for mechanical drag (bottom guide, track debris, weather seals).",
+        "Verify safety sensors are not over-sensitive.",
+        "Check sensor monitoring settings (FS7).",
+        "Re-run learn after corrections."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE", "obstruction"]
+    },
+    "UNISLIDE_DRIFTS_DETAIL": {
+      "type": "action",
+      "title": "UniSlide – drifts open/won't stay",
+      "steps": [
+        "Check FS8 (hold force closed) setting.",
+        "Verify learn cycle completed properly.",
+        "Check for wind/stack pressure issues.",
+        "Re-run learn after adjustments."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["BESAM_UNISLIDE"]
+    },
+
+    "MODELJ_TUNE_IN": {
+      "type": "action",
+      "title": "Stanley Dura-Glide 2000/3000 – Model J: Tune-In procedure",
+      "steps": [
+        "1. Set power switch to OFF.",
+        "2. Turn OPEN, CLOSE, and CHECK speed pots fully counter-clockwise.",
+        "3. Set AUT/CLS/OPN switch to CLS (disables sensor interference during setup).",
+        "4. Connect motor and encoder cables (refer to wiring diagram Page 12 of manual).",
+        "5. Power ON—WD (Watchdog) light should turn ON.",
+        "6. Manually push door—encoder lights should blink ON/OFF.",
+        "7. Set CHECK speed pot to ~1/3 clockwise.",
+        "8. Set switch to AUT—door should open/close on its own.",
+        "9. Set Reduced Opening using DIP selector (Chart A, Page 8) as needed.",
+        "10. Gradually turn OPEN/CLOSE speed pots clockwise to desired motion.",
+        "11. Set BRAKE jumper: UP = Max brake, DOWN = Min brake."
+      ],
+      "ul_325_speed_limits": {
+        "note": "Maximum kinetic energy must not exceed 1.25 ft-lb for sliding doors",
+        "by_weight": {
+          "up_to_160_lbs": "0.70 ft/s max",
+          "161_to_190_lbs": "0.75 ft/s max",
+          "191_to_200_lbs": "0.80 ft/s max",
+          "201_to_220_lbs": "0.85 ft/s max"
+        }
+      },
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["learn", "STANLEY_MODEL_J", "sliding"]
+    },
+    "MODELJ_INDICATOR_TREE": {
+      "type": "decision",
+      "prompt": "Stanley Model J – which indicator/symptom matches?",
+      "options": {
+        "wd_light_off": "MODELJ_WD_OFF",
+        "door_wont_start": "MODELJ_DOOR_WONT_START",
+        "encoder_lights_no_blink": "MODELJ_ENCODER_NO_BLINK",
+        "moves_wrong_direction": "MODELJ_WRONG_DIRECTION",
+        "slams_open_or_close": "MODELJ_SLAMS",
+        "doesnt_open_fully": "MODELJ_NOT_FULL_OPEN",
+        "motor_hums_no_movement": "MODELJ_HUMS",
+        "doesnt_activate_in_auto": "MODELJ_NO_ACTIVATE_AUTO",
+        "auto_doesnt_work_manual_does": "MODELJ_AUTO_FAILS_MANUAL_OK",
+        "stuck_in_no_lock_mode": "MODELJ_STUCK_NO_LOCK",
+        "other": "UNKNOWN_CODE_TREE"
+      },
+      "default": "UNKNOWN_CODE_TREE",
+      "tags": ["STANLEY_MODEL_J", "indicators"]
+    },
+    "MODELJ_WD_OFF": {
+      "type": "action",
+      "title": "Model J – WD light OFF",
+      "steps": [
+        "Check harness 421902-1.",
+        "Check transformer power input.",
+        "Verify voltage at power connectors and interface board."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J", "power"]
+    },
+    "MODELJ_DOOR_WONT_START": {
+      "type": "action",
+      "title": "Model J – Door won't start",
+      "steps": [
+        "Check brake switch circuit.",
+        "Verify brake switch is closed properly."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J"]
+    },
+    "MODELJ_ENCODER_NO_BLINK": {
+      "type": "action",
+      "title": "Model J – Encoder lights don't blink",
+      "steps": [
+        "Reverse encoder cable.",
+        "Check for encoder connection fault.",
+        "Re-run tune-in procedure after correction."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J", "encoder"]
+    },
+    "MODELJ_WRONG_DIRECTION": {
+      "type": "action",
+      "title": "Model J – Door moves wrong direction",
+      "steps": [
+        "Check handing switch.",
+        "Reverse handing switch if incorrectly set."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J"]
+    },
+    "MODELJ_SLAMS": {
+      "type": "action",
+      "title": "Model J – Door slams open/closed",
+      "steps": [
+        "Reduce OPEN speed pot (turn counter-clockwise).",
+        "Reduce CLOSE speed pot (turn counter-clockwise).",
+        "Increase braking: set BRAKE jumper to UP (Max brake).",
+        "Verify compliance with UL 325 speed limits for door weight."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J", "safety", "speed"]
+    },
+    "MODELJ_NOT_FULL_OPEN": {
+      "type": "action",
+      "title": "Model J – Door doesn't open fully",
+      "steps": [
+        "Check check stroke selector switch position.",
+        "Adjust CHECK speed pot.",
+        "Verify Reduced Opening DIP selector setting."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J"]
+    },
+    "MODELJ_HUMS": {
+      "type": "action",
+      "title": "Model J – Motor hums, no movement",
+      "steps": [
+        "Brake resistor may be open—inspect and replace if needed.",
+        "Motor brushes may be worn—inspect and replace if needed."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J", "motor"]
+    },
+    "MODELJ_NO_ACTIVATE_AUTO": {
+      "type": "action",
+      "title": "Model J – Door doesn't activate in AUTO",
+      "steps": [
+        "Check Lock/No Lock switch position.",
+        "Confirm input at TB1 pins 7 & 8."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J"]
+    },
+    "MODELJ_AUTO_FAILS_MANUAL_OK": {
+      "type": "action",
+      "title": "Model J – AUTO doesn't work, MANUAL does",
+      "steps": [
+        "Check interface board power supply terminal connections."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J"]
+    },
+    "MODELJ_STUCK_NO_LOCK": {
+      "type": "action",
+      "title": "Model J – Stuck in No Lock mode",
+      "steps": [
+        "Check interface switch S1 (YES/NO logic control)."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J"]
+    },
+    "MODELJ_NO_POWER_DETAIL": {
+      "type": "action",
+      "title": "Model J – no power quick checks",
+      "steps": [
+        "If WD light is OFF, treat as power/harness issue.",
+        "Check transformer input.",
+        "Check harness connections (421902-1)."
+      ],
+      "next": "NO_POWER_RESOLVE_OR_ESCALATE",
+      "tags": ["STANLEY_MODEL_J", "power"]
+    },
+    "MODELJ_NO_RESPONSE_DETAIL": {
+      "type": "action",
+      "title": "Model J – powers on but no response",
+      "steps": [
+        "Verify AUT/CLS/OPN switch position.",
+        "CLS disables sensor interference during tune-in but AUT is required for normal operation.",
+        "Confirm activation inputs and lock/no-lock settings."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J"]
+    },
+    "MODELJ_WONT_OPEN_DETAIL": {
+      "type": "action",
+      "title": "Model J – won't open",
+      "steps": [
+        "Verify brake switch circuit is closed.",
+        "Check lock/no-lock input (TB1 pins 7 & 8).",
+        "Check encoder lights blink during manual movement."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J"]
+    },
+    "MODELJ_WONT_CLOSE_DETAIL": {
+      "type": "action",
+      "title": "Model J – won't close",
+      "steps": [
+        "Check AUT/CLS/OPN switch position.",
+        "Check presence/safety sensor inputs.",
+        "Verify hold-open timer setting."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J"]
+    },
+    "MODELJ_UNCONTROLLED_DETAIL": {
+      "type": "action",
+      "title": "Model J – slamming/uncontrolled",
+      "steps": [
+        "Reduce OPEN and CLOSE speed pots.",
+        "Increase braking: set BRAKE jumper to UP (Max brake).",
+        "Verify compliance with UL 325 speed limits."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MODEL_J", "safety"]
+    },
+
+    "MC521_FIS": {
+      "type": "action",
+      "title": "Stanley MC521 – First Installation Sequence (FIS) / learn cycle",
+      "steps": [
+        "1. Set function switch to CLOSED.",
+        "2. Power ON system.",
+        "3. Unlock keypad: INDEX 99 → VALUE 00.",
+        "4. Restart FIS: INDEX 96 → VALUE 01.",
+        "5. Select door type: INDEX 00 → VALUE 01 (single) or 02 (dual).",
+        "6. Select handing: INDEX 01 → VALUE 00 (RH) or 01 (LH).",
+        "7. Accept FIS: INDEX 03 → VALUE 01 (display shows A1).",
+        "8. Move function switch to OPEN then back to CLOSED to begin learning.",
+        "9. Door auto-cycles full open/full close and tests speeds.",
+        "10. Display shows A2 when learn complete.",
+        "11. Lock keypad: INDEX 99 → VALUE 01."
+      ],
+      "common_adjustments": {
+        "INDEX_00": "Open Speed (Default 30, Range 05–35)",
+        "INDEX_01": "Close Speed (Default 10, Range 05–12)",
+        "INDEX_02": "Check Speed (Default 05, Range 03–10)"
+      },
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["learn", "STANLEY_MC521", "swing", "bifold"]
+    },
+    "MC521_CODE_TREE": {
+      "type": "decision",
+      "prompt": "Stanley MC521 – which code is shown?",
+      "options": {
+        "A0": "MC521_A0",
+        "A2": "MC521_A2",
+        "E3": "MC521_E3",
+        "F1_to_F5": "MC521_F1_F5",
+        "FA": "MC521_FA",
+        "b1": "MC521_B1",
+        "0b": "MC521_OBSTRUCTION_0B",
+        "other": "UNKNOWN_CODE_TREE"
+      },
+      "default": "UNKNOWN_CODE_TREE",
+      "tags": ["STANLEY_MC521", "codes"]
+    },
+    "MC521_A0": {
+      "type": "action",
+      "title": "MC521 A0 – FIS active",
+      "steps": [
+        "Complete the learn cycle (FIS) before making adjustments."
+      ],
+      "next": "MC521_FIS",
+      "tags": ["STANLEY_MC521"]
+    },
+    "MC521_A2": {
+      "type": "action",
+      "title": "MC521 A2 – Learn complete",
+      "steps": [
+        "Proceed with adjustments (open/close/check speeds) and functional testing."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MC521"]
+    },
+    "MC521_E3": {
+      "type": "action",
+      "title": "MC521 E3 – Door length error",
+      "steps": [
+        "Check door length setup.",
+        "Re-run FIS."
+      ],
+      "next": "MC521_FIS",
+      "tags": ["STANLEY_MC521"]
+    },
+    "MC521_F1_F5": {
+      "type": "action",
+      "title": "MC521 F1–F5 – Sensor errors",
+      "steps": [
+        "Confirm motion and safety sensor wiring.",
+        "Verify correct sensor logic selection.",
+        "After corrections, power cycle if required and re-test.",
+        "Re-run FIS if configuration changed."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MC521", "sensors"]
+    },
+    "MC521_FA": {
+      "type": "action",
+      "title": "MC521 FA – Fire alarm input active",
+      "steps": [
+        "Fire input is active or shorted.",
+        "Verify fire alarm contacts/wiring logic.",
+        "Clear the fire input, then power cycle and re-test."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MC521", "fire_alarm"]
+    },
+    "MC521_B1": {
+      "type": "action",
+      "title": "MC521 b1 – Encoder fault",
+      "steps": [
+        "Check encoder cable connection.",
+        "Check alignment of motor encoder.",
+        "After correction, re-run FIS."
+      ],
+      "next": "MC521_FIS",
+      "tags": ["STANLEY_MC521", "encoder"]
+    },
+    "MC521_OBSTRUCTION_0B": {
+      "type": "action",
+      "title": "MC521 0b – Obstruction error (MC521 PRO swing/bifold)",
+      "steps": [
+        "PROGRAMMING CHECKPOINTS:",
+        "• Ensure keypad unlocked: INDEX 99 = 00",
+        "• Restart FIS: INDEX 96 = 01",
+        "• Set Safety Logic correctly (INDEX 11) for monitored sensors",
+        "",
+        "OBSTRUCTION LIKELY CAUSES:",
+        "A. Stall/Torque Settings:",
+        "  • Stall torque too low/high (INDEX 02 and 09 for Motor 1)",
+        "  • Obstruction time too short (INDEX 13 = 20 recommended for ~1.0s)",
+        "  • Adjust gradually using Attachment 11 guidance",
+        "",
+        "B. Sensor Setup:",
+        "  • Ensure sensors are functional and aligned",
+        "  • Inputs: dark when detecting, light when clear (see page 45)",
+        "  • Confirm jumper JP200 is installed for swing/bifold setup",
+        "",
+        "C. Breakout Cam Adjustment:",
+        "  • Adjust breakout cam to trigger at approx. 3°",
+        "  • Test with multimeter at TB3 terminals 9 and 10:",
+        "    - Door closed = continuity",
+        "    - Door pushed ~3° = open circuit",
+        "",
+        "After corrections, cycle door fully open to store values."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MC521", "obstruction", "critical"]
+    },
+    "MC521_NO_RESPONSE_DETAIL": {
+      "type": "action",
+      "title": "MC521 – door won't respond (quick checks)",
+      "steps": [
+        "Confirm function switch is in CLOSED for normal operation and learn setup steps.",
+        "After configuration changes, a power cycle may be required.",
+        "Inspect encoder and motion sensor cables.",
+        "If FIS won't start: unlock keypad (Index 99=00) and force restart (Index 96=01).",
+        "Verify no active inputs blocking cycle."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MC521"]
+    },
+    "MC521_WONT_OPEN_DETAIL": {
+      "type": "action",
+      "title": "MC521 – won't open (quick checks)",
+      "steps": [
+        "Check function switch position.",
+        "Check active safety/hold inputs.",
+        "If obstruction occurs mid-learn: check for incorrect handing, reversed/unplugged encoder, or physical obstruction.",
+        "Re-run FIS after corrections."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MC521"]
+    },
+    "MC521_WONT_CLOSE_DETAIL": {
+      "type": "action",
+      "title": "MC521 – won't close (quick checks)",
+      "steps": [
+        "Check safety sensor inputs.",
+        "Verify breakout cam adjustment.",
+        "Check hold-open timer setting."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MC521"]
+    },
+    "MC521_UNCONTROLLED_DETAIL": {
+      "type": "action",
+      "title": "MC521 – uncontrolled motion",
+      "steps": [
+        "Motor overcurrent or overheating: speed may be too high for door weight.",
+        "Reduce speed settings (INDEX 00, 01) or increase delay.",
+        "Let motor cool 5-10 minutes if overheated.",
+        "Re-run FIS after motor is cool."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["STANLEY_MC521", "safety"]
+    },
+
+    "C4190_SETUP": {
+      "type": "action",
+      "title": "Horton C4190 – Setup / Adjustment Guide",
+      "steps": [
+        "C4190 uses onboard potentiometers and jumpers for tuning—no digital learn cycle.",
+        "KEY POTENTIOMETERS:",
+        "• HOLD pot (R32): Controls hold-open stability. Turn CW to increase.",
+        "• LIMIT pot (R54): Controls motor power. Reduce if door overpowers.",
+        "• OBST pot: Controls obstruction sensitivity. Turn CW to increase.",
+        "• DACCL / CHECK: Controls deceleration. Reduce if door bounces.",
+        "• L.OUT pot: Controls lockout time for sensor inputs during close.",
+        "",
+        "KEY JUMPERS:",
+        "• JB2: Soft-Touch re-open enable. Install for obstruction detection.",
+        "• JB4: Lock delay (0–1 sec range).",
+        "• CN2 pins 2-3: Must have jumper installed for operation.",
+        "",
+        "LED INDICATORS:",
+        "• D1 = Activation input",
+        "• D2 = Safety input",
+        "• D3 = Toggle switch input",
+        "",
+        "Use model-specific troubleshoot nodes based on symptom."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["setup", "HORTON_C4190", "swing", "folding"]
+    },
+    "C4190_NO_POWER_DETAIL": {
+      "type": "action",
+      "title": "Horton C4190 – no power / dead control checks",
+      "steps": [
+        "Confirm 120VAC is present at CN1 input.",
+        "Ensure jumper is installed between CN2 pin 2 and 3 (REQUIRED for operation).",
+        "Check fuses F1, F2, F3 located beside transformer."
+      ],
+      "next": "NO_POWER_RESOLVE_OR_ESCALATE",
+      "tags": ["HORTON_C4190", "power"]
+    },
+    "C4190_NO_RESPONSE_DETAIL": {
+      "type": "action",
+      "title": "Horton C4190 – no response (quick checks)",
+      "steps": [
+        "Confirm 120VAC at CN1 input.",
+        "Verify CN2 pin 2–3 jumper is installed.",
+        "Check fuses F1–F3 beside transformer.",
+        "Verify LED indicators: D1=Activation, D2=Safety, D3=Toggle."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["HORTON_C4190"]
+    },
+    "C4190_INDICATOR_TREE": {
+      "type": "decision",
+      "prompt": "Horton C4190 – which symptom matches?",
+      "options": {
+        "door_doesnt_respond": "C4190_DOESNT_RESPOND",
+        "drifts_open_or_wont_stay": "C4190_DRIFTS_OPEN",
+        "hits_frame_or_slams": "C4190_SLAMS",
+        "fails_obstruction": "C4190_OBSTRUCTION_DETAIL",
+        "lock_delay_not_working": "C4190_LOCK_DELAY",
+        "other": "UNKNOWN_CODE_TREE"
+      },
+      "default": "UNKNOWN_CODE_TREE",
+      "tags": ["HORTON_C4190", "indicators"]
+    },
+    "C4190_DOESNT_RESPOND": {
+      "type": "action",
+      "title": "C4190 – Door doesn't respond",
+      "steps": [
+        "Confirm 120VAC at CN1 input.",
+        "Verify CN2 pin 2–3 jumper is installed.",
+        "Check fuses F1–F3 beside transformer.",
+        "Verify LED indicators: D1=Activation, D2=Safety input, D3=Toggle input."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["HORTON_C4190"]
+    },
+    "C4190_DRIFTS_OPEN": {
+      "type": "action",
+      "title": "C4190 – Drifts open / won't stay closed",
+      "steps": [
+        "Increase HOLD pot (R32) clockwise to stabilize door in hold-open position.",
+        "Adjust open check cam to trip at ~10° BEFORE full open—prevents rollback."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["HORTON_C4190"]
+    },
+    "C4190_SLAMS": {
+      "type": "action",
+      "title": "C4190 – Door hits frame or slams",
+      "steps": [
+        "Reduce LIMIT pot (R54) if the door is overpowered.",
+        "Lower DACCL or CHECK if bounce occurs at full open."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["HORTON_C4190", "safety"]
+    },
+    "C4190_OBSTRUCTION_DETAIL": {
+      "type": "action",
+      "title": "C4190 – Fails to detect obstruction",
+      "steps": [
+        "Turn OBST pot clockwise to increase obstruction sensitivity.",
+        "Ensure JB2 jumper is installed to enable Soft-Touch re-open function."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["HORTON_C4190", "obstruction"]
+    },
+    "C4190_LOCK_DELAY": {
+      "type": "action",
+      "title": "C4190 – Lock delay not working",
+      "steps": [
+        "Set JB4 jumper to desired 0–1 sec range based on required lock delay.",
+        "Increase L.OUT pot to prolong the time sensor inputs are ignored during close cycle."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["HORTON_C4190", "locks"]
+    },
+    "C4190_WONT_OPEN_DETAIL": {
+      "type": "action",
+      "title": "C4190 – won't open (quick checks)",
+      "steps": [
+        "Verify activation input (D1 LED) changes when activation is triggered.",
+        "Verify safety input (D2 LED) is not stuck active.",
+        "Confirm correct power/fuse/jumper conditions."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["HORTON_C4190"]
+    },
+    "C4190_WONT_CLOSE_DETAIL": {
+      "type": "action",
+      "title": "C4190 – won't close (quick checks)",
+      "steps": [
+        "Check safety input (D2 LED) is not held active.",
+        "Adjust sensor alignment if needed.",
+        "Verify hold-open and open-check adjustments (R32 and open-check cam) are not causing drift."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["HORTON_C4190"]
+    },
+    "C4190_UNCONTROLLED_DETAIL": {
+      "type": "action",
+      "title": "C4190 – uncontrolled/slamming motion",
+      "steps": [
+        "Reduce LIMIT pot (R54).",
+        "Adjust CHECK/DACCL as needed.",
+        "Re-test for smooth operation."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["HORTON_C4190", "safety"]
+    },
+
+    "RECORD8000_LEARN": {
+      "type": "action",
+      "title": "Record 8000 Series – Learn / calibration + reset levels",
+      "steps": [
+        "TO START LEARN/CALIBRATION:",
+        "Hold blue button until 3 red LED flashes.",
+        "Door closes then opens fully to map stroke and brake settings.",
+        "Stroke length displays on FPC902 terminal if connected.",
+        "",
+        "RESET LEVELS:",
+        "• Soft Reset: Hold black reset button ~6 seconds (no setting loss).",
+        "• Standard Reset: Press blue button until 8 flashes (resets settings).",
+        "• Full Reset: Press blue button for 9 flashes, then REMOVE jumper at terminals 14–15 (factory wipe).",
+        "",
+        "AFTER RESET: Reprogram Door Type (e.g., Door Type 25 = USA Low Energy).",
+        "",
+        "FPC902 HAND TERMINAL:",
+        "Connect to STG port on operator header.",
+        "Navigate: Service STG → Parameter",
+        "Key Menus: Drive (speed, angle), Locking (timing), Misc (push to start), Entrance System (door type).",
+        "",
+        "DUAL UNITS: Verify firmware matches: DFA127 Vx.xxM (Master) and Vx.xxS (Slave). Use Flash Menu to sync."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["learn", "RECORD_8000", "reset"]
+    },
+    "RECORD8000_CODE_TREE": {
+      "type": "decision",
+      "prompt": "Record 8000 – which code is shown?",
+      "options": {
+        "E12": "RECORD8000_E12",
+        "E13": "RECORD8000_E13",
+        "E73": "RECORD8000_E73",
+        "60": "RECORD8000_60",
+        "59": "RECORD8000_59",
+        "other": "UNKNOWN_CODE_TREE"
+      },
+      "default": "UNKNOWN_CODE_TREE",
+      "tags": ["RECORD_8000", "codes"]
+    },
+    "RECORD8000_E12": {
+      "type": "action",
+      "title": "Record 8000 E12 – EEPROM error",
+      "steps": [
+        "Reset to defaults (standard reset: blue button until 8 flashes).",
+        "If persistent, replace control."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["RECORD_8000", "control"]
+    },
+    "RECORD8000_E13": {
+      "type": "action",
+      "title": "Record 8000 E13 – Overcurrent",
+      "steps": [
+        "Check motor wiring.",
+        "Check door travel for binding/resistance.",
+        "Correct mechanical issues and re-test."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["RECORD_8000", "electrical"]
+    },
+    "RECORD8000_E73": {
+      "type": "action",
+      "title": "Record 8000 E73 – Brake circuit failed",
+      "steps": [
+        "Retry learn cycle.",
+        "If recurring, replace board."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["RECORD_8000", "brake"]
+    },
+    "RECORD8000_60": {
+      "type": "action",
+      "title": "Record 8000 code 60 – EEPROM blank",
+      "steps": [
+        "Perform full reset with jumper removal at terminals 14–15 (factory wipe).",
+        "Reprogram door type and settings."
+      ],
+      "next": "RECORD8000_LEARN",
+      "tags": ["RECORD_8000", "reset"]
+    },
+    "RECORD8000_59": {
+      "type": "action",
+      "title": "Record 8000 code 59 – Safety input stuck",
+      "steps": [
+        "Beam may be blocked or miswired.",
+        "Clear obstruction and verify wiring/logic.",
+        "TIP: Isolate sensors during reset if stuck input errors continue."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["RECORD_8000", "sensors"]
+    },
+    "RECORD8000_NO_POWER_DETAIL": {
+      "type": "action",
+      "title": "Record 8000 – no power (quick checks)",
+      "steps": [
+        "Check power input and transformer.",
+        "Check for jumper at terminals 14–15 (required unless fire alarm is tied in).",
+        "Verify blue/black button responses."
+      ],
+      "next": "NO_POWER_RESOLVE_OR_ESCALATE",
+      "tags": ["RECORD_8000", "power"]
+    },
+    "RECORD8000_NO_RESPONSE_DETAIL": {
+      "type": "action",
+      "title": "Record 8000 – powers on but won't run (quick checks)",
+      "steps": [
+        "Check safety inputs are not stuck active (code 59 if applicable).",
+        "Confirm lock mode is not delaying opening unnecessarily.",
+        "'Always Locked' mode can delay opening—use 'Night Locked' for faster response.",
+        "If codes persist after reset, verify jumper at terminals 14–15 if fire alarm is tied in."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["RECORD_8000"]
+    },
+    "RECORD8000_WONT_OPEN_DETAIL": {
+      "type": "action",
+      "title": "Record 8000 – won't open (quick checks)",
+      "steps": [
+        "Confirm lock mode/timing and that unlock occurs before motion.",
+        "Check motor wiring.",
+        "Run learn cycle to remap stroke/brake if changes were made."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["RECORD_8000"]
+    },
+    "RECORD8000_WONT_CLOSE_DETAIL": {
+      "type": "action",
+      "title": "Record 8000 – won't close (quick checks)",
+      "steps": [
+        "Check presence/holding beams and safety inputs (code 59 if applicable).",
+        "Verify hold-open timing.",
+        "Ensure safety devices are not continuously detecting traffic.",
+        "Re-run learn/calibration after mechanical or parameter changes."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["RECORD_8000"]
+    },
+    "RECORD8000_UNCONTROLLED_DETAIL": {
+      "type": "action",
+      "title": "Record 8000 – uncontrolled motion",
+      "steps": [
+        "Re-run learn/calibration to map stroke and brake settings.",
+        "Check for brake circuit issues (E73).",
+        "Check for motor/door resistance (E13)."
+      ],
+      "next": "RESOLUTION_AND_DOCS",
+      "tags": ["RECORD_8000", "safety"]
+    }
+  }
+}

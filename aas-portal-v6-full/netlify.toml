@@ -1,0 +1,58 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Headers - no CSP
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# Redirects
+[[redirects]]
+  from = "/service"
+  to = "/service/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/door"
+  to = "/door/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/tech/*"
+  to = "/tech/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/customer/*"
+  to = "/customer/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/s"
+  to = "/service/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/d"
+  to = "/door/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
