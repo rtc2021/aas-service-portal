@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Door Detail • AAS</title>
+<style>
+/* =========================================================
+   AAS SERVICE PAGE — Full Design
+   ========================================================= */
+:root {
+  --bg: #0b1220;
+  --text: #e6edf3;
+  --muted: #9fb0c3;
+  --accent: #7dffb0;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Header / Logo */
+.header {
+  text-align: center;
+  padding: 28px 16px 16px;
+}
+.header__inner {
+  display: inline-block;
+  padding: 20px 32px;
+  border-radius: 22px;
+  background: rgba(11,18,32,0.4);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.header__flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px 24px;
+}
+.header__logo {
+  height: clamp(80px, 15vw, 140px);
+  width: auto;
+  filter: drop-shadow(0 0 20px rgba(125,255,176,0.5)) brightness(1.1);
+  mix-blend-mode: lighten;
+}
+.header__text {
+  text-align: center;
+}
+.header__title {
+  font-family: system-ui, -apple-system, sans-serif;
+  letter-spacing: 6px;
+  font-weight: 300;
+  font-size: clamp(20px, 5vw, 32px);
+  color: #b8ffd4;
+  text-shadow: 0 0 5px rgba(125,255,176,0.9), 0 0 15px rgba(125,255,176,0.7), 0 0 30px rgba(125,255,176,0.5), 0 0 50px rgba(125,255,176,0.3);
+}
+.header__subtitle {
+  font-family: system-ui, -apple-system, sans-serif;
+  letter-spacing: 10px;
+  font-weight: 300;
+  font-size: clamp(12px, 3vw, 18px);
+  color: #9fe8c0;
+  margin-top: 6px;
+  text-shadow: 0 0 5px rgba(125,255,176,0.8), 0 0 15px rgba(125,255,176,0.6), 0 0 30px rgba(125,255,176,0.4);
+}
+
+/* Page Title */
+.page-title {
+  max-width: 760px;
+  margin: 32px auto 0;
+  padding: 0 16px;
+  text-align: center;
+}
+.page-title__h1 {
+  margin: 0 0 6px;
+  font: 900 clamp(1.4rem, 2vw + 1rem, 2rem)/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.page-title__h1 .accent { color: #7dffb0; }
+.page-title__sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: .95rem;
+  line-height: 1.45;
+}
+
+/* Main container — glass panel */
+.service-page {
+  max-width: 760px;
+  margin: 28px auto 40px;
+  padding: 24px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(11,18,32,.55);
+  box-shadow: 0 16px 46px rgba(0,0,0,.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Header row */
+.service-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.service-header__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+/* Card panel */
+.service-card {
+  background: rgba(11,18,32,.62);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Field rows */
+.field {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.field:last-child { border-bottom: 0; }
+.field[style*="display: none"] { display: none !important; }
+
+.label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+.value {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* Door Type Pills */
+.type-pill {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.type-pill--auto-slide {
+  background: rgba(26,58,92,.85);
+  color: #5cb8ff;
+  border: 1px solid rgba(92,184,255,.25);
+}
+.type-pill--auto-swing {
+  background: rgba(26,74,60,.85);
+  color: #5cffa8;
+  border: 1px solid rgba(92,255,168,.25);
+}
+.type-pill--manual {
+  background: rgba(58,58,44,.85);
+  color: #d4c875;
+  border: 1px solid rgba(212,200,117,.25);
+}
+.type-pill--fire {
+  background: rgba(74,42,42,.85);
+  color: #ff8a6b;
+  border: 1px solid rgba(255,107,107,.30);
+}
+.type-pill--default {
+  background: rgba(42,51,71,.85);
+  color: #cbd3df;
+  border: 1px solid rgba(203,211,223,.20);
+}
+.type-pill--fire-slide {
+  background: linear-gradient(135deg, rgba(74,42,42,.90) 0%, rgba(26,58,92,.90) 100%);
+  color: #ffb86b;
+  border: 1px solid rgba(255,107,107,.45);
+  box-shadow: 0 0 12px rgba(255,107,107,.15);
+}
+.type-pill--fire-swing {
+  background: linear-gradient(135deg, rgba(74,42,42,.90) 0%, rgba(26,74,60,.90) 100%);
+  color: #ffb86b;
+  border: 1px solid rgba(255,107,107,.45);
+  box-shadow: 0 0 12px rgba(255,107,107,.15);
+}
+.type-pill--fire-manual {
+  background: linear-gradient(135deg, rgba(74,42,42,.90) 0%, rgba(58,58,44,.90) 100%);
+  color: #ffb86b;
+  border: 1px solid rgba(255,107,107,.45);
+  box-shadow: 0 0 12px rgba(255,107,107,.15);
+}
+
+/* Docs Link */
+.docs-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #7dffb0;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 4px 0;
+  transition: color .15s ease;
+}
+.docs-link:hover { color: #a5ffc9; }
+.docs-link svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  fill: none;
+}
+
+/* Request Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .18s ease;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(34,197,94,.25);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #2dd468 0%, #1db954 100%);
+  box-shadow: 0 12px 32px rgba(34,197,94,.35);
+  transform: translateY(-2px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: rgba(255,255,255,.08);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,.12);
+  margin-top: 12px;
+  width: 100%;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,.12);
+}
+
+/* States: Loading + Not Found */
+.not-found {
+  text-align: center;
+  padding: 48px 24px;
+}
+.not-found__icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: .5;
+}
+.not-found__title {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.not-found__msg {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: .95rem;
+}
+.not-found__help {
+  font-size: .85rem;
+  color: #6b7d91;
+  line-height: 1.6;
+}
+.not-found__help a {
+  color: #7dffb0;
+  text-decoration: none;
+}
+.not-found__help a:hover { text-decoration: underline; }
+
+.loading {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--muted);
+}
+.loading__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255,255,255,.12);
+  border-top-color: #7dffb0;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Mobile */
+@media (max-width: 640px) {
+  .service-page {
+    margin: 20px 14px 40px;
+    padding: 20px 14px;
+    border-radius: 18px;
+  }
+  .field {
+    grid-template-columns: 110px 1fr;
+  }
+  .service-header {
+    justify-content: center;
+    text-align: center;
+  }
+  .service-header__title {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+}
+/* Auth Required Overlay */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.auth-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.auth-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 50px;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+}
+.auth-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+}
+.auth-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.auth-subtitle {
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #00d4ff;
+  color: #000;
+  border: none;
+  padding: 16px 40px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-btn:hover {
+  background: #00b8e6;
+  transform: translateY(-2px);
+}
+.auth-loading {
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  margin-top: 16px;
+}
+</style>
+<link rel="stylesheet" href="/assets/portal.css">
+</head>
+<body>
+<!-- Auth Required Overlay -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <img src="https://images.squarespace-cdn.com/content/53292562e4b06710691770b4/ceffb36f-efdc-4b4c-a007-ae99b1943f81/door.webp" alt="AAS" class="auth-logo">
+    <h1 class="auth-title">AAS Service Portal</h1>
+    <p class="auth-subtitle">Sign in to access this page.</p>
+    <button class="auth-btn" id="authLoginBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Sign In
+    </button>
+    <p class="auth-loading" id="authLoadingText">Checking authentication...</p>
+  </div>
+</div>
+<!-- v3 Premium: Animated floating gradient background -->
+<div class="animated-bg" aria-hidden="true"></div>
+<div class="animated-bg-orb" aria-hidden="true"></div>
+
+<div class="app-shell">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <header class="sidebar-header">
+      <a href="/" class="sidebar-logo">
+        <img src="https://images.squarespace-cdn.com/content/53292562e4b06710691770b4/ceffb36f-efdc-4b4c-a007-ae99b1943f81/door.webp" alt="AAS">
+        <span class="sidebar-logo-text">AAS</span>
+      </a>
+    </header>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <a href="/" class="nav-link" data-page="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+      </div>
+      
+      <div class="nav-section" id="techNav">
+        <div class="nav-section-title">Tech Tools</div>
+        <a href="/tech/parts" class="nav-link" data-page="parts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Parts Finder
+        </a>
+        <a href="/tech/command" class="nav-link" data-page="command">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Command Center
+        </a>
+        <a href="/tech/doors" class="nav-link" data-page="doors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+          Door Browser
+        </a>
+        <a href="/tech/manuals" class="nav-link" data-page="manuals">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Tech Manuals
+        </a>
+      </div>
+      
+      <div class="nav-section" id="customerNav" style="display:none;">
+        <div class="nav-section-title">Customer</div>
+        <a href="/customer/doors" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+          My Doors
+        </a>
+        <a href="/customer/history" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Service History
+        </a>
+        <a href="/customer/billing" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Billing
+        </a>
+      </div>
+    </nav>
+    
+    <footer class="sidebar-footer">
+      <!-- Login Button -->
+      <a href="#" id="loginBtn" class="nav-link" style="background: var(--accent); color: #000; font-weight: 700; justify-content: center; margin-bottom: 12px; border-radius: 8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In
+      </a>
+      <!-- User Badge -->
+      <div class="user-badge" id="userBadge" style="display: none;">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">Guest</div>
+          <div class="user-role" id="userRole">Not signed in</div>
+        </div>
+      </div>
+      <!-- Logout Button -->
+      <a href="#" id="logoutBtn" class="nav-link" style="display: none; color: var(--text-muted); font-size: 13px; justify-content: center; margin-top: 8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+    </footer>
+  </aside>
+  
+  <!-- Mobile toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+<!-- Header -->
+<div class="header">
+  <div class="header__inner">
+    <div class="header__flex">
+      <img 
+        src="https://images.squarespace-cdn.com/content/53292562e4b06710691770b4/ceffb36f-efdc-4b4c-a007-ae99b1943f81/door.webp?content-type=image%2Fwebp" 
+        alt="AAS Logo" 
+        class="header__logo"
+      >
+      <div class="header__text">
+        <div class="header__title">AUTOMATIC</div>
+        <div class="header__subtitle">ACCESS</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Page Title -->
+<div class="page-title">
+  <h1 class="page-title__h1">
+    <span class="accent" id="pageAssetName">…</span>
+  </h1>
+  <p class="page-title__sub">
+    Fire door inspection record for <strong id="pageAssetNameSub">…</strong>
+  </p>
+</div>
+
+<!-- Main Panel -->
+<div class="service-page">
+  
+  <!-- Loading state -->
+  <div id="loadingState" class="loading">
+    <div class="loading__spinner"></div>
+    <div>Loading inspection data…</div>
+  </div>
+  
+  <!-- Not found state -->
+  <div id="notFoundState" class="not-found" style="display:none;">
+    <div class="not-found__icon">🚪</div>
+    <h2 class="not-found__title">Door Not Found</h2>
+    <p class="not-found__msg">
+      <strong id="notFoundId">—</strong> is not yet registered in our system.
+    </p>
+    <p class="not-found__help">
+      If you just placed this label, the asset may still be syncing.<br>
+      Contact office: <a href="tel:+15043364422">(504) 336-4422</a>
+    </p>
+  </div>
+  
+  <!-- Main content -->
+  <div id="serviceContent" style="display:none;">
+    <header class="service-header">
+      <span class="service-header__title">Fire Door Inspection</span>
+      <a class="btn btn-primary"
+         href="#"
+         target="_blank"
+         rel="noopener noreferrer"
+         id="requestLink">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+        Request Service
+      </a>
+    </header>
+    
+    <section class="service-card" aria-label="Door details">
+      <div class="field" data-row="location">
+        <div class="label">Location</div>
+        <div class="value" id="location">—</div>
+      </div>
+      <div class="field" data-row="lastInspection">
+        <div class="label">Last Inspection</div>
+        <div class="value" id="lastInspection">—</div>
+      </div>
+      <div class="field" data-row="status">
+        <div class="label">Status</div>
+        <div class="value" id="status">—</div>
+      </div>
+      <div class="field" data-row="results">
+        <div class="label">Results</div>
+        <div class="value" id="results">—</div>
+      </div>
+      <div class="field" data-row="technician">
+        <div class="label">Technician</div>
+        <div class="value" id="technician">—</div>
+      </div>
+      <div class="field" data-row="notes">
+        <div class="label">Notes</div>
+        <div class="value" id="notes">—</div>
+      </div>
+      <div class="field" data-row="retested">
+        <div class="label">Retested</div>
+        <div class="value" id="retested">—</div>
+      </div>
+      <div class="field" data-row="customer">
+        <div class="label">Customer</div>
+        <div class="value" id="customer">—</div>
+      </div>
+      <div class="field" data-row="doorType">
+        <div class="label">Door Type</div>
+        <div class="value" id="doorType">—</div>
+      </div>
+    </section>
+    
+    <a class="btn btn-secondary" href="tel:+15048105285">
+      📞 Call 24/7: (504) 810-5285
+    </a>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  function $(id) { return document.getElementById(id); }
+  function clean(v) { return (v == null ? "" : String(v)).trim(); }
+
+  function setText(id, val) {
+    var el = $(id);
+    if (!el) return;
+    var text = clean(val);
+    el.textContent = text || "—";
+    var row = el.closest(".field") || el.closest("[data-row]");
+    if (row) row.style.display = text ? "" : "none";
+  }
+
+  function setTypePill(id, raw) {
+    var el = $(id);
+    if (!el) return;
+
+    var v = clean(raw).toLowerCase();
+    var cls = "type-pill--default";
+
+    var hasFire = v.indexOf("fire") > -1;
+    var hasSlide = v.indexOf("slide") > -1 || v.indexOf("sliding") > -1;
+    var hasSwing = v.indexOf("swing") > -1;
+    var hasAuto = v.indexOf("auto") > -1;
+    var hasManual = v.indexOf("manual") > -1;
+
+    if (hasFire && (hasSlide || (hasAuto && !hasSwing && !hasManual))) cls = "type-pill--fire-slide";
+    else if (hasFire && hasSwing) cls = "type-pill--fire-swing";
+    else if (hasFire && hasManual) cls = "type-pill--fire-manual";
+    else if (hasFire) cls = "type-pill--fire";
+    else if (hasAuto && hasSlide) cls = "type-pill--auto-slide";
+    else if (hasAuto && hasSwing) cls = "type-pill--auto-swing";
+    else if (hasSlide) cls = "type-pill--auto-slide";
+    else if (hasSwing) cls = "type-pill--auto-swing";
+    else if (hasManual) cls = "type-pill--manual";
+
+    var label = clean(raw) || "—";
+    el.innerHTML = '<span class="type-pill ' + cls + '">' + label + '</span>';
+
+    var row = el.closest(".field") || el.closest("[data-row]");
+    if (row) row.style.display = clean(raw) ? "" : "none";
+  }
+
+  function setStatusPill(id, raw) {
+    var el = $(id);
+    if (!el) return;
+
+    var v = clean(raw).toLowerCase();
+    var cls = "type-pill--default";
+
+    if (v === "pass" || v === "passed") {
+      cls = "type-pill--auto-swing"; // Green
+    } else if (v === "fail" || v === "failed") {
+      cls = "type-pill--fire"; // Red
+    } else if (v === "pending" || v === "scheduled") {
+      cls = "type-pill--manual"; // Yellow
+    }
+
+    var label = clean(raw) || "—";
+    el.innerHTML = '<span class="type-pill ' + cls + '">' + label + '</span>';
+
+    var row = el.closest(".field") || el.closest("[data-row]");
+    if (row) row.style.display = clean(raw) ? "" : "none";
+  }
+
+  function setDocsLink(id, url) {
+    var el = $(id);
+    if (!el) return;
+    var link = clean(url);
+
+    if (link) {
+      el.innerHTML =
+        '<a class="docs-link" href="' + link + '" target="_blank" rel="noopener noreferrer">' +
+          '<svg viewBox="0 0 24 24">' +
+            '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+            '<polyline points="14,2 14,8 20,8"/>' +
+            '<line x1="16" y1="13" x2="8" y2="13"/>' +
+            '<line x1="16" y1="17" x2="8" y2="17"/>' +
+            '<polyline points="10,9 9,9 8,9"/>' +
+          '</svg>' +
+          'View Docs' +
+        '</a>';
+    } else {
+      el.textContent = "—";
+    }
+
+    var row = el.closest(".field") || el.closest("[data-row]");
+    if (row) row.style.display = link ? "" : "none";
+  }
+
+  function showState(state) {
+    var loading = $("loadingState");
+    var notFound = $("notFoundState");
+    var content = $("serviceContent");
+
+    if (loading) loading.style.display = state === "loading" ? "" : "none";
+    if (notFound) notFound.style.display = state === "notfound" ? "" : "none";
+    if (content) content.style.display = state === "loaded" ? "" : "none";
+  }
+
+  function getAssetIdFromUrl() {
+    try {
+      var url = new URL(window.location.href);
+      var raw =
+        url.searchParams.get("id") ||
+        url.searchParams.get("doorid") ||
+        url.searchParams.get("doorId") ||
+        url.searchParams.get("door") ||
+        url.searchParams.get("name") ||
+        "";
+      return clean(decodeURIComponent(raw));
+    } catch(e) {
+      return "";
+    }
+  }
+
+  function boot() {
+    var assetId = getAssetIdFromUrl();
+
+    // Update title slots
+    var h1Slot = $("pageAssetName");
+    var subSlot = $("pageAssetNameSub");
+    if (h1Slot) h1Slot.textContent = assetId || "—";
+    if (subSlot) subSlot.textContent = assetId || "this door";
+    if (assetId) document.title = assetId + " • Service • AAS";
+
+    if (!assetId) {
+      showState("notfound");
+      var nfId0 = $("notFoundId");
+      if (nfId0) nfId0.textContent = "(no ID provided)";
+      return;
+    }
+
+    showState("loading");
+
+    // Call the Netlify Function API with view=door for inspection data
+    fetch('/api/door?doorid=' + encodeURIComponent(assetId) + '&view=door')
+      .then(function(res) {
+        return res.json().then(function(j) { return { ok: res.ok, data: j }; });
+      })
+      .then(function(result) {
+        if (!result.ok) {
+          throw new Error(result.data.error || "Lookup failed");
+        }
+
+        // Use compat block for inspection fields
+        var row = result.data.compat || result.data;
+
+        // Populate inspection fields
+        setText("location", row.location);
+        setText("lastInspection", row.last_inspection);
+        setStatusPill("status", row.status);
+        setText("results", row.results);
+        setText("technician", row.technician);
+        setText("notes", row.notes);
+        setText("retested", row.retested);
+        setText("customer", row.customer);
+        setTypePill("doorType", row.door_type);
+
+        // Request button URL - use limble_pm_url for inspections
+        var btn = $("requestLink");
+        if (btn && row.limble_pm_url) {
+          btn.href = row.limble_pm_url;
+          btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg> Open PM Work Order';
+        } else if (btn) {
+          btn.style.display = 'none';
+        }
+
+        showState("loaded");
+      })
+      .catch(function(err) {
+        console.error("[service] error:", err);
+        showState("notfound");
+        var nfId = $("notFoundId");
+        if (nfId) nfId.textContent = assetId;
+      });
+  }
+
+  // Boot on load
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+
+<!-- Copilot Panel -->
+<link rel="stylesheet" href="/assets/copilot.css">
+<script src="/assets/copilot.js"></script>
+<script>
+// Pass door context to Copilot when data loads
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait a bit for door data to load, then update Copilot context
+  setTimeout(function() {
+    if (window.AASCopilot) {
+      var ctx = {
+        id: document.getElementById('doorId')?.textContent || '',
+        name: document.getElementById('pageAssetName')?.textContent || '',
+        manufacturer: document.getElementById('manufacturer')?.textContent || '',
+        model: document.getElementById('model')?.textContent || '',
+        customer: document.getElementById('customer')?.textContent || '',
+        doorType: document.getElementById('doorType')?.textContent || ''
+      };
+      window.AASCopilot.setDoorContext(ctx);
+    }
+  }, 1500);
+});
+</script>
+  </main>
+</div>
+
+<script>
+// Mobile sidebar toggle
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(e) {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
+    sidebar.classList.remove('open');
+  }
+});
+
+// Highlight current nav link
+const currentPath = window.location.pathname;
+document.querySelectorAll('.nav-link').forEach(link => {
+  const href = link.getAttribute('href');
+  if (href === currentPath || (currentPath.startsWith(href) && href !== '/')) {
+    link.classList.add('active');
+  }
+});
+</script>
+
+<script src="/auth.js"></script>
+</body>
+</html>
