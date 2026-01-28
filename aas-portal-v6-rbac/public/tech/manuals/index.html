@@ -1,0 +1,1573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tech Manuals • AAS Portal</title>
+<link rel="stylesheet" href="/assets/portal.css">
+</head>
+<body style="margin:0;background:#070a0f;">
+<!-- v3 Premium: Animated floating gradient background -->
+<div class="animated-bg" aria-hidden="true"></div>
+<div class="animated-bg-orb" aria-hidden="true"></div>
+
+<div class="app-shell">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <header class="sidebar-header">
+      <a href="/" class="sidebar-logo">
+        <img src="https://images.squarespace-cdn.com/content/53292562e4b06710691770b4/ceffb36f-efdc-4b4c-a007-ae99b1943f81/door.webp" alt="AAS">
+        <span class="sidebar-logo-text">AAS</span>
+      </a>
+    </header>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <a href="/" class="nav-link" data-page="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+      </div>
+      
+      <div class="nav-section" id="techNav">
+        <div class="nav-section-title">Tech Tools</div>
+        <a href="/tech/parts" class="nav-link" data-page="parts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Parts Finder
+        </a>
+        <a href="/tech/command" class="nav-link" data-page="command">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Command Center
+        </a>
+        <a href="/tech/doors" class="nav-link" data-page="doors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+          Door Browser
+        </a>
+        <a href="/tech/manuals" class="nav-link" data-page="manuals">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Tech Manuals
+        </a>
+      </div>
+      
+      <div class="nav-section" id="customerNav" style="display:none;">
+        <div class="nav-section-title">Customer</div>
+        <a href="/customer/doors" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+          My Doors
+        </a>
+        <a href="/customer/history" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Service History
+        </a>
+        <a href="/customer/billing" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Billing
+        </a>
+      </div>
+    </nav>
+    
+    <footer class="sidebar-footer">
+      <!-- Login Button -->
+      <a href="#" id="loginBtn" class="nav-link" style="background: var(--accent); color: #000; font-weight: 700; justify-content: center; margin-bottom: 12px; border-radius: 8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In
+      </a>
+      <!-- User Badge -->
+      <div class="user-badge" id="userBadge" style="display: none;">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">Guest</div>
+          <div class="user-role" id="userRole">Not signed in</div>
+        </div>
+      </div>
+      <!-- Logout Button -->
+      <a href="#" id="logoutBtn" class="nav-link" style="display: none; color: var(--text-muted); font-size: 13px; justify-content: center; margin-top: 8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+    </footer>
+  </aside>
+  
+  <!-- Mobile toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+<div id="manualHub" class="mh-root">
+  <!-- Background --><div id="mhAnnounce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <div class="mh-bg" aria-hidden="true"></div>
+
+  <!-- Screen reader announcements -->
+  <div id="mhAnnounce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="mh-shell">
+    <!-- Header -->
+    <div class="mh-hero mh-glass">
+      <div class="mh-heroText">
+        <h2 class="mh-title">Technician Manuals Hub</h2>
+        <div class="mh-sub">
+          Search by model, controller, sensor, fault code, wiring, or manual type.
+          <span class="mh-tip">Tip: Use <code>|</code> for OR (ex: <code>Nabco|wiring</code>). Quotes supported too (ex: <code>"model j"</code>).</span>
+        </div>
+      </div>
+
+      <button id="mhGoFav" class="mh-btn-lite mh-cta mh-ripple" type="button">
+        ⭐ Favorites
+      </button>
+    </div>
+
+    <!-- Controls -->
+    <div class="mh-panel mh-glass">
+      <div class="mh-row mh-rowSearch">
+        <label class="mh-field mh-fieldWide">
+          <span class="mh-label">Search</span>
+          <div class="mh-inputRow">
+            <input
+              id="mhQuery"
+              class="mh-input"
+              type="search"
+              placeholder='Search manuals… (ex: mc521 "pro swing" wiring)'
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button id="mhClear" class="mh-btn-lite mh-ripple" type="button">Clear</button>
+          </div>
+        </label>
+
+        <label class="mh-field">
+          <span class="mh-label">Manufacturer</span>
+          <select id="mhMaker" class="mh-select"></select>
+        </label>
+
+        <label class="mh-field">
+          <span class="mh-label">Manual Type</span>
+          <select id="mhType" class="mh-select"></select>
+        </label>
+      </div>
+
+      <!-- Door Type Chips -->
+      <div class="mh-row mh-rowChips">
+        <div class="mh-label">Door Type</div>
+        <div id="mhChips" class="mh-chips" role="tablist" aria-label="Door type filters">
+          <button class="mh-chip active" data-chip="" type="button">All</button>
+          <button class="mh-chip" data-chip="sensors" type="button">Sensors</button>
+          <button class="mh-chip" data-chip="sliding" type="button">Sliding</button>
+          <button class="mh-chip" data-chip="swing" type="button">Swing</button>
+          <button class="mh-chip" data-chip="icu" type="button">ICU</button>
+          <button class="mh-chip" data-chip="revolving" type="button">Revolving</button>
+          <button class="mh-chip" data-chip="operator" type="button">Operators</button>
+        </div>
+      </div>
+
+      <!-- Quick Buttons -->
+      <div class="mh-row mh-rowQuick">
+        <div class="mh-qgroup">
+          <div class="mh-qtitle">Quick</div>
+          <div class="mh-qbtns">
+            <button class="mh-qbtn" data-quick="programming" type="button">Programming</button>
+            <button class="mh-qbtn" data-quick="install" type="button">Installation</button>
+            <button class="mh-qbtn" data-quick="wiring" type="button">Wiring</button>
+            <button class="mh-qbtn" data-quick="service" type="button">Service</button>
+            <button class="mh-qbtn" data-quick="parts" type="button">Parts</button>
+            <button class="mh-qbtn" data-quick="errorcodes" type="button">Error Codes</button>
+            <button class="mh-qbtn" data-quick="operators" type="button">Operators</button>
+          </div>
+        </div>
+
+        <div class="mh-qgroup">
+          <div class="mh-qtitle">Common Systems</div>
+          <div class="mh-qbtns">
+            <button class="mh-qbtn" data-q='stanley mc521 "pro swing"|proswing|pro-swing|pro_swing' data-chip="swing" type="button">Stanley MC521 ProSwing</button>
+            <button class="mh-qbtn" data-q='stanley mc521 "pro slide"|proslide|pro-slide|pro_slide' data-chip="sliding" type="button">Stanley MC521 ProSlide</button>
+            <button class="mh-qbtn" data-q="horton 4190" data-chip="sliding" type="button">Horton 4190</button>
+            <button class="mh-qbtn" data-q='Stanley "model j"|modelj|model-j|model_j' type="button">Stanley Model J</button>
+            <button class="mh-qbtn" data-q='besam|assa unislide|"uni slide"|uni-slide|uni_slide' data-chip="sliding" type="button">Besam UniSlide</button>
+            <button class="mh-qbtn" data-q='dorma|dormakaba "esa 2"|esa2|esa-2|esa_2' data-chip="sliding" type="button">Dorma ESA 2</button>
+            <button class="mh-qbtn" data-q="nabco|nabco opus" type="button">Nabco Opus</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="mh-row mh-rowStatus">
+        <div id="mhStatus" class="mh-status">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Favorites -->
+    <div id="mhFavWrap" class="mh-favs mh-glass" style="display:none;">
+      <div class="mh-favHeader">
+        <div class="mh-favTitle">⭐ Favorites</div>
+        <button id="mhFavClearAll" class="mh-btn-lite mh-ripple" type="button">Clear all</button>
+      </div>
+      <div id="mhFavResults" class="mh-grid"></div>
+    </div>
+
+    <!-- Results -->
+    <div id="mhResults" class="mh-grid"></div>
+
+    <!-- Show More -->
+    <div class="mh-moreRow">
+      <button id="mhShowMore" class="mh-btn-lite mh-ripple" type="button" style="display:none;">Show more</button>
+    </div>
+
+    <div class="mh-footnote">
+      Call 504 810-5285 if unable to find a specific manual
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ========== Manual Hub (scoped) ========== */
+  #manualHub { position: relative; z-index: 0; }
+  #manualHub * { box-sizing: border-box; }
+
+  /* Screen reader only */
+  #manualHub .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+  }
+
+  /* Background layer */
+  #manualHub .mh-bg{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    transform: translateZ(0);
+    background:
+      radial-gradient( circle at 18% 22%, rgba(120,170,255,0.16) 0 140px, transparent 160px ),
+      radial-gradient( circle at 78% 18%, rgba(255,140,210,0.12) 0 120px, transparent 150px ),
+      radial-gradient( circle at 82% 82%, rgba(120,255,210,0.10) 0 150px, transparent 190px ),
+      radial-gradient( circle at 30% 86%, rgba(255,220,140,0.08) 0 160px, transparent 210px ),
+      radial-gradient( circle at 55% 55%, rgba(170,160,255,0.08) 0 190px, transparent 240px ),
+      linear-gradient(180deg, rgba(7,10,15,1) 0%, rgba(9,12,18,1) 100%);
+    background-repeat: no-repeat;
+    background-size: 120% 120%;
+    animation: mhBokehA 22s linear infinite;
+    filter: saturate(1.05);
+  }
+  #manualHub .mh-bg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient( circle at 25% 35%, rgba(255,255,255,0.06) 0 90px, transparent 140px ),
+      radial-gradient( circle at 75% 65%, rgba(255,255,255,0.04) 0 110px, transparent 170px );
+    opacity: 0.65;
+    mix-blend-mode: screen;
+    animation: mhBokehB 34s linear infinite;
+  }
+
+  @keyframes mhBokehA {
+    0%   { background-position: 0% 0%; }
+    50%  { background-position: 60% 35%; }
+    100% { background-position: 0% 0%; }
+  }
+  @keyframes mhBokehB {
+    0%   { transform: translate3d(0,0,0); }
+    50%  { transform: translate3d(-2.5%, 2%, 0); }
+    100% { transform: translate3d(0,0,0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    #manualHub .mh-bg, #manualHub .mh-bg::after{ animation: none !important; }
+  }
+
+  /* Foreground shell */
+  #manualHub .mh-shell{
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(16px, 3vw, 28px);
+    color: rgba(255,255,255,0.92);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+
+  /* Glass panels/cards */
+  #manualHub .mh-glass{
+    background: rgba(16, 20, 30, 0.56);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+    box-shadow: 0 18px 60px rgba(0,0,0,0.38);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  }
+
+  /* Hero */
+  #manualHub .mh-hero{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap: 14px;
+    padding: 16px 16px;
+    margin-bottom: 14px;
+  }
+  #manualHub .mh-title{
+    margin: 0;
+    font-size: clamp(20px, 2.4vw, 28px);
+    letter-spacing: 0.2px;
+  }
+  #manualHub .mh-sub{
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.35;
+    color: rgba(255,255,255,0.75);
+  }
+  #manualHub .mh-tip{ display:block; margin-top: 6px; opacity: 0.95; }
+  #manualHub code{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.10);
+  }
+
+  /* Panel layout */
+  #manualHub .mh-panel{ padding: 14px; }
+  #manualHub .mh-row{ margin-top: 12px; }
+  #manualHub .mh-row:first-child{ margin-top: 0; }
+
+  #manualHub .mh-rowSearch{
+    display:grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+  }
+  #manualHub .mh-field{ display:block; min-width: 0; }
+  #manualHub .mh-label{
+    display:block;
+    font-size: 12px;
+    color: rgba(255,255,255,0.70);
+    margin: 0 0 6px 4px;
+  }
+
+  #manualHub .mh-inputRow{
+    display:flex;
+    gap: 10px;
+    align-items:center;
+  }
+  #manualHub .mh-input,
+  #manualHub .mh-select{
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(0,0,0,0.20);
+    color: rgba(255,255,255,0.92);
+    padding: 11px 12px;
+    outline: none;
+  }
+  #manualHub .mh-input:focus,
+  #manualHub .mh-select:focus{
+    border-color: rgba(160,200,255,0.55);
+    box-shadow: 0 0 0 3px rgba(120,170,255,0.18);
+  }
+
+  /* Dropdown visibility fix */
+  #manualHub .mh-select option{
+    color: #111 !important;
+    background: #fff !important;
+  }
+
+  #manualHub .mh-btn-lite{
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.90);
+    padding: 10px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #manualHub .mh-cta{
+    background: rgba(120,170,255,0.18);
+    border-color: rgba(160,200,255,0.35);
+  }
+
+  /* Chips */
+  #manualHub .mh-chips{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  #manualHub .mh-chip{
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.85);
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  #manualHub .mh-chip.active{
+    background: rgba(120,170,255,0.22);
+    border-color: rgba(160,200,255,0.45);
+  }
+
+  /* Quick buttons */
+  #manualHub .mh-rowQuick{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  #manualHub .mh-qtitle{
+    font-size: 12px;
+    color: rgba(255,255,255,0.72);
+    margin: 0 0 6px 4px;
+  }
+  #manualHub .mh-qbtns{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  #manualHub .mh-qbtn{
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(0,0,0,0.18);
+    color: rgba(255,255,255,0.90);
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  /* Status */
+  #manualHub .mh-status{
+    font-size: 13px;
+    color: rgba(255,255,255,0.82);
+    padding: 8px 6px 0 6px;
+  }
+
+  /* Grids */
+  #manualHub .mh-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  /* Card styles */
+  #manualHub .mh-card{
+    background: rgba(16, 20, 30, 0.56);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    box-shadow: 0 14px 44px rgba(0,0,0,0.35);
+    backdrop-filter: blur(14px) saturate(1.15);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    padding: 14px;
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #manualHub .mh-pillRow{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+  }
+  #manualHub .mh-pill{
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 6px 10px;
+    max-width: 100%;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  #manualHub .mh-favBtn{
+    width: 40px;
+    height: 36px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(0,0,0,0.20);
+    color: rgba(255,255,255,0.88);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #manualHub .mh-favBtn.active{
+    color: rgba(255,214,120,0.95);
+    border-color: rgba(255,214,120,0.35);
+    background: rgba(255,214,120,0.10);
+  }
+  #manualHub .mh-model{
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: 0.2px;
+  }
+  #manualHub .mh-file{
+    font-size: 13px;
+    color: rgba(255,255,255,0.74);
+    line-height: 1.25;
+  }
+  #manualHub .mh-actions{
+    margin-top: auto;
+    display:flex;
+    gap: 10px;
+    align-items:center;
+  }
+
+  #manualHub a.mh-open{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+    text-decoration:none !important;
+    border-radius: 14px;
+    padding: 10px 12px;
+    border: 1px solid rgba(160,200,255,0.35);
+    background: rgba(120,170,255,0.18);
+    color: rgba(255,255,255,0.92) !important;
+  }
+
+  /* Favorites section */
+  #manualHub .mh-favs{
+    margin-top: 16px;
+    padding: 14px;
+  }
+  #manualHub .mh-favHeader{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  #manualHub .mh-favTitle{
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+
+  /* Show more row */
+  #manualHub .mh-moreRow{
+    margin-top: 14px;
+    display:flex;
+    justify-content:center;
+  }
+
+  #manualHub .mh-footnote{
+    margin-top: 16px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  /* Skeleton loading cards */
+  #manualHub .mh-skeleton { pointer-events: none; }
+  #manualHub .mh-skel-pill,
+  #manualHub .mh-skel-title,
+  #manualHub .mh-skel-text,
+  #manualHub .mh-skel-btn {
+    background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
+    background-size: 200% 100%;
+    animation: mhShimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+  #manualHub .mh-skel-pill { height: 28px; width: 60%; }
+  #manualHub .mh-skel-title { height: 22px; width: 80%; margin-top: 10px; }
+  #manualHub .mh-skel-text { height: 16px; width: 90%; margin-top: 8px; }
+  #manualHub .mh-skel-btn { height: 40px; width: 100px; margin-top: 14px; }
+  @keyframes mhShimmer { 
+    0% { background-position: 200% 0; } 
+    100% { background-position: -200% 0; } 
+  }
+
+  /* Ripple */
+  #manualHub .mh-ripple,
+  #manualHub .mh-qbtn,
+  #manualHub .mh-chip,
+  #manualHub .mh-favBtn,
+  #manualHub .mh-btn-lite,
+  #manualHub .mh-open{
+    position: relative;
+    overflow: hidden;
+  }
+  #manualHub .mh-ripple::after,
+  #manualHub .mh-qbtn::after,
+  #manualHub .mh-chip::after,
+  #manualHub .mh-favBtn::after,
+  #manualHub .mh-btn-lite::after,
+  #manualHub .mh-open::after{
+    content:"";
+    position:absolute;
+    left: var(--rx, 50%);
+    top: var(--ry, 50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(255,255,255,0.22);
+    opacity: 0;
+    pointer-events:none;
+  }
+  #manualHub .mh-rippling::after{
+    animation: mhRipple 440ms ease-out;
+  }
+  @keyframes mhRipple{
+    0%   { transform: translate(-50%, -50%) scale(0); opacity: 0.35; }
+    100% { transform: translate(-50%, -50%) scale(24); opacity: 0; }
+  }
+
+  /* Mobile responsive + larger touch targets */
+  @media (max-width: 900px){
+    #manualHub .mh-rowSearch{ grid-template-columns: 1fr; }
+    #manualHub .mh-rowQuick{ grid-template-columns: 1fr; }
+    #manualHub .mh-hero{ flex-direction: column; }
+    #manualHub .mh-btn-lite{ width: fit-content; }
+    
+    /* Larger touch targets for mobile */
+    #manualHub .mh-chip,
+    #manualHub .mh-qbtn,
+    #manualHub .mh-favBtn {
+      min-height: 44px;
+      min-width: 44px;
+      padding: 12px 16px;
+    }
+    #manualHub .mh-favBtn {
+      width: 44px;
+      height: 44px;
+    }
+  }/* ========== ADDITIONS FOR IMPROVED MANUAL HUB ========== */
+
+/* Skeleton Loading Animation */
+#manualHub .mh-skeleton { 
+  pointer-events: none; 
+  min-height: 180px;
+}
+#manualHub .mh-skel-pill,
+#manualHub .mh-skel-title,
+#manualHub .mh-skel-text,
+#manualHub .mh-skel-btn {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
+  animation: mhShimmer 1.5s infinite;
+  border-radius: 8px;
+}
+#manualHub .mh-skel-pill { 
+  height: 28px; 
+  width: 60%; 
+}
+#manualHub .mh-skel-title { 
+  height: 22px; 
+  width: 80%; 
+  margin-top: 12px; 
+}
+#manualHub .mh-skel-text { 
+  height: 16px; 
+  width: 90%; 
+  margin-top: 10px; 
+}
+#manualHub .mh-skel-btn { 
+  height: 40px; 
+  width: 100px; 
+  margin-top: auto; 
+}
+@keyframes mhShimmer { 
+  0% { background-position: 200% 0; } 
+  100% { background-position: -200% 0; } 
+}
+
+/* Screen Reader Only (Accessibility) */
+#manualHub .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+/* Keyboard Focus Styles */
+#manualHub .mh-card:focus {
+  outline: 2px solid rgba(120,170,255,0.7);
+  outline-offset: 2px;
+}
+#manualHub .mh-card:focus-visible {
+  outline: 2px solid rgba(120,170,255,0.9);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(120,170,255,0.15);
+}
+
+/* Mobile Touch Target Size Improvements */
+@media (max-width: 900px) {
+  #manualHub .mh-chip,
+  #manualHub .mh-qbtn,
+  #manualHub .mh-favBtn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+  
+  #manualHub .mh-input,
+  #manualHub .mh-select {
+    min-height: 48px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  #manualHub .mh-open {
+    min-height: 48px;
+    padding: 14px 18px;
+  }
+}
+
+/* Retry Button Styling */
+#manualHub #mhRetry {
+  margin-left: 12px;
+  background: rgba(255,100,100,0.15);
+  border-color: rgba(255,100,100,0.35);
+}
+#manualHub #mhRetry:hover {
+  background: rgba(255,100,100,0.25);
+}
+
+/* Improved Card Hover State */
+#manualHub .mh-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+#manualHub .mh-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+}
+
+/* Active/Pressed State */
+#manualHub .mh-card:active {
+  transform: translateY(0);
+}
+
+/* Search Input Clear Button Enhancement */
+#manualHub #mhClear {
+  flex-shrink: 0;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+#manualHub #mhClear:hover {
+  opacity: 1;
+}
+
+/* Status Message Styling */
+#manualHub .mh-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Empty State Enhancement */
+#manualHub .mh-empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(255,255,255,0.7);
+}
+#manualHub .mh-empty-state svg {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+/* Auth Required Overlay */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.auth-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.auth-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 50px;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+}
+.auth-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+}
+.auth-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.auth-subtitle {
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #00d4ff;
+  color: #000;
+  border: none;
+  padding: 16px 40px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-btn:hover {
+  background: #00b8e6;
+  transform: translateY(-2px);
+}
+.auth-loading {
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  margin-top: 16px;
+}
+</style><script>
+(() => {
+  const CSV_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTU61rKQUtfzsyATsgMQIKIhFZP0p5u7xeHoxVUt32hY3gHWiNarTnPH9guNhRkci2ZWucvJTPUxCVY/pub?gid=0&single=true&output=csv";
+  const ROOT_ID  = "manualHub";
+  const FAV_KEY  = "aas_manual_favorites_v2";
+  const CACHE_KEY = "aas_manual_cache_v1";
+  const CACHE_TTL = 1000 * 60 * 30; // 30 minutes
+  const MAX_FAVS = 80;
+
+  /* ✅ LIMIT how many cards render at once */
+  const PAGE_SIZE = matchMedia("(max-width: 900px)").matches ? 36 : 60;
+
+  const norm  = (s) => (s ?? "").toString().trim();
+  const lower = (s) => norm(s).toLowerCase();
+
+  const esc = (s) => (s ?? "").toString()
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+  const safeJsonParse = (s, fallback) => { try { return JSON.parse(s); } catch { return fallback; } };
+
+  /* ========= NEW: Levenshtein for fuzzy matching ========= */
+  function levenshtein(a, b) {
+    if (!a.length) return b.length;
+    if (!b.length) return a.length;
+    const matrix = [];
+    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        matrix[i][j] = b[i-1] === a[j-1] 
+          ? matrix[i-1][j-1]
+          : Math.min(matrix[i-1][j-1]+1, matrix[i][j-1]+1, matrix[i-1][j]+1);
+      }
+    }
+    return matrix[b.length][a.length];
+  }
+
+  function fuzzyMatch(needle, haystack, threshold = 2) {
+    if (haystack.includes(needle)) return true;
+    if (needle.length < 5) return false;
+    const words = haystack.split(/\s+/);
+    return words.some(w => w.length >= 4 && levenshtein(needle, w) <= threshold);
+  }
+
+  function parseCSV(text){
+    const out = [];
+    let row = [], cur = "", inQ = false;
+    for (let i=0;i<text.length;i++){
+      const c = text[i], n = text[i+1];
+      if (c === '"' && inQ && n === '"'){ cur += '"'; i++; continue; }
+      if (c === '"'){ inQ = !inQ; continue; }
+      if (c === ',' && !inQ){ row.push(cur); cur=""; continue; }
+      if ((c === '\n' || c === '\r') && !inQ){
+        if (c === '\r' && n === '\n') i++;
+        row.push(cur); cur="";
+        if (row.length > 1 || row[0] !== "") out.push(row);
+        row = [];
+        continue;
+      }
+      cur += c;
+    }
+    row.push(cur);
+    if (row.length > 1 || row[0] !== "") out.push(row);
+    return out;
+  }
+
+  /* -------- Query tokenizer: supports "quoted phrases" -------- */
+  function tokenizeQuery(q){
+    const s = norm(q);
+    if (!s) return [];
+    const tokens = [];
+    let cur = "", inQuote = false;
+    for (let i=0;i<s.length;i++){
+      const c = s[i];
+      if (c === '"'){ inQuote = !inQuote; cur += c; continue; }
+      if (!inQuote && /\s/.test(c)){
+        if (cur.trim()) tokens.push(cur.trim());
+        cur = "";
+        continue;
+      }
+      cur += c;
+    }
+    if (cur.trim()) tokens.push(cur.trim());
+    return tokens;
+  }
+
+  function unquote(x){
+    const s = norm(x);
+    if (s.length >= 2 && s.startsWith('"') && s.endsWith('"')) return s.slice(1,-1);
+    return s;
+  }
+
+  /* ========= Normalizers ========= */
+  function cleanText(s){
+    return lower(s).replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
+  }
+  function compactText(s){
+    return lower(s).replace(/[^a-z0-9]+/g,"");
+  }
+
+  /* ========= Aliases ========= */
+  const ALIAS = {
+    nabco:    ["nabco","nabteb","nabtesco"],
+    nabteb:   ["nabco","nabteb","nabtesco"],
+    nabtesco: ["nabco","nabteb","nabtesco"],
+    dorma:      ["dorma","dormakaba","kaba"],
+    dormakaba:  ["dorma","dormakaba","kaba"],
+    besam:      ["besam","assa","assaabloy"],
+    assa:       ["besam","assa","assaabloy"],
+    stanley:    ["stanley","stanleydoor"],
+    horton:     ["horton","hortondoor"]
+  };
+
+  function expandAliasIfAny(termClean){
+    if (!termClean || termClean.includes(" ")) return [termClean];
+    return ALIAS[termClean] ? ALIAS[termClean] : [termClean];
+  }
+
+  function compileQuery(q){
+    const toks = tokenizeQuery(q);
+    const groups = [];
+
+    for (const tok of toks){
+      const rawParts = tok.split("|").map(p => unquote(p)).map(p => p.trim()).filter(Boolean);
+      let parts = [];
+
+      for (const rp of rawParts){
+        const c = cleanText(rp);
+        if (!c) continue;
+
+        if (c.includes(" ")){
+          parts.push(c);
+        } else {
+          parts.push(...expandAliasIfAny(c));
+        }
+      }
+
+      parts = Array.from(new Set(parts.filter(Boolean)));
+      if (parts.length) groups.push(parts);
+    }
+    return groups;
+  }
+
+  function isCodeLike(t){
+    if (!t) return false;
+    if (/\d/.test(t)) return true;
+    if (t.length <= 4) return true;
+    if (/^[a-z]{0,2}\d+[a-z0-9]*$/.test(t)) return true;
+    return false;
+  }
+
+  function termMatchesRow(r, termClean){
+    const t = termClean;
+    if (!t) return false;
+
+    const tCompact = t.replace(/\s+/g,"");
+    const phrase = t.includes(" ");
+
+    if (phrase){
+      return r._clean.includes(" " + t + " ") || r._hay.includes(t);
+    }
+
+    if (isCodeLike(t)){
+      if (r._clean.includes(" " + t + " ")) return true;
+      if (tCompact && r._compact.includes(tCompact)) return true;
+      return false;
+    }
+
+    if (r._hay.includes(t)) return true;
+    if (tCompact && tCompact.length >= 4 && tCompact.length <= 14 && r._compact.includes(tCompact)) return true;
+    
+    // NEW: Fuzzy match fallback for typos (only words 5+ chars)
+    if (t.length >= 5 && fuzzyMatch(t, r._hay, 2)) return true;
+
+    return false;
+  }
+
+  function queryMatchesRow(r, groups){
+    if (!groups.length) return true;
+    return groups.every(group => group.some(t => termMatchesRow(r, t)));
+  }
+
+  function buildSelect(el, values, placeholder){
+    const uniq = Array.from(new Set(values.filter(Boolean)))
+      .sort((a,b)=>a.localeCompare(b));
+    el.innerHTML =
+      `<option value="">${esc(placeholder)}</option>` +
+      uniq.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
+  }
+
+  function favId(r){
+    if (r.DriveLink) return lower(r.DriveLink);
+    if (r.SourceURL) return lower(r.SourceURL);
+    return lower([r.Manufacturer, r.FileName].join("||"));
+  }
+
+  function prettifyFileName(name){
+    const s = norm(name);
+    if (!s) return "";
+    return s
+      .replace(/\.pdf$/i, "")
+      .replace(/_/g, " ")
+      .replace(/\b(resized|compressed|shrunk|small|large|copy|test)\b/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  const QUICK = {
+    service:       "service|troubleshoot|troubleshooting|remedy|learn|tune",
+    errorcodes:    "error|alarm|code|message|fault",
+    wiring:        "wiring|diagram|terminal",
+    programming:   "program|programming|setup|parameter",
+    install:       "install|installation",
+    parts:         "parts|breakdown|catalog",
+    operators:     "operator|operators|operation|operating|opener"
+  };
+
+  const TYPE_WEIGHT = {
+    "Service": 600,
+    "Programming": 500,
+    "Wiring": 450,
+    "Installation": 400,
+    "General": 300,
+    "Parts": 200
+  };
+
+  function scoreRow(r, makerSel, typeSel, activeChip, compiledGroups){
+    let s = 0;
+    s += TYPE_WEIGHT[r.ManualType_Final] ?? 0;
+
+    if (makerSel && r.Manufacturer === makerSel) s += 40;
+    if (typeSel && r.ManualType_Final === typeSel) s += 60;
+
+    if (activeChip){
+      const chip = lower(activeChip);
+      if (r._door.includes(chip) || r._tags.includes(chip)) s += 40;
+    }
+
+    for (const group of compiledGroups){
+      if (group.some(t => termMatchesRow(r, t))) s += 8;
+    }
+
+    return s;
+  }
+
+  /* Ripple */
+  function bindRipple(root, signal){
+    function rippleOn(el, clientX, clientY){
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--rx", (clientX - r.left) + "px");
+      el.style.setProperty("--ry", (clientY - r.top) + "px");
+      el.classList.remove("mh-rippling");
+      void el.offsetWidth;
+      el.classList.add("mh-rippling");
+    }
+    root.addEventListener("pointerdown", (e) => {
+      const t = e.target.closest(".mh-ripple, .mh-qbtn, .mh-chip, .mh-favBtn, .mh-btn-lite, .mh-open");
+      if (!t) return;
+      rippleOn(t, e.clientX, e.clientY);
+    }, { passive: true, signal });
+
+    root.addEventListener("animationend", (e) => {
+      const t = e.target.closest(".mh-rippling");
+      if (t) t.classList.remove("mh-rippling");
+    }, { signal });
+  }
+
+  function initManualHub(){
+    const root = document.getElementById(ROOT_ID);
+    if (!root) return;
+
+    root._mhAbort?.abort?.();
+    const ctrl = new AbortController();
+    root._mhAbort = ctrl;
+
+    const els = {
+      q: document.getElementById("mhQuery"),
+      maker: document.getElementById("mhMaker"),
+      type: document.getElementById("mhType"),
+      clear: document.getElementById("mhClear"),
+      status: document.getElementById("mhStatus"),
+      results: document.getElementById("mhResults"),
+      chipsWrap: document.getElementById("mhChips"),
+      qbtns: root.querySelectorAll(".mh-qbtn"),
+      favWrap: document.getElementById("mhFavWrap"),
+      favResults: document.getElementById("mhFavResults"),
+      favClearAll: document.getElementById("mhFavClearAll"),
+      goFav: document.getElementById("mhGoFav"),
+      showMore: document.getElementById("mhShowMore"),
+      announce: document.getElementById("mhAnnounce")
+    };
+
+    const must = ["q","maker","type","clear","status","results","chipsWrap","favWrap","favResults","favClearAll","goFav"];
+    for (const k of must){
+      if (!els[k]) { console.warn("ManualHub missing element:", k); return; }
+    }
+
+    bindRipple(root, ctrl.signal);
+
+    let data = [];
+    let activeChip = "";
+    let visible = PAGE_SIZE;
+
+    let favs = safeJsonParse(localStorage.getItem(FAV_KEY), []);
+    if (!Array.isArray(favs)) favs = [];
+    function saveFavs(){ localStorage.setItem(FAV_KEY, JSON.stringify(favs)); }
+
+    /* NEW: Screen reader announcements */
+    function announce(msg) {
+      if (els.announce) els.announce.textContent = msg;
+    }
+
+    /* NEW: Skeleton loading UI */
+    function renderSkeletons(count = 6) {
+      els.results.innerHTML = Array(count).fill(`
+        <div class="mh-card mh-skeleton">
+          <div class="mh-skel-pill"></div>
+          <div class="mh-skel-title"></div>
+          <div class="mh-skel-text"></div>
+          <div class="mh-skel-btn"></div>
+        </div>
+      `).join('');
+    }
+
+    /* NEW: URL state for shareable searches */
+    function syncToURL() {
+      const params = new URLSearchParams();
+      if (els.q.value) params.set("q", els.q.value);
+      if (els.maker.value) params.set("maker", els.maker.value);
+      if (els.type.value) params.set("type", els.type.value);
+      if (activeChip) params.set("chip", activeChip);
+      
+      const newURL = params.toString() 
+        ? `${location.pathname}?${params}` 
+        : location.pathname;
+      history.replaceState(null, "", newURL);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(location.search);
+      if (params.get("q")) els.q.value = params.get("q");
+      if (params.get("maker")) els.maker.value = params.get("maker");
+      if (params.get("type")) els.type.value = params.get("type");
+      if (params.get("chip")) setChip(params.get("chip"));
+    }
+
+    function setChip(chip){
+      activeChip = lower(chip || "");
+      els.chipsWrap.querySelectorAll(".mh-chip").forEach(b => {
+        const c = lower(b.getAttribute("data-chip") || "");
+        b.classList.toggle("active", c === activeChip);
+      });
+    }
+
+    function chipMatch(r){
+      if (!activeChip) return true;
+      return r._door.includes(activeChip) || r._tags.includes(activeChip);
+    }
+
+    function setQuery(q){
+      els.q.value = q;
+      els.maker.value = "";
+      els.type.value = "";
+      visible = PAGE_SIZE;
+      renderResults();
+      els.q.focus();
+    }
+
+    function applyQuick(key){
+      const add = QUICK[key] || "";
+      if (!add) return;
+      els.q.value = add;
+      visible = PAGE_SIZE;
+      renderResults();
+      els.q.focus();
+    }
+
+    function toggleFav(id){
+      if (favs.includes(id)) favs = favs.filter(x => x !== id);
+      else favs = [id, ...favs].slice(0, MAX_FAVS);
+      saveFavs();
+      requestAnimationFrame(() => { renderFavs(); renderResults(); });
+    }
+
+    function clearFavs(){
+      favs = [];
+      saveFavs();
+      renderFavs();
+      renderResults();
+    }
+
+    function cardHTML(r){
+      const id = favId(r);
+      const isFav = favs.includes(id);
+      const model = r.Model_Final || r.Model_Auto || r.DoorType_Final || "";
+      const mtype = (r.ManualType_Final || "Manual").toUpperCase();
+      const pretty = prettifyFileName(r.FileName);
+
+      return `
+        <div class="mh-card" data-id="${esc(id)}" tabindex="0">
+          <div class="mh-pillRow">
+            <div class="mh-pill">${esc(r.Manufacturer)} • ${esc(mtype)}</div>
+            <button class="mh-favBtn ${isFav ? "active" : ""} mh-ripple" type="button" aria-label="${isFav ? 'Remove from favorites' : 'Add to favorites'}">
+              ${isFav ? "★" : "☆"}
+            </button>
+          </div>
+          <div class="mh-model">${esc(model)}</div>
+          <div class="mh-file">${esc(pretty)}</div>
+          <div class="mh-actions">
+            <a class="mh-open mh-ripple" href="${esc(r.DriveLink)}" target="_blank" rel="noopener noreferrer">Open PDF</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachFavHandlers(container){
+      container.querySelectorAll(".mh-card").forEach(card => {
+        const id = card.getAttribute("data-id");
+        const btn = card.querySelector(".mh-favBtn");
+        if (!btn || !id) return;
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleFav(id);
+        }, { signal: ctrl.signal });
+      });
+    }
+
+    function renderFavs(){
+      const favSet = new Set(favs);
+      const favRows = data.filter(r => favSet.has(favId(r)));
+
+      if (!favRows.length){
+        els.favWrap.style.display = "none";
+        els.favResults.innerHTML = "";
+        return;
+      }
+
+      els.favWrap.style.display = "block";
+      els.favResults.innerHTML = favRows.map(cardHTML).join("");
+      attachFavHandlers(els.favResults);
+    }
+
+    function getFiltered(){
+      const q = els.q.value;
+      const maker = els.maker.value;
+      const type = els.type.value;
+
+      const compiled = compileQuery(q);
+
+      let rows = data.filter(r => {
+        if (maker && r.Manufacturer !== maker) return false;
+        if (type && r.ManualType_Final !== type) return false;
+        if (!chipMatch(r)) return false;
+        return queryMatchesRow(r, compiled);
+      });
+
+      rows = rows
+        .map(r => ({ r, s: scoreRow(r, maker, type, activeChip, compiled) }))
+        .sort((a,b) => b.s - a.s || a.r.FileName.localeCompare(b.r.FileName))
+        .map(x => x.r);
+
+      return rows;
+    }
+
+    function renderResults(){
+      const filtered = getFiltered();
+      const total = filtered.length;
+      const showing = Math.min(visible, total);
+
+      let statusMsg;
+      if (total === 0){
+        const q = norm(els.q.value);
+        statusMsg = q
+          ? `No matches for: ${q}`
+          : `0 manuals found (check the CSV + DriveLink column).`;
+      } else {
+        statusMsg = `Showing ${showing} of ${total} manuals`;
+      }
+      
+      els.status.textContent = statusMsg;
+      announce(statusMsg);
+
+      els.results.innerHTML = filtered.slice(0, showing).map(cardHTML).join("");
+      attachFavHandlers(els.results);
+
+      if (els.showMore){
+        const more = total - showing;
+        els.showMore.style.display = more > 0 ? "inline-flex" : "none";
+        els.showMore.textContent = more > 0 ? `Show ${Math.min(PAGE_SIZE, more)} more` : "";
+      }
+
+      // NEW: Sync search to URL
+      syncToURL();
+    }
+
+    function goToFavs(){
+      if (els.favWrap.style.display !== "none"){
+        els.favWrap.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      els.status.textContent = "No favorites yet — tap ☆ on a manual to save it.";
+      els.results.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    let t = 0;
+    function scheduleRender(){
+      clearTimeout(t);
+      t = setTimeout(() => { visible = PAGE_SIZE; renderResults(); }, 90);
+    }
+
+    function bind(){
+      els.q.addEventListener("input", scheduleRender, { signal: ctrl.signal });
+      els.maker.addEventListener("change", () => { visible = PAGE_SIZE; renderResults(); }, { signal: ctrl.signal });
+      els.type.addEventListener("change", () => { visible = PAGE_SIZE; renderResults(); }, { signal: ctrl.signal });
+
+      els.clear.addEventListener("click", () => {
+        els.q.value = "";
+        visible = PAGE_SIZE;
+        renderResults();
+        els.q.focus();
+      }, { signal: ctrl.signal });
+
+      els.favClearAll.addEventListener("click", clearFavs, { signal: ctrl.signal });
+      els.goFav.addEventListener("click", goToFavs, { signal: ctrl.signal });
+
+      els.chipsWrap.querySelectorAll(".mh-chip").forEach(btn => {
+        btn.classList.add("mh-ripple");
+        btn.addEventListener("click", () => {
+          setChip(btn.getAttribute("data-chip") || "");
+          visible = PAGE_SIZE;
+          renderResults();
+        }, { signal: ctrl.signal });
+      });
+
+      els.qbtns.forEach(b => {
+        b.classList.add("mh-ripple");
+        b.addEventListener("click", () => {
+          const quick = b.getAttribute("data-quick");
+          const q = b.getAttribute("data-q");
+          const chip = b.getAttribute("data-chip");
+
+          if (chip != null) setChip(chip);
+
+          if (quick) applyQuick(quick);
+          else setQuery(q || "");
+        }, { signal: ctrl.signal });
+      });
+
+      if (els.showMore){
+        els.showMore.addEventListener("click", () => {
+          visible += PAGE_SIZE;
+          renderResults();
+        }, { signal: ctrl.signal });
+      }
+
+      /* NEW: Keyboard navigation for results grid */
+      els.results.addEventListener("keydown", (e) => {
+        const cards = [...els.results.querySelectorAll(".mh-card")];
+        const current = document.activeElement?.closest(".mh-card");
+        const idx = cards.indexOf(current);
+        
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+          e.preventDefault();
+          const next = cards[idx + 1];
+          if (next) next.focus();
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          e.preventDefault();
+          const prev = cards[idx - 1];
+          if (prev) prev.focus();
+        } else if (e.key === "Enter" && current) {
+          const link = current.querySelector(".mh-open");
+          if (link) link.click();
+        }
+      }, { signal: ctrl.signal });
+    }
+
+    /* NEW: Fetch with caching for faster loads */
+    async function fetchWithCache(url, signal) {
+      const cached = safeJsonParse(localStorage.getItem(CACHE_KEY), null);
+      if (cached && Date.now() - cached.ts < CACHE_TTL) {
+        console.log("ManualHub: using cached data");
+        return cached.text;
+      }
+      
+      const res = await fetch(url, { cache: "no-store", signal });
+      if (!res.ok) throw new Error("CSV fetch failed: " + res.status);
+      const text = await res.text();
+      
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), text }));
+      } catch (e) { /* quota exceeded, ignore */ }
+      
+      return text;
+    }
+
+    async function load(){
+      els.status.textContent = "Loading manuals…";
+      renderSkeletons(6);
+
+      try {
+        const text = await fetchWithCache(CSV_URL, ctrl.signal);
+        const parsed = parseCSV(text);
+        const headers = parsed.shift().map(h => norm(h));
+
+        const requiredHeaders = ["Manufacturer","FileName","DriveLink","ManualType_Final","Tags","DoorType_Final","Model_Auto","Model_Final","SourceURL"];
+        const headerSet = new Set(headers);
+        const missing = requiredHeaders.filter(h => !headerSet.has(h));
+        if (missing.length){
+          console.error("ManualHub CSV missing headers:", missing, "Found headers:", headers);
+          els.status.textContent = "CSV header mismatch. Missing: " + missing.join(", ");
+          els.results.innerHTML = "";
+          return;
+        }
+
+        const idx = Object.fromEntries(headers.map((h,i)=>[h,i]));
+        const get = (row, key) => norm(row[idx[key]]);
+
+        data = parsed.map(row => {
+          const r = {
+            Manufacturer: get(row,"Manufacturer"),
+            FileName: get(row,"FileName"),
+            DriveLink: get(row,"DriveLink"),
+            ManualType_Final: get(row,"ManualType_Final"),
+            Tags: get(row,"Tags"),
+            DoorType_Final: get(row,"DoorType_Final"),
+            Model_Auto: get(row,"Model_Auto"),
+            Model_Final: get(row,"Model_Final"),
+            SourceURL: get(row,"SourceURL")
+          };
+
+          let hay = lower([
+            r.Manufacturer,
+            r.ManualType_Final,
+            r.Model_Final,
+            r.Model_Auto,
+            r.DoorType_Final,
+            r.FileName,
+            r.Tags
+          ].filter(Boolean).join(" "));
+
+          const man = lower(r.Manufacturer);
+          if (man.includes("nabtesco") || man.includes("nabteb")) hay += " nabco";
+          if (man.includes("dormakaba")) hay += " dorma";
+          if (man.includes("assa")) hay += " besam";
+
+          r._tags = lower(r.Tags);
+          r._door = lower(r.DoorType_Final);
+          r._hay = hay;
+          r._clean = " " + cleanText(hay) + " ";
+          r._compact = compactText(hay);
+
+          return r;
+        }).filter(r => !!r.DriveLink);
+
+        buildSelect(els.maker, data.map(d => d.Manufacturer), "All Manufacturers");
+        buildSelect(els.type, data.map(d => d.ManualType_Final), "All Manual Types");
+
+        // NEW: Load search params from URL
+        loadFromURL();
+
+        renderFavs();
+        renderResults();
+        
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+        console.error(err);
+        
+        // NEW: Retry button on error
+        els.status.innerHTML = `
+          Could not load manuals. 
+          <button id="mhRetry" class="mh-btn-lite mh-ripple" type="button">Retry</button>
+        `;
+        els.results.innerHTML = "";
+        
+        document.getElementById("mhRetry")?.addEventListener("click", () => {
+          localStorage.removeItem(CACHE_KEY); // Clear bad cache
+          load();
+        }, { signal: ctrl.signal });
+      }
+    }
+
+    bind();
+    load();
+  }
+
+  function boot(){ setTimeout(initManualHub, 0); }
+
+  document.addEventListener("DOMContentLoaded", boot);
+  document.addEventListener("turbolinks:load", boot);
+  document.addEventListener("site:afterContentUpdate", boot);
+  window.addEventListener("hashchange", boot);
+})();
+</script>
+  </main>
+</div>
+
+<script>
+// Mobile sidebar toggle
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(e) {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
+    sidebar.classList.remove('open');
+  }
+});
+
+// Highlight current nav link
+const currentPath = window.location.pathname;
+document.querySelectorAll('.nav-link').forEach(link => {
+  const href = link.getAttribute('href');
+  if (href === currentPath || (currentPath.startsWith(href) && href !== '/')) {
+    link.classList.add('active');
+  }
+});
+</script>
+
+<script src="/auth.js"></script>
+</body></html>

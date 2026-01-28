@@ -1,0 +1,2411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Command Center • AAS Portal</title>
+/* Auth Required Overlay */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.auth-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.auth-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 50px;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+}
+.auth-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+}
+.auth-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.auth-subtitle {
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #00d4ff;
+  color: #000;
+  border: none;
+  padding: 16px 40px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-btn:hover {
+  background: #00b8e6;
+  transform: translateY(-2px);
+}
+.auth-loading {
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  margin-top: 16px;
+}
+<style>html,body{margin:0;padding:0;}</style>
+<link rel="stylesheet" href="/assets/portal.css">
+</head>
+<body>
+<!-- Auth Required Overlay -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <img src="https://images.squarespace-cdn.com/content/53292562e4b06710691770b4/ceffb36f-efdc-4b4c-a007-ae99b1943f81/door.webp" alt="AAS" class="auth-logo">
+    <h1 class="auth-title">AAS Service Portal</h1>
+    <p class="auth-subtitle">Sign in to access this page.</p>
+    <button class="auth-btn" id="authLoginBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Sign In
+    </button>
+    <p class="auth-loading" id="authLoadingText">Checking authentication...</p>
+  </div>
+</div>
+<!-- v3 Premium: Animated floating gradient background -->
+<div class="animated-bg" aria-hidden="true"></div>
+<div class="animated-bg-orb" aria-hidden="true"></div>
+
+<div class="app-shell">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <header class="sidebar-header">
+      <a href="/" class="sidebar-logo">
+        <img src="https://images.squarespace-cdn.com/content/53292562e4b06710691770b4/ceffb36f-efdc-4b4c-a007-ae99b1943f81/door.webp" alt="AAS">
+        <span class="sidebar-logo-text">AAS</span>
+      </a>
+    </header>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <a href="/" class="nav-link" data-page="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+      </div>
+      
+      <div class="nav-section" id="techNav">
+        <div class="nav-section-title">Tech Tools</div>
+        <a href="/tech/parts" class="nav-link" data-page="parts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Parts Finder
+        </a>
+        <a href="/tech/command" class="nav-link" data-page="command">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Command Center
+        </a>
+        <a href="/tech/doors" class="nav-link" data-page="doors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+          Door Browser
+        </a>
+        <a href="/tech/manuals" class="nav-link" data-page="manuals">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Tech Manuals
+        </a>
+      </div>
+      
+      <div class="nav-section" id="customerNav" style="display:none;">
+        <div class="nav-section-title">Customer</div>
+        <a href="/customer/doors" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+          My Doors
+        </a>
+        <a href="/customer/history" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Service History
+        </a>
+        <a href="/customer/billing" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Billing
+        </a>
+      </div>
+    </nav>
+    
+    <footer class="sidebar-footer">
+      <!-- Login Button -->
+      <a href="#" id="loginBtn" class="nav-link" style="background: var(--accent); color: #000; font-weight: 700; justify-content: center; margin-bottom: 12px; border-radius: 8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In
+      </a>
+      <!-- User Badge -->
+      <div class="user-badge" id="userBadge" style="display: none;">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">Guest</div>
+          <div class="user-role" id="userRole">Not signed in</div>
+        </div>
+      </div>
+      <!-- Logout Button -->
+      <a href="#" id="logoutBtn" class="nav-link" style="display: none; color: var(--text-muted); font-size: 13px; justify-content: center; margin-top: 8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+    </footer>
+  </aside>
+  
+  <!-- Mobile toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+<!--
+  AAS COMMAND CENTER v2.3 (Standalone)
+  Automatic Access Solutions • Technician Portal
+  Self-contained - no external dependencies
+  
+  CHANGES FROM v2.2:
+  - More inclusive search (any match shows, weighting handles ordering)
+  - Door ID search automatically boosts related manuals by manufacturer/model
+  - Cached merged doors (performance improvement)
+  - Single-pass highlight function (fixes overlapping match bug)
+  - Extracted config constants
+-->
+
+<div id="aasCommandCenter">
+  <!-- Animated Background -->
+  <div class="cc-bg" aria-hidden="true"></div>
+
+  <!-- Screen Reader Announcements -->
+  <div id="ccAnnounce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="cc-shell">
+    <!-- Hero -->
+    <div style="text-align:center; padding:28px 16px 16px;">
+      <div style="display:inline-block; padding:20px 32px; border-radius:22px; background:rgba(11,18,32,0.4); border:1px solid rgba(255,255,255,0.08);">
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:16px 24px;">
+          <img 
+            src="https://images.squarespace-cdn.com/content/53292562e4b06710691770b4/c75debc4-7194-4008-875d-856c6fa3b205/dis+lis+logo.webp?content-type=image%2Fwebp" 
+            alt="AAS Logo" 
+            style="height:clamp(80px, 15vw, 140px); width:auto; filter: drop-shadow(0 0 25px rgba(0,210,255,0.6)) drop-shadow(0 0 50px rgba(0,210,255,0.3));"
+          >
+          <div style="text-align:center;">
+            <div style="font-family:system-ui,-apple-system,sans-serif; letter-spacing:6px; font-weight:300; font-size:clamp(20px, 5vw, 32px); color:#b8e5ff; text-shadow: 0 0 5px rgba(0,210,255,0.9), 0 0 15px rgba(0,210,255,0.7), 0 0 30px rgba(0,210,255,0.5), 0 0 50px rgba(0,210,255,0.3);">
+              AUTOMATIC
+            </div>
+            <div style="font-family:system-ui,-apple-system,sans-serif; letter-spacing:10px; font-weight:300; font-size:clamp(12px, 3vw, 18px); color:#8ad4f0; margin-top:6px; text-shadow: 0 0 5px rgba(0,210,255,0.8), 0 0 15px rgba(0,210,255,0.6), 0 0 30px rgba(0,210,255,0.4);">
+              ACCESS
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <header class="cc-hero">
+      <div class="cc-hero__badge">
+        <span class="cc-hero__badge-dot"></span>
+        AAS TECHNICIAN PORTAL
+      </div>
+      <h1 class="cc-hero__title">Command Center</h1>
+      <p class="cc-hero__sub">Search manuals, parts, service records, and doors — all in one place.</p>
+
+      <!-- Global Search -->
+      <div class="cc-search" role="combobox" aria-expanded="false" aria-haspopup="listbox">
+        <div class="cc-search__bar">
+          <svg class="cc-search__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/>
+          </svg>
+
+          <input 
+            id="ccGlobalSearch" 
+            class="cc-search__input" 
+            type="search" 
+            placeholder="Search everything… (try: door: 101, manual: stanley, customer name, address)"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search manuals, parts, service records, and doors"
+            aria-controls="ccSearchResults"
+            aria-autocomplete="list"
+          />
+
+          <div class="cc-search__loading" aria-hidden="true">
+            <div class="cc-spinner"></div>
+          </div>
+
+          <kbd class="cc-search__kbd"><span>⌘</span><span>K</span></kbd>
+        </div>
+
+        <!-- Results Dropdown -->
+        <div id="ccSearchResults" class="cc-results" role="listbox"></div>
+      </div>
+    </header>
+
+    <!-- Quick Actions -->
+    <section class="cc-actions" aria-label="Quick Actions">
+      <div class="cc-actions__grid">
+        <a href="/tech/manuals" class="cc-action" data-type="manuals">
+          <div class="cc-action__glow"></div>
+          <div class="cc-action__icon cc-action__icon--manuals">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+              <path d="M8 7h8M8 11h6"/>
+            </svg>
+          </div>
+          <span class="cc-action__label">Manuals Hub</span>
+          <span class="cc-action__count" id="ccManualCount">
+            <span class="cc-action__skeleton"></span>
+          </span>
+        </a>
+
+        <a href="/tech/parts" class="cc-action" data-type="parts">
+          <div class="cc-action__glow"></div>
+          <div class="cc-action__icon cc-action__icon--parts">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+            </svg>
+          </div>
+          <span class="cc-action__label">Parts Finder</span>
+          <span class="cc-action__count" id="ccPartsCount">
+            <span class="cc-action__skeleton"></span>
+          </span>
+        </a>
+
+
+        <a href="/tech/doors" class="cc-action" data-type="doors">
+          <div class="cc-action__glow"></div>
+          <div class="cc-action__icon cc-action__icon--doors">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"/>
+              <path d="M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/>
+              <circle cx="15" cy="12" r="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <span class="cc-action__label">Door Browser</span>
+          <span class="cc-action__count" id="ccDoorCount">
+            <span class="cc-action__skeleton"></span>
+          </span>
+        </a>
+
+        <a href="https://app.limblecmms.com" target="_blank" rel="noopener" class="cc-action">
+          <div class="cc-action__glow cc-action__glow--limble"></div>
+          <div class="cc-action__icon cc-action__icon--limble">
+            <div class="cc-action__pulse"></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <span class="cc-action__label">Open Limble</span>
+          <span class="cc-action__count">CMMS Dashboard</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Recent Activity -->
+    <section class="cc-section">
+      <div class="cc-section__header">
+        <h2 class="cc-section__title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Recent Activity
+        </h2>
+        <button id="ccClearRecent" class="cc-btn cc-btn--ghost">Clear</button>
+      </div>
+
+      <div id="ccRecentActivity" class="cc-recent">
+        <div class="cc-recent__empty">
+          <div class="cc-recent__empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18M9 21V9"/>
+            </svg>
+          </div>
+          <p>No recent activity yet</p>
+          <p class="cc-recent__empty-hint">Items you view will appear here for quick access</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="cc-section">
+      <h2 class="cc-section__title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 20V10M12 20V4M6 20v-6"/>
+        </svg>
+        System Overview
+      </h2>
+
+      <div class="cc-stats">
+        <div class="cc-stat" data-type="manuals">
+          <div class="cc-stat__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+              <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+            </svg>
+          </div>
+          <div class="cc-stat__content">
+            <div class="cc-stat__value" id="ccStatManuals">—</div>
+            <div class="cc-stat__label">Manuals</div>
+          </div>
+          <div class="cc-stat__bar"></div>
+        </div>
+
+        <div class="cc-stat" data-type="parts">
+          <div class="cc-stat__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+              <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+            </svg>
+          </div>
+          <div class="cc-stat__content">
+            <div class="cc-stat__value" id="ccStatParts">—</div>
+            <div class="cc-stat__label">Parts</div>
+          </div>
+          <div class="cc-stat__bar"></div>
+        </div>
+
+        <div class="cc-stat" data-type="service">
+          <div class="cc-stat__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="1"/>
+            </svg>
+          </div>
+          <div class="cc-stat__content">
+            <div class="cc-stat__value" id="ccStatService">—</div>
+            <div class="cc-stat__label">Service Records</div>
+          </div>
+          <div class="cc-stat__bar"></div>
+        </div>
+
+        <div class="cc-stat" data-type="doors">
+          <div class="cc-stat__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+              <path d="M3 21h18M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/>
+              <circle cx="15" cy="12" r="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="cc-stat__content">
+            <div class="cc-stat__value" id="ccStatDoors">—</div>
+            <div class="cc-stat__label">Doors Tracked</div>
+          </div>
+          <div class="cc-stat__bar"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="cc-footer">
+      <div class="cc-footer__brand">
+        <div class="cc-footer__dot"></div>
+        <span>Automatic Access Solutions</span>
+      </div>
+      <p class="cc-footer__version">Command Center v2.3.1</p>
+    </footer>
+  </div>
+</div>
+
+<style>
+/* ============================================
+   AAS COMMAND CENTER v2.3 — STANDALONE
+   Dark glass aesthetic with integrated design system
+   ============================================ */
+
+/* Design Tokens */
+#aasCommandCenter {
+  --cc-bg: #070a0f;
+  --cc-surface: #0d1117;
+  --cc-glass: rgba(13, 17, 23, 0.72);
+  --cc-glass-border: rgba(255, 255, 255, 0.08);
+  --cc-glass-border-hover: rgba(255, 255, 255, 0.14);
+  --cc-text: rgba(255, 255, 255, 0.92);
+  --cc-text-muted: rgba(255, 255, 255, 0.60);
+  --cc-text-faint: rgba(255, 255, 255, 0.40);
+  --cc-primary: #6ea8fe;
+  --cc-primary-glow: rgba(110, 168, 254, 0.12);
+  --cc-success: #63e6be;
+  --cc-success-glow: rgba(99, 230, 190, 0.12);
+  --cc-warning: #ffd43b;
+  --cc-warning-glow: rgba(255, 212, 59, 0.12);
+  --cc-danger: #ff6b6b;
+  --cc-danger-glow: rgba(255, 107, 107, 0.12);
+  --cc-pink: #f783ac;
+  --cc-pink-glow: rgba(247, 131, 172, 0.12);
+  --cc-limble: #58a6ff;
+  --cc-limble-glow: rgba(88, 166, 255, 0.15);
+  --cc-radius-sm: 8px;
+  --cc-radius-md: 12px;
+  --cc-radius-lg: 16px;
+  --cc-radius-xl: 20px;
+  --cc-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --cc-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --cc-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#aasCommandCenter {
+  position: relative;
+  min-height: 100vh;
+  background: var(--cc-bg);
+  color: var(--cc-text);
+  font-family: var(--cc-font);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#aasCommandCenter *, #aasCommandCenter *::before, #aasCommandCenter *::after {
+  box-sizing: border-box;
+}
+
+#aasCommandCenter .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Animated Background */
+.cc-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(110, 168, 254, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(247, 131, 172, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 50% at 75% 80%, rgba(99, 230, 190, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 25% 85%, rgba(255, 212, 59, 0.04) 0%, transparent 50%),
+    linear-gradient(180deg, #070a0f 0%, #0a0e14 100%);
+  animation: ccBgFloat 30s ease-in-out infinite;
+}
+
+.cc-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+}
+
+@keyframes ccBgFloat {
+  0%, 100% { background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%; }
+  25% { background-position: 5% 5%, 95% 5%, 95% 95%, 5% 95%, 0% 0%; }
+  50% { background-position: 10% 0%, 90% 10%, 90% 90%, 10% 90%, 0% 0%; }
+  75% { background-position: 5% 5%, 95% 5%, 95% 95%, 5% 95%, 0% 0%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-bg { animation: none !important; }
+}
+
+/* Shell */
+.cc-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* Hero */
+.cc-hero {
+  padding: 56px 0 40px;
+  text-align: center;
+}
+
+.cc-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+  background: var(--cc-primary-glow);
+  border: 1px solid rgba(110, 168, 254, 0.20);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--cc-primary);
+}
+
+.cc-hero__badge-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--cc-primary);
+  border-radius: 50%;
+  animation: ccPulse 2s ease-in-out infinite;
+}
+
+@keyframes ccPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.cc-hero__title {
+  font-size: clamp(32px, 6vw, 56px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 16px;
+  background: linear-gradient(135deg, #ffffff 0%, var(--cc-primary) 50%, var(--cc-pink) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: ccGradientShift 8s ease-in-out infinite;
+}
+
+@keyframes ccGradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.cc-hero__sub {
+  color: var(--cc-text-muted);
+  font-size: 17px;
+  margin: 0 auto;
+  max-width: 540px;
+}
+
+/* Search */
+.cc-search {
+  max-width: 640px;
+  margin: 32px auto 0;
+  position: relative;
+}
+
+.cc-search__bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  background: var(--cc-glass);
+  border: 1px solid var(--cc-glass-border);
+  border-radius: var(--cc-radius-xl);
+  box-shadow: var(--cc-shadow), inset 0 1px 0 rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  transition: all 0.2s ease;
+}
+
+.cc-search__bar:focus-within {
+  border-color: rgba(110, 168, 254, 0.35);
+  box-shadow: var(--cc-shadow), 0 0 0 4px rgba(110, 168, 254, 0.08), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.cc-search__icon {
+  width: 22px;
+  height: 22px;
+  color: var(--cc-text-faint);
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.cc-search__bar:focus-within .cc-search__icon {
+  color: var(--cc-primary);
+}
+
+.cc-search__input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--cc-text);
+  font-size: 17px;
+  font-family: inherit;
+  min-width: 0;
+}
+
+.cc-search__input::placeholder {
+  color: var(--cc-text-faint);
+}
+
+.cc-search__loading {
+  display: none;
+}
+
+.cc-search.is-loading .cc-search__loading {
+  display: flex;
+}
+
+.cc-search.is-loading .cc-search__kbd {
+  display: none;
+}
+
+.cc-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--cc-glass-border);
+  border-top-color: var(--cc-primary);
+  border-radius: 50%;
+  animation: ccSpin 0.8s linear infinite;
+}
+
+@keyframes ccSpin {
+  to { transform: rotate(360deg); }
+}
+
+.cc-search__kbd {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--cc-glass-border);
+  border-radius: var(--cc-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cc-text-faint);
+  font-family: inherit;
+}
+
+/* Search Results */
+.cc-results {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-top: 10px;
+  max-height: 460px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: rgba(13, 17, 23, 0.96);
+  border: 1px solid var(--cc-glass-border);
+  border-radius: var(--cc-radius-lg);
+  box-shadow: var(--cc-shadow-lg);
+  backdrop-filter: blur(24px);
+  display: none;
+  z-index: 1000;
+}
+
+.cc-results::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cc-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cc-results::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+.cc-results.is-open {
+  display: block;
+  animation: ccSlideIn 0.15s ease-out;
+}
+
+@keyframes ccSlideIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cc-results__section {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.cc-results__section:last-child { border-bottom: none; }
+
+.cc-results__label {
+  padding: 10px 20px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--cc-text-faint);
+}
+
+.cc-results__item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  border-left: 3px solid transparent;
+  margin: 0 4px;
+  border-radius: 0 var(--cc-radius-sm) var(--cc-radius-sm) 0;
+}
+
+.cc-results__item:hover,
+.cc-results__item.is-active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cc-results__item.is-active {
+  border-left-color: var(--cc-primary);
+  background: rgba(110, 168, 254, 0.06);
+}
+
+/* Related manual indicator */
+.cc-results__item.is-related {
+  border-left-color: var(--cc-success);
+  background: rgba(99, 230, 190, 0.04);
+}
+
+.cc-results__item.is-related:hover {
+  background: rgba(99, 230, 190, 0.08);
+}
+
+.cc-results__item-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cc-radius-md);
+  flex-shrink: 0;
+}
+
+.cc-results__item-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.cc-results__item-icon--manual { background: var(--cc-primary-glow); color: var(--cc-primary); }
+.cc-results__item-icon--part { background: var(--cc-success-glow); color: var(--cc-success); }
+.cc-results__item-icon--service { background: var(--cc-warning-glow); color: var(--cc-warning); }
+.cc-results__item-icon--door { background: var(--cc-pink-glow); color: var(--cc-pink); }
+
+.cc-results__item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.cc-results__item-title {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--cc-text);
+}
+
+.cc-results__item-title mark {
+  background: rgba(110, 168, 254, 0.25);
+  color: inherit;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+.cc-results__item-meta {
+  font-size: 13px;
+  color: var(--cc-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.cc-results__item-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--cc-success-glow);
+  color: var(--cc-success);
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.cc-results__empty {
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.cc-results__empty-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.cc-results__empty p {
+  margin: 0;
+  color: var(--cc-text-muted);
+}
+
+.cc-results__empty-hint {
+  font-size: 13px;
+  color: var(--cc-text-faint);
+  margin-top: 8px !important;
+}
+
+/* Quick Actions */
+.cc-actions {
+  margin-top: 48px;
+}
+
+.cc-actions__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1100px) {
+  .cc-actions__grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .cc-actions__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+}
+
+.cc-action {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 28px 16px 24px;
+  background: var(--cc-glass);
+  border: 1px solid var(--cc-glass-border);
+  border-radius: var(--cc-radius-lg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  text-decoration: none;
+  color: var(--cc-text);
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.cc-action::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.cc-action:hover {
+  transform: translateY(-4px);
+  border-color: var(--cc-glass-border-hover);
+  box-shadow: var(--cc-shadow);
+}
+
+.cc-action:hover::before { opacity: 1; }
+
+.cc-action__glow {
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.cc-action:hover .cc-action__glow { opacity: 1; }
+
+.cc-action[data-type="manuals"] .cc-action__glow { background: radial-gradient(circle, var(--cc-primary-glow) 0%, transparent 70%); }
+.cc-action[data-type="parts"] .cc-action__glow { background: radial-gradient(circle, var(--cc-success-glow) 0%, transparent 70%); }
+.cc-action[data-type="service"] .cc-action__glow { background: radial-gradient(circle, var(--cc-warning-glow) 0%, transparent 70%); }
+.cc-action[data-type="doors"] .cc-action__glow { background: radial-gradient(circle, var(--cc-pink-glow) 0%, transparent 70%); }
+.cc-action__glow--limble { background: radial-gradient(circle, var(--cc-limble-glow) 0%, transparent 70%); }
+.cc-action__glow--cta { background: radial-gradient(circle, var(--cc-danger-glow) 0%, transparent 70%); }
+
+.cc-action__icon {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cc-radius-md);
+  z-index: 1;
+}
+
+.cc-action__icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.cc-action__icon--manuals { background: var(--cc-primary-glow); color: var(--cc-primary); }
+.cc-action__icon--parts { background: var(--cc-success-glow); color: var(--cc-success); }
+.cc-action__icon--service { background: var(--cc-warning-glow); color: var(--cc-warning); }
+.cc-action__icon--doors { background: var(--cc-pink-glow); color: var(--cc-pink); }
+.cc-action__icon--limble { background: var(--cc-limble-glow); color: var(--cc-limble); }
+
+.cc-action__pulse {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background: var(--cc-limble);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--cc-limble);
+  animation: ccPulse 2s ease-in-out infinite;
+}
+
+.cc-action__label {
+  font-weight: 650;
+  font-size: 14px;
+  text-align: center;
+  z-index: 1;
+}
+
+.cc-action__count {
+  font-size: 13px;
+  color: var(--cc-text-muted);
+  z-index: 1;
+  min-height: 18px;
+}
+
+.cc-action__skeleton {
+  display: inline-block;
+  width: 56px;
+  height: 14px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: ccShimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes ccShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Sections */
+.cc-section {
+  margin-top: 56px;
+}
+
+.cc-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.cc-section__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--cc-text);
+}
+
+.cc-section__title svg {
+  width: 22px;
+  height: 22px;
+  color: var(--cc-text-muted);
+}
+
+/* Buttons */
+.cc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--cc-radius-md);
+  border: 1px solid var(--cc-glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--cc-text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cc-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--cc-glass-border-hover);
+}
+
+.cc-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.cc-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Recent Activity */
+.cc-recent {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 640px) {
+  .cc-recent { grid-template-columns: 1fr; }
+}
+
+.cc-recent__item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  background: var(--cc-glass);
+  border: 1px solid var(--cc-glass-border);
+  border-radius: var(--cc-radius-md);
+  backdrop-filter: blur(12px);
+  text-decoration: none;
+  color: var(--cc-text);
+  transition: all 0.2s ease;
+}
+
+.cc-recent__item:hover {
+  transform: translateY(-2px);
+  border-color: var(--cc-glass-border-hover);
+  box-shadow: var(--cc-shadow);
+}
+
+.cc-recent__icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cc-radius-md);
+  flex-shrink: 0;
+}
+
+.cc-recent__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cc-recent__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.cc-recent__title {
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cc-recent__meta {
+  font-size: 13px;
+  color: var(--cc-text-muted);
+  margin-top: 3px;
+}
+
+.cc-recent__empty {
+  grid-column: 1 / -1;
+  padding: 56px 24px;
+  text-align: center;
+  background: var(--cc-glass);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: var(--cc-radius-lg);
+}
+
+.cc-recent__empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  color: var(--cc-text-faint);
+  opacity: 0.5;
+}
+
+.cc-recent__empty-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cc-recent__empty p {
+  margin: 0;
+  color: var(--cc-text-muted);
+}
+
+.cc-recent__empty-hint {
+  font-size: 14px;
+  color: var(--cc-text-faint);
+  margin-top: 8px !important;
+}
+
+/* Stats */
+.cc-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .cc-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .cc-stats { grid-template-columns: 1fr 1fr; gap: 12px; }
+}
+
+.cc-stat {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 20px;
+  background: var(--cc-glass);
+  border: 1px solid var(--cc-glass-border);
+  border-radius: var(--cc-radius-md);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.cc-stat:hover {
+  transform: translateY(-2px);
+  border-color: var(--cc-glass-border-hover);
+}
+
+.cc-stat__icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cc-radius-sm);
+  flex-shrink: 0;
+}
+
+.cc-stat__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.cc-stat[data-type="manuals"] .cc-stat__icon { background: var(--cc-primary-glow); color: var(--cc-primary); }
+.cc-stat[data-type="parts"] .cc-stat__icon { background: var(--cc-success-glow); color: var(--cc-success); }
+.cc-stat[data-type="service"] .cc-stat__icon { background: var(--cc-warning-glow); color: var(--cc-warning); }
+.cc-stat[data-type="doors"] .cc-stat__icon { background: var(--cc-pink-glow); color: var(--cc-pink); }
+
+.cc-stat__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.cc-stat__value {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cc-text);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.cc-stat.is-loaded .cc-stat__value {
+  animation: ccPopIn 0.35s ease-out;
+}
+
+@keyframes ccPopIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  70% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.cc-stat__label {
+  font-size: 13px;
+  color: var(--cc-text-muted);
+  margin-top: 4px;
+}
+
+.cc-stat__bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s ease-out 0.1s;
+}
+
+.cc-stat.is-loaded .cc-stat__bar {
+  transform: scaleX(1);
+}
+
+.cc-stat[data-type="manuals"] .cc-stat__bar { background: linear-gradient(90deg, var(--cc-primary) 0%, transparent 100%); }
+.cc-stat[data-type="parts"] .cc-stat__bar { background: linear-gradient(90deg, var(--cc-success) 0%, transparent 100%); }
+.cc-stat[data-type="service"] .cc-stat__bar { background: linear-gradient(90deg, var(--cc-warning) 0%, transparent 100%); }
+.cc-stat[data-type="doors"] .cc-stat__bar { background: linear-gradient(90deg, var(--cc-pink) 0%, transparent 100%); }
+
+/* Footer */
+.cc-footer {
+  margin-top: 64px;
+  padding: 28px 0;
+  border-top: 1px solid var(--cc-glass-border);
+  text-align: center;
+}
+
+.cc-footer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--cc-text-muted);
+}
+
+.cc-footer__dot {
+  width: 8px;
+  height: 8px;
+  background: var(--cc-primary);
+  border-radius: 50%;
+}
+
+.cc-footer__version {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--cc-text-faint);
+}
+
+/* Mobile refinements */
+@media (max-width: 640px) {
+  .cc-shell { padding: 0 16px 60px; }
+  .cc-hero { padding: 40px 0 32px; }
+  .cc-hero__badge { font-size: 10px; padding: 6px 12px; }
+  .cc-search__kbd { display: none; }
+  .cc-search__bar { padding: 14px 16px; }
+  .cc-action { padding: 22px 12px 18px; }
+  .cc-action__icon { width: 48px; height: 48px; }
+  .cc-action__icon svg { width: 24px; height: 24px; }
+  .cc-action__label { font-size: 13px; }
+  .cc-section { margin-top: 40px; }
+  .cc-section__title { font-size: 18px; }
+  .cc-stat { padding: 16px 14px; gap: 12px; }
+  .cc-stat__icon { width: 38px; height: 38px; }
+  .cc-stat__icon svg { width: 18px; height: 18px; }
+  .cc-stat__value { font-size: 22px; }
+  .cc-stat__label { font-size: 11px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+/* Auth Required Overlay */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.auth-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.auth-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 50px;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+}
+.auth-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+}
+.auth-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.auth-subtitle {
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #00d4ff;
+  color: #000;
+  border: none;
+  padding: 16px 40px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-btn:hover {
+  background: #00b8e6;
+  transform: translateY(-2px);
+}
+.auth-loading {
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  margin-top: 16px;
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  // ============================
+  // GLOBAL GUARD (Squarespace soft-nav safe)
+  // ============================
+  const GLOBAL = window.__AAS_CC__ || (window.__AAS_CC__ = {
+    bound: false,
+    activeRoot: null,
+    aborter: null,
+  });
+
+  const root = document.getElementById('aasCommandCenter');
+  if (!root) return;
+  GLOBAL.activeRoot = root;
+
+  // ============================
+  // CONFIG (v2.3 - extracted constants)
+  // ============================
+  const CONFIG = {
+    VERSION: '2.3.1',
+    SEARCH_DEBOUNCE_MS: 160,
+    CACHE_TTL_MS: 1000 * 60 * 30, // 30 min
+    MAX_RESULTS: 30,
+    MAX_RESULTS_PER_TYPE: 8,
+    MAX_ACTIVITY_ITEMS: 20,
+    FUZZY_MAX_DISTANCE: 2,
+    RELATED_MANUAL_BOOST: 15, // boost for manuals matching door's mfg/model
+  };
+
+  // ============================
+  // UTILITIES
+  // ============================
+  const str = {
+    clean: (s) => (s ?? '').toString().trim(),
+    escape: (s) => (s ?? '').toString()
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;'),
+  };
+
+  const $ = (sel, ctx = root) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = root) => Array.from(ctx.querySelectorAll(sel));
+
+  function debounce(fn, ms = 160) {
+    let t;
+    return function (...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), ms);
+    };
+  }
+
+  function normSearch(v) {
+    let s = str.clean(v).toLowerCase();
+    try { s = s.normalize('NFKD'); } catch (e) {}
+    return s
+      .replace(/[\u0300-\u036f]/g, '') // diacritics
+      .replace(/[^a-z0-9]+/g, ' ')     // punctuation -> spaces
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function normId(v) {
+    return str.clean(v).toUpperCase().replace(/\s+/g, ' ');
+  }
+
+  function compactId(v) {
+    return normId(v).replace(/[^A-Z0-9]/g, '');
+  }
+
+  function withCacheBust(url) {
+    const u = str.clean(url);
+    if (!u) return u;
+    const join = u.indexOf('?') > -1 ? '&' : '?';
+    return u + join + 't=' + Date.now();
+  }
+
+  async function fetchText(url, { timeoutMs = 12000, signal } = {}) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+
+    const onAbort = () => ctrl.abort();
+    if (signal) signal.addEventListener('abort', onAbort, { once: true });
+
+    try {
+      const res = await fetch(withCacheBust(url), { cache: 'no-store', signal: ctrl.signal });
+      if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+      return await res.text();
+    } finally {
+      clearTimeout(timer);
+      if (signal) signal.removeEventListener('abort', onAbort);
+    }
+  }
+
+  // Robust CSV parser (handles quotes, CRLF, BOM)
+  function parseCSV(text) {
+    const t = (text || '').replace(/^\uFEFF/, ''); // strip BOM
+    const out = [];
+    let row = [];
+    let cur = '';
+    let inQ = false;
+
+    for (let i = 0; i < t.length; i++) {
+      const c = t[i];
+      const n = t[i + 1];
+
+      if (c === '"' && inQ && n === '"') { cur += '"'; i++; continue; }
+      if (c === '"') { inQ = !inQ; continue; }
+
+      if (!inQ && c === ',') { row.push(cur); cur = ''; continue; }
+
+      if (!inQ && (c === '\n' || c === '\r')) {
+        if (c === '\r' && n === '\n') i++;
+        row.push(cur); cur = '';
+        if (row.some(v => str.clean(v))) out.push(row);
+        row = [];
+        continue;
+      }
+
+      cur += c;
+    }
+
+    row.push(cur);
+    if (row.some(v => str.clean(v))) out.push(row);
+    return out;
+  }
+
+  function csvToObjects(text) {
+    const rows = parseCSV(text);
+    if (!rows.length) return [];
+
+    const rawHeaders = rows.shift().map(h => str.clean(h) || 'Column');
+    const headers = [];
+    const seen = new Map();
+    rawHeaders.forEach(h => {
+      const key = h;
+      const n = (seen.get(key) || 0) + 1;
+      seen.set(key, n);
+      headers.push(n === 1 ? key : (key + ' ' + n));
+    });
+
+    return rows.map(cells => {
+      const obj = {};
+      headers.forEach((h, i) => { obj[h] = str.clean(cells[i]); });
+      return obj;
+    }).filter(o => Object.values(o).some(v => str.clean(v)));
+  }
+
+  function pick(obj, keys) {
+    for (const k of keys) {
+      const v = obj && obj[k];
+      if (v != null && str.clean(v)) return str.clean(v);
+    }
+    return '';
+  }
+
+  function collectRowText(obj, excludeKeys = []) {
+    const ex = new Set(excludeKeys.map(k => String(k).toLowerCase()));
+    return Object.entries(obj || {})
+      .filter(([k, v]) => v != null && str.clean(v) && !ex.has(String(k).toLowerCase()))
+      .map(([, v]) => str.clean(v))
+      .join(' ');
+  }
+
+  function levenshtein(a, b) {
+    if (!a.length) return b.length;
+    if (!b.length) return a.length;
+    const matrix = [];
+    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        matrix[i][j] = b[i - 1] === a[j - 1]
+          ? matrix[i - 1][j - 1]
+          : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+      }
+    }
+    return matrix[b.length][a.length];
+  }
+
+  function bestFuzzyDistance(token, words) {
+    let best = 99;
+    for (let i = 0; i < words.length; i++) {
+      const w = words[i];
+      if (!w || w.length < 3) continue;
+      if (Math.abs(w.length - token.length) > 2) continue;
+      const d = levenshtein(token, w);
+      if (d < best) best = d;
+      if (best <= 1) break; // early exit
+    }
+    return best;
+  }
+
+  function addIndexItem(index, item) {
+    const title = str.clean(item.title) || 'Untitled';
+    const subtitle = str.clean(item.subtitle) || '';
+    const fullText = str.clean(item.fullText || (title + ' ' + subtitle));
+
+    const titleNorm = normSearch(title);
+    const subtitleNorm = normSearch(subtitle);
+    const fullNorm = normSearch(fullText);
+
+    index.push({
+      ...item,
+      title,
+      subtitle,
+      fullText,
+      titleNorm,
+      subtitleNorm,
+      fullNorm,
+      words: fullNorm ? fullNorm.split(' ') : [],
+      idCompact: compactId(title + ' ' + subtitle),
+    });
+  }
+
+  function mergeDoorRows(rows) {
+    const map = new Map();
+    rows.forEach(r => {
+      const id = normId(pick(r, [
+        'Name', 'Door ID', 'Door Id', 'DoorID', 'Asset ID', 'Asset Id', 'AssetID', 'ID', 'Id'
+      ]));
+      if (!id) return;
+      const prev = map.get(id) || {};
+      map.set(id, { ...prev, ...r });
+    });
+    return Array.from(map.values());
+  }
+
+  function announce(msg) {
+    const a = $('#ccAnnounce');
+    if (a) a.textContent = str.clean(msg);
+  }
+
+  // ============================
+  // DATA SOURCES
+  // ============================
+  const DATA_SOURCES = {
+    manuals: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTU61rKQUtfzsyATsgMQIKIhFZP0p5u7xeHoxVUt32hY3gHWiNarTnPH9guNhRkci2ZWucvJTPUxCVY/pub?gid=0&single=true&output=csv',
+    parts: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLWrgcUPv3oD7tIiKCQnDYEnGvlwZ5rYiN-4BhOdZsEV52XvI6NCy7wSqmCgrN02pdKKfSc9w6Fwx7/pub?gid=0&single=true&output=csv',
+    service: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaL-Cagmos7f4rCojgOROSm_Zs8Gnl41nvUUN8hXJIrDyGdv4eYhtJKq56lMRK9euN0TvFNOj_rszM/pub?gid=379834637&single=true&output=csv',
+    doors:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vTcpq972LhvEzo3MA_iJzFeF7vJ1a7qudjvd3ooqxrfho-SZ7p1kvP0943VXsCfHWywDknQ-BHzC2Og/pub?output=csv',
+    doorAssets: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTcpq972LhvEzo3MA_iJzFeF7vJ1a7qudjvd3ooqxrfho-SZ7p1kvP0943VXsCfHWywDknQ-BHzC2Og/pub?gid=0&single=true&output=csv',
+  };
+
+  const CACHE_KEY = 'aas_cc_v23_' + CONFIG.VERSION + '_';
+  const ACTIVITY_KEY = 'aas_cc_activity_v23';
+
+  // ============================
+  // ICONS / TYPES
+  // ============================
+  const ICONS = {
+    manual: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M8 7h8M8 11h6"/></svg>',
+    part: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+    service: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6m-6 4h4"/></svg>',
+    door: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/><circle cx="15" cy="12" r="1" fill="currentColor"/></svg>',
+  };
+
+  const TYPE_CONFIG = {
+    manual: { icon: ICONS.manual, iconClass: 'cc-results__item-icon--manual' },
+    part: { icon: ICONS.part, iconClass: 'cc-results__item-icon--part' },
+    service: { icon: ICONS.service, iconClass: 'cc-results__item-icon--service' },
+    door: { icon: ICONS.door, iconClass: 'cc-results__item-icon--door' },
+  };
+
+  // ============================
+  // STATE
+  // ============================
+  let data = { manuals: [], parts: [], service: [], doors: [], doorAssets: [] };
+  let searchIndex = [];
+  let mergedDoorsCache = []; // v2.3: cached merged doors
+  let doorLookup = new Map(); // v2.3: quick lookup by door ID for cross-referencing
+  let activeResultIndex = -1;
+  let isDataLoaded = false;
+
+  // ============================
+  // CACHED CSV FETCH
+  // ============================
+  function readCache(key) {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY + key);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || !parsed.ts || !parsed.text) return null;
+      if (Date.now() - parsed.ts > CONFIG.CACHE_TTL_MS) return null;
+      return parsed.text;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeCache(key, text) {
+    try {
+      localStorage.setItem(CACHE_KEY + key, JSON.stringify({ ts: Date.now(), text }));
+    } catch (e) {}
+  }
+
+  async function fetchCSV(key, signal) {
+    const url = DATA_SOURCES[key];
+    if (!url) return [];
+
+    const cachedText = readCache(key);
+    if (cachedText) return csvToObjects(cachedText);
+
+    const text = await fetchText(url, { timeoutMs: 14000, signal });
+    writeCache(key, text);
+    return csvToObjects(text);
+  }
+
+  // ============================
+  // INDEX BUILD (v2.3)
+  // ============================
+  function buildSearchIndex() {
+    const index = [];
+
+    // Manuals - store manufacturer/model for cross-referencing
+    data.manuals.forEach(m => {
+      const url = m.DriveLink || m['Drive Link'];
+      if (!url) return;
+
+      const title = m.Model_Final || m.FileName || m.Model || 'Manual';
+      const manufacturer = str.clean(m.Manufacturer || '');
+      const model = str.clean(m.Model_Final || m.Model || '');
+      const subtitle = [manufacturer, m.ManualType_Final, m['Manual Type']].filter(Boolean).join(' • ');
+
+      addIndexItem(index, {
+        type: 'manual',
+        title,
+        subtitle,
+        url,
+        fullText: collectRowText(m, ['DriveLink', 'Drive Link']),
+        // v2.3: store for cross-referencing
+        manufacturer: manufacturer.toLowerCase(),
+        model: model.toLowerCase(),
+        mfgNorm: normSearch(manufacturer),
+        modelNorm: normSearch(model),
+      });
+    });
+
+    // Parts
+    data.parts.forEach(p => {
+      const key = p.key || p.part_number || p['Part Number'] || p['Part'];
+      if (!key) return;
+
+      const subtitle = [p.manufacturer, p.mfg_part, p.description].filter(Boolean).join(' • ');
+      addIndexItem(index, {
+        type: 'part',
+        title: key,
+        subtitle,
+        url: '/tech/parts?q=' + encodeURIComponent(p.key || p.mfg_part || key),
+        fullText: collectRowText(p),
+      });
+    });
+
+    // Service records
+    data.service.forEach(s => {
+      const task = s['Task ID'] || s['Task Id'] || s['Task'] || s['Work Order'] || s['WO'];
+      const loc = s['Location Name'] || s['Location'] || s['Customer'] || s['Site'];
+      const dateStr = s['Service Date'] || s['Date'] || s['Completed'] || '';
+      const date = dateStr ? (new Date(dateStr).getTime() || 0) : 0;
+
+      if (!task && !loc) return;
+
+      addIndexItem(index, {
+        type: 'service',
+        title: task ? ('Task ' + task) : loc,
+        subtitle: [loc, dateStr].filter(Boolean).join(' • '),
+        url: s['WO Link'] || s['Work Order Link'] || '/tech/summary',
+        fullText: collectRowText(s),
+        date,
+      });
+    });
+
+    // Doors (merged) - v2.3: build lookup map for cross-referencing
+    mergedDoorsCache.forEach(d => {
+      const doorKey = pick(d, ['Name', 'Door ID', 'Door Id', 'DoorID', 'Asset ID', 'Asset Id', 'AssetID', 'ID', 'Id']);
+      if (!str.clean(doorKey)) return;
+
+      const customer = pick(d, ['Customer', 'Customer Name', 'Account', 'Location Name']);
+      const address = pick(d, ['Address', 'Site Address']);
+      const doorLoc = pick(d, ['Door Location', 'Door location', 'Location']);
+      const doorType = pick(d, ['Door Type', 'Type']);
+      const mfg = pick(d, ['Manufacturer', 'Mfr', 'Make']);
+      const model = pick(d, ['Model']);
+      const status = pick(d, ['Status']);
+      const did = pick(d, ['Door ID', 'Door Id', 'DoorID']);
+
+      const subtitle = [
+        customer,
+        doorLoc || address,
+        doorType,
+        [mfg, model].filter(Boolean).join(' '),
+        did ? ('DoorID: ' + did) : '',
+        status,
+      ].filter(Boolean).join(' • ');
+
+      // v2.3: store door info for lookup
+      const doorInfo = {
+        manufacturer: mfg.toLowerCase(),
+        model: model.toLowerCase(),
+        mfgNorm: normSearch(mfg),
+        modelNorm: normSearch(model),
+      };
+      doorLookup.set(compactId(doorKey), doorInfo);
+
+      // v2.3.1: Use Name field for links (matches Door Browser behavior)
+      // Door Registry Name field is the primary identifier (e.g., "MH-1.42/43", "Door 41-1119")
+      const doorName = pick(d, ['Name', 'Door Name', 'Asset Name']);
+      const linkId = doorName || doorKey; // Prefer Name, fall back to doorKey
+      
+      addIndexItem(index, {
+        type: 'door',
+        title: doorName ? doorName : ('Door ' + doorKey),
+        subtitle,
+        url: '/service?id=' + encodeURIComponent(linkId), // Link to service page (primary)
+        fullText: collectRowText(d, ['Docs', 'QR URL', 'DriveLink', 'Drive Link']),
+        doorCompact: compactId(doorKey),
+        // v2.3: store mfg/model for potential future use
+        ...doorInfo,
+      });
+    });
+
+    return index;
+  }
+
+  // ============================
+  // SEARCH (v2.3 - more inclusive + door→manual cross-reference)
+  // ============================
+  function parseTypePrefix(q) {
+    const m = normSearch(q).match(/^(door|doors|manual|manuals|part|parts|service|records)\s*:\s*(.+)$/);
+    if (!m) return { type: null, rest: str.clean(q) };
+    const t = m[1];
+    const rest = str.clean(q).slice(q.indexOf(':') + 1);
+    if (t.startsWith('door')) return { type: 'door', rest };
+    if (t.startsWith('manual')) return { type: 'manual', rest };
+    if (t.startsWith('part')) return { type: 'part', rest };
+    if (t.startsWith('service') || t.startsWith('record')) return { type: 'service', rest };
+    return { type: null, rest: str.clean(q) };
+  }
+
+  // v2.3: Find door by ID and return its mfg/model info
+  function findDoorInfo(query) {
+    const qCompact = compactId(query);
+    if (!qCompact || qCompact.length < 2) return null;
+    
+    // Direct lookup
+    if (doorLookup.has(qCompact)) {
+      return doorLookup.get(qCompact);
+    }
+    
+    // Partial match - check if query looks like a door ID
+    for (const [key, info] of doorLookup) {
+      if (key.includes(qCompact) || qCompact.includes(key)) {
+        return info;
+      }
+    }
+    
+    return null;
+  }
+
+  // v2.3: Check if a manual matches a door's mfg/model
+  function manualMatchesDoor(item, doorInfo) {
+    if (!doorInfo || item.type !== 'manual') return false;
+    if (!doorInfo.mfgNorm && !doorInfo.modelNorm) return false;
+    
+    // Check manufacturer match
+    const mfgMatch = doorInfo.mfgNorm && item.mfgNorm && 
+      (item.mfgNorm.includes(doorInfo.mfgNorm) || doorInfo.mfgNorm.includes(item.mfgNorm));
+    
+    // Check model match
+    const modelMatch = doorInfo.modelNorm && item.modelNorm && 
+      (item.modelNorm.includes(doorInfo.modelNorm) || doorInfo.modelNorm.includes(item.modelNorm));
+    
+    return mfgMatch || modelMatch;
+  }
+
+  function performSearch(query) {
+    const { type: typeFilter, rest } = parseTypePrefix(query);
+    const qRaw = str.clean(rest);
+    const q = normSearch(qRaw);
+    if (q.length < 2) return [];
+
+    const tokens = q.split(' ').filter(t => t.length >= 2);
+    if (!tokens.length) return [];
+
+    // v2.3: Check if query matches a door ID for cross-referencing
+    const doorInfo = findDoorInfo(qRaw);
+
+    const scored = [];
+
+    for (let i = 0; i < searchIndex.length; i++) {
+      const item = searchIndex[i];
+      if (typeFilter && item.type !== typeFilter) continue;
+
+      let score = 0;
+      let matched = 0;
+      let isRelatedManual = false;
+
+      // v2.3: Boost manuals that match the door's manufacturer/model
+      if (doorInfo && manualMatchesDoor(item, doorInfo)) {
+        score += CONFIG.RELATED_MANUAL_BOOST;
+        matched++;
+        isRelatedManual = true;
+      }
+
+      // Exact door ID hit
+      const qCompact = compactId(qRaw);
+      if (item.type === 'door' && item.doorCompact && qCompact && item.doorCompact === qCompact) {
+        score += 50;
+        matched += 2;
+      }
+
+      for (let j = 0; j < tokens.length; j++) {
+        const t = tokens[j];
+        let pts = 0;
+
+        // Field weights
+        if (item.titleNorm.includes(t)) pts = 12;
+        else if (item.subtitleNorm.includes(t)) pts = 7;
+        else if (item.fullNorm.includes(t)) pts = 3;
+
+        // Prefix bonus (good for part numbers / door IDs)
+        if (!pts && (item.titleNorm.startsWith(t) || item.idCompact.startsWith(compactId(t)))) pts = 6;
+
+        // Typo assist
+        if (!pts && t.length >= 4 && item.words && item.words.length) {
+          const d = bestFuzzyDistance(t, item.words);
+          if (d === 1) pts = 1.5;
+          else if (d === 2) pts = 1;
+        }
+
+        if (pts > 0) {
+          score += pts;
+          matched++;
+        }
+      }
+
+      // Phrase boost
+      if (item.titleNorm.includes(q)) score += 6;
+      else if (item.subtitleNorm.includes(q)) score += 3;
+      else if (item.fullNorm.includes(q)) score += 1;
+
+      // Slightly prefer fresh service records
+      if (item.type === 'service' && item.date) {
+        score += Math.min(2, item.date / (1000 * 60 * 60 * 24 * 365 * 20));
+      }
+
+      // v2.3: INCLUSIVE - only require ANY match (was: minMatches threshold)
+      if (matched === 0) continue;
+
+      scored.push({ item, score, isRelatedManual });
+    }
+
+    scored.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return (b.item.date || 0) - (a.item.date || 0);
+    });
+
+    return scored.slice(0, CONFIG.MAX_RESULTS).map(x => ({
+      ...x.item,
+      isRelatedManual: x.isRelatedManual,
+    }));
+  }
+
+  // v2.3: Single-pass highlight function (fixes overlapping match bug)
+  function highlightMatch(text, query) {
+    const raw = str.clean(text);
+    const tokens = normSearch(query).split(' ').filter(t => t.length >= 2);
+    if (!tokens.length) return str.escape(raw);
+
+    // Build single regex pattern from all tokens
+    const pattern = tokens
+      .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('|');
+    
+    return str.escape(raw).replace(
+      new RegExp(`(${pattern})`, 'gi'),
+      '<mark>$1</mark>'
+    );
+  }
+
+  // ============================
+  // RENDER RESULTS (v2.3 - related manual indicator)
+  // ============================
+  function openResults() {
+    const el = $('#ccSearchResults');
+    const wrap = $('.cc-search');
+    if (el) el.classList.add('is-open');
+    if (wrap) wrap.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeResults() {
+    const el = $('#ccSearchResults');
+    const wrap = $('.cc-search');
+    if (el) el.classList.remove('is-open');
+    if (wrap) wrap.setAttribute('aria-expanded', 'false');
+    activeResultIndex = -1;
+    const input = $('#ccGlobalSearch');
+    if (input) input.removeAttribute('aria-activedescendant');
+  }
+
+  function renderResults(results, query) {
+    const el = $('#ccSearchResults');
+    if (!el) return;
+
+    activeResultIndex = -1;
+
+    if (!isDataLoaded) {
+      el.innerHTML = `
+        <div class="cc-results__empty">
+          <div class="cc-results__empty-icon">⏳</div>
+          <p>Loading data…</p>
+          <p class="cc-results__empty-hint">Search will update automatically</p>
+        </div>
+      `;
+      openResults();
+      announce('Loading data…');
+      return;
+    }
+
+    if (!results.length) {
+      el.innerHTML = `
+        <div class="cc-results__empty">
+          <div class="cc-results__empty-icon">🔍</div>
+          <p>No results for "${str.escape(query)}"</p>
+          <p class="cc-results__empty-hint">Try: door: 101 • manual: stanley • a customer name • an address</p>
+        </div>
+      `;
+      openResults();
+      announce('No results.');
+      return;
+    }
+
+    const grouped = {
+      door: results.filter(r => r.type === 'door'),
+      manual: results.filter(r => r.type === 'manual'),
+      part: results.filter(r => r.type === 'part'),
+      service: results.filter(r => r.type === 'service').sort((a, b) => (b.date || 0) - (a.date || 0)),
+    };
+
+    const labels = {
+      door: 'Doors',
+      manual: 'Manuals',
+      part: 'Parts',
+      service: 'Service Records',
+    };
+
+    let html = '';
+    let idx = 0;
+
+    Object.entries(grouped).forEach(([type, items]) => {
+      if (!items.length) return;
+      const cfg = TYPE_CONFIG[type];
+
+      html += `<div class="cc-results__section">`;
+      html += `<div class="cc-results__label">${labels[type]} (${items.length})</div>`;
+
+      items.slice(0, CONFIG.MAX_RESULTS_PER_TYPE).forEach(item => {
+        const optId = 'ccopt-' + idx;
+        const relatedClass = item.isRelatedManual ? ' is-related' : '';
+        const relatedBadge = item.isRelatedManual 
+          ? '<span class="cc-results__item-badge">Related</span>' 
+          : '';
+        
+        html += `
+          <div
+            id="${optId}"
+            class="cc-results__item${relatedClass}"
+            data-index="${idx}"
+            data-url="${str.escape(item.url)}"
+            data-title="${str.escape(item.title)}"
+            data-type="${type}"
+            role="option"
+            aria-selected="false"
+          >
+            <div class="cc-results__item-icon ${cfg.iconClass}">${cfg.icon}</div>
+            <div class="cc-results__item-text">
+              <div class="cc-results__item-title">${highlightMatch(item.title, query)}${relatedBadge}</div>
+              <div class="cc-results__item-meta">${str.escape(item.subtitle || '')}</div>
+            </div>
+          </div>
+        `;
+        idx++;
+      });
+
+      html += `</div>`;
+    });
+
+    el.innerHTML = html;
+    openResults();
+    announce(results.length + ' results. Use arrow keys to navigate.');
+
+    $$('.cc-results__item', el).forEach(itemEl => {
+      itemEl.addEventListener('click', () => selectResult(itemEl));
+    });
+  }
+
+  function selectResult(itemEl) {
+    const url = itemEl.dataset.url || '';
+    const title = itemEl.dataset.title || '';
+    const type = itemEl.dataset.type || '';
+    logActivity(type, title, url);
+
+    if (/^https?:\/\//i.test(url)) window.open(url, '_blank');
+    else window.location.href = url;
+
+    closeResults();
+  }
+
+  function navigateResults(dir) {
+    const el = $('#ccSearchResults');
+    if (!el || !el.classList.contains('is-open')) return;
+
+    const items = Array.from(el.querySelectorAll('.cc-results__item'));
+    if (!items.length) return;
+
+    if (activeResultIndex >= 0 && items[activeResultIndex]) {
+      items[activeResultIndex].classList.remove('is-active');
+      items[activeResultIndex].setAttribute('aria-selected', 'false');
+    }
+
+    if (dir === 'down') activeResultIndex = activeResultIndex < items.length - 1 ? activeResultIndex + 1 : 0;
+    else activeResultIndex = activeResultIndex > 0 ? activeResultIndex - 1 : items.length - 1;
+
+    const active = items[activeResultIndex];
+    active.classList.add('is-active');
+    active.setAttribute('aria-selected', 'true');
+    active.scrollIntoView({ block: 'nearest' });
+
+    const input = $('#ccGlobalSearch');
+    if (input) input.setAttribute('aria-activedescendant', active.id);
+  }
+
+  // ============================
+  // RECENT ACTIVITY
+  // ============================
+  function getActivity() {
+    try { 
+      const raw = localStorage.getItem(ACTIVITY_KEY);
+      return raw ? JSON.parse(raw) : []; 
+    } catch (e) { 
+      return []; 
+    }
+  }
+
+  function logActivity(type, title, url) {
+    const recent = getActivity();
+    const id = compactId(title).slice(0, 24) + '_' + type;
+    const entry = { type, title, url, id, ts: Date.now() };
+
+    const filtered = recent.filter(r => r.id !== id);
+    filtered.unshift(entry);
+
+    try { localStorage.setItem(ACTIVITY_KEY, JSON.stringify(filtered.slice(0, CONFIG.MAX_ACTIVITY_ITEMS))); }
+    catch (e) {}
+
+    renderRecentActivity();
+  }
+
+  function clearActivity() {
+    try { localStorage.removeItem(ACTIVITY_KEY); } catch (e) {}
+    renderRecentActivity();
+  }
+
+  function formatTimeAgo(ts) {
+    const diff = Date.now() - ts;
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return mins + 'm ago';
+    if (hours < 24) return hours + 'h ago';
+    if (days === 1) return 'Yesterday';
+    return days + 'd ago';
+  }
+
+  function renderRecentActivity() {
+    const recent = getActivity().slice(0, 8);
+    const el = $('#ccRecentActivity');
+    if (!el) return;
+
+    if (!recent.length) {
+      el.innerHTML = `
+        <div class="cc-recent__empty">
+          <div class="cc-recent__empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18M9 21V9"/>
+            </svg>
+          </div>
+          <p>No recent activity yet</p>
+          <p class="cc-recent__empty-hint">Items you view will appear here for quick access</p>
+        </div>
+      `;
+      return;
+    }
+
+    el.innerHTML = recent.map(item => {
+      const cfg = TYPE_CONFIG[item.type] || null;
+      const icon = cfg ? `<div class="cc-recent__icon" style="background:rgba(255,255,255,0.06);">${cfg.icon}</div>`
+                       : `<div class="cc-recent__icon" style="background:rgba(255,255,255,0.06);">📄</div>`;
+      const ago = formatTimeAgo(item.ts);
+      const external = /^https?:\/\//i.test(item.url || '');
+      return `
+        <a href="${str.escape(item.url)}" ${external ? 'target="_blank" rel="noopener"' : ''} class="cc-recent__item">
+          ${icon}
+          <div class="cc-recent__text">
+            <div class="cc-recent__title">${str.escape(item.title)}</div>
+            <div class="cc-recent__meta">${ago}</div>
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  // ============================
+  // STATS (v2.3 - uses cached merged doors)
+  // ============================
+  function updateStats() {
+    const counts = {
+      manuals: data.manuals.filter(m => m.DriveLink || m['Drive Link']).length,
+      parts: data.parts.length,
+      service: data.service.length,
+      doors: mergedDoorsCache.length,
+    };
+
+    setTimeout(() => {
+      const m = $('#ccStatManuals'), p = $('#ccStatParts'), s = $('#ccStatService'), d = $('#ccStatDoors');
+      if (m) m.textContent = counts.manuals.toLocaleString();
+      if (p) p.textContent = counts.parts.toLocaleString();
+      if (s) s.textContent = counts.service.toLocaleString();
+      if (d) d.textContent = counts.doors.toLocaleString();
+
+      $$('.cc-stat').forEach((el, i) => setTimeout(() => el.classList.add('is-loaded'), i * 80));
+    }, 150);
+
+    const mc = $('#ccManualCount'), pc = $('#ccPartsCount'), sc = $('#ccServiceCount'), dc = $('#ccDoorCount');
+    if (mc) mc.textContent = counts.manuals + ' manuals';
+    if (pc) pc.textContent = counts.parts + ' parts';
+    if (sc) sc.textContent = counts.service + ' records';
+    if (dc) dc.textContent = counts.doors + ' doors';
+  }
+
+  // ============================
+  // INIT
+  // ============================
+  function bindUI() {
+    const searchInput = $('#ccGlobalSearch');
+    const searchWrap = $('.cc-search');
+    const clearBtn = $('#ccClearRecent');
+
+    if (!searchInput || !searchWrap) return;
+
+    if (searchInput.dataset.bound === '1') return;
+    searchInput.dataset.bound = '1';
+
+    const handleSearch = debounce((e) => {
+      const q = str.clean(e.target.value);
+      searchWrap.classList.remove('is-loading');
+
+      if (q.length < 2) {
+        closeResults();
+        return;
+      }
+
+      const results = performSearch(q);
+      renderResults(results, q);
+    }, CONFIG.SEARCH_DEBOUNCE_MS);
+
+    searchInput.addEventListener('input', (e) => {
+      const q = str.clean(e.target.value);
+      if (q.length >= 2) searchWrap.classList.add('is-loading');
+      handleSearch(e);
+    });
+
+    clearBtn && clearBtn.addEventListener('click', clearActivity);
+  }
+
+  function bindDocumentEventsOnce() {
+    if (GLOBAL.bound) return;
+    GLOBAL.bound = true;
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      const r = GLOBAL.activeRoot;
+      if (!r) return;
+      const search = r.querySelector('.cc-search');
+      if (!search) return;
+      if (!e.target.closest('.cc-search')) {
+        const results = r.querySelector('#ccSearchResults');
+        if (results && results.classList.contains('is-open')) {
+          results.classList.remove('is-open');
+          search.setAttribute('aria-expanded', 'false');
+        }
+      }
+    }, true);
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      const r = GLOBAL.activeRoot;
+      if (!r) return;
+
+      const input = r.querySelector('#ccGlobalSearch');
+      const resultsEl = r.querySelector('#ccSearchResults');
+      const open = resultsEl && resultsEl.classList.contains('is-open');
+
+      if (e.key === 'Escape') {
+        if (resultsEl) resultsEl.classList.remove('is-open');
+        const search = r.querySelector('.cc-search');
+        if (search) search.setAttribute('aria-expanded', 'false');
+        if (input) input.blur();
+        return;
+      }
+
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        if (input) { input.focus(); input.select(); }
+        return;
+      }
+
+      if (open) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); navigateResults('down'); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); navigateResults('up'); }
+        else if (e.key === 'Enter' && activeResultIndex >= 0) {
+          e.preventDefault();
+          const active = r.querySelector('.cc-results__item.is-active');
+          if (active) selectResult(active);
+        }
+      }
+    });
+  }
+
+  async function loadData() {
+    // Abort previous load
+    if (GLOBAL.aborter) {
+      try { GLOBAL.aborter.abort(); } catch (e) {}
+    }
+    GLOBAL.aborter = new AbortController();
+
+    try {
+      const [manuals, parts, service, doors, doorAssets] = await Promise.all([
+        fetchCSV('manuals', GLOBAL.aborter.signal).catch(() => []),
+        fetchCSV('parts', GLOBAL.aborter.signal).catch(() => []),
+        fetchCSV('service', GLOBAL.aborter.signal).catch(() => []),
+        fetchCSV('doors', GLOBAL.aborter.signal).catch(() => []),
+        fetchCSV('doorAssets', GLOBAL.aborter.signal).catch(() => []),
+      ]);
+
+      data = { manuals, parts, service, doors, doorAssets };
+      
+      // v2.3: Cache merged doors once
+      mergedDoorsCache = mergeDoorRows([...(data.doors || []), ...(data.doorAssets || [])]);
+      doorLookup.clear();
+      
+      searchIndex = buildSearchIndex();
+      isDataLoaded = true;
+
+      updateStats();
+      renderRecentActivity();
+
+      console.log('[CC v2.3] Loaded:', {
+        manuals: manuals.length,
+        parts: parts.length,
+        service: service.length,
+        doors: doors.length,
+        doorAssets: doorAssets.length,
+        mergedDoors: mergedDoorsCache.length,
+        index: searchIndex.length,
+        doorLookup: doorLookup.size,
+      });
+
+      announce('Data loaded. Ready to search.');
+    } catch (err) {
+      console.error('[CC v2.3] Load error:', err);
+      isDataLoaded = true; // Allow UI to show "no results" not "loading"
+      announce('Data load error.');
+    }
+  }
+
+  function boot() {
+    bindUI();
+    bindDocumentEventsOnce();
+    renderRecentActivity();
+    loadData();
+  }
+
+  // Boot hooks
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+
+  document.addEventListener('turbolinks:load', boot);
+  document.addEventListener('site:afterContentUpdate', boot);
+})();
+</script>
+  </main>
+</div>
+
+<script>
+// Mobile sidebar toggle
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(e) {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
+    sidebar.classList.remove('open');
+  }
+});
+
+// Highlight current nav link
+const currentPath = window.location.pathname;
+document.querySelectorAll('.nav-link').forEach(link => {
+  const href = link.getAttribute('href');
+  if (href === currentPath || (currentPath.startsWith(href) && href !== '/')) {
+    link.classList.add('active');
+  }
+});
+</script>
+
+<link rel="stylesheet" href="/assets/copilot-v3.css">
+<script src="/assets/copilot-v3.js"></script>
+<script src="/auth.js"></script>
+</body>
+</html>

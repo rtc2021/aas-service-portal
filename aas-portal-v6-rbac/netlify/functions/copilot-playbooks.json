@@ -1,0 +1,234 @@
+{
+  "metadata": {
+    "version": "3.0.0",
+    "updated": "2026-01-27"
+  },
+  "playbooks": {
+    "nabco-opus": {
+      "manufacturer": "NABCO",
+      "model": "OPUS",
+      "type": "sliding",
+      "symptoms": {
+        "no-power": {
+          "title": "No Power / Dead Control",
+          "steps": [
+            "Verify facility power and breaker status",
+            "Check operator power switch position",
+            "Use meter to confirm 120VAC at operator input",
+            "Check for blown fuses on control board",
+            "Inspect transformer output voltage (24VAC typical)",
+            "Check for loose harness plugs at motor, encoder, transformer",
+            "OPUS-specific: Check rotary dial display for any indication"
+          ],
+          "parts": [
+            {"name": "Transformer", "confidence": 0.6},
+            {"name": "Control Board", "confidence": 0.5},
+            {"name": "Fuse Kit", "confidence": 0.4}
+          ]
+        },
+        "wont-open": {
+          "title": "Won't Open",
+          "steps": [
+            "Check program selector/function switch position",
+            "Verify door is not mechanically locked",
+            "Check emergency stop and fire alarm input status",
+            "Test activation devices (motion sensor, push plate)",
+            "Verify safety sensors are not blocked",
+            "Check for active fault codes on display",
+            "With power OFF, verify door moves freely by hand"
+          ],
+          "parts": [
+            {"name": "Motion Sensor", "confidence": 0.5},
+            {"name": "Push Plate", "confidence": 0.4}
+          ]
+        },
+        "wont-close": {
+          "title": "Won't Close / Stays Open",
+          "steps": [
+            "Check if presence sensor is detecting obstruction",
+            "Verify safety beams are aligned and clean",
+            "Check for active hold-open input",
+            "Verify close timer setting is not zero/off",
+            "Check for mechanical binding when closing",
+            "Test emergency stop circuit"
+          ],
+          "parts": [
+            {"name": "Presence Sensor", "confidence": 0.6},
+            {"name": "Safety Beam", "confidence": 0.5}
+          ]
+        },
+        "slow-operation": {
+          "title": "Slow or Weak Operation",
+          "steps": [
+            "Check motor encoder connection",
+            "Verify track/rail is clean and lubricated",
+            "Check drive belt tension and condition",
+            "Verify speed settings on control",
+            "Check for mechanical drag or binding",
+            "Inspect trolley wheels and bearings"
+          ],
+          "parts": [
+            {"name": "Drive Belt", "confidence": 0.6},
+            {"name": "Trolley Assembly", "confidence": 0.5},
+            {"name": "Motor", "confidence": 0.4}
+          ]
+        },
+        "noise": {
+          "title": "Unusual Noise",
+          "steps": [
+            "Identify noise source: motor, track, or header",
+            "Check drive belt for wear or glazing",
+            "Inspect trolley wheels for flat spots",
+            "Verify track alignment and cleanliness",
+            "Check for loose panels or hardware",
+            "Lubricate track per manufacturer specs"
+          ],
+          "parts": [
+            {"name": "Drive Belt", "confidence": 0.6},
+            {"name": "Trolley Wheels", "confidence": 0.5}
+          ]
+        },
+        "learn-cycle": {
+          "title": "Learn / Calibration Required",
+          "steps": [
+            "Set function switch to OFF position",
+            "Clear any displayed fault codes",
+            "Ensure door path is clear of obstructions",
+            "Follow OPUS learn cycle procedure on rotary dial",
+            "Allow door to complete full open/close cycles",
+            "Verify proper speed and force after learn",
+            "Return function switch to desired mode"
+          ],
+          "parts": []
+        }
+      },
+      "errorCodes": {
+        "E1": {"meaning": "Motor overload", "action": "Check for mechanical binding, verify motor connections"},
+        "E2": {"meaning": "Encoder fault", "action": "Check encoder connection, may need replacement"},
+        "E3": {"meaning": "Safety input active", "action": "Check safety sensors, verify wiring"},
+        "E4": {"meaning": "Communication error", "action": "Check control board connections"},
+        "E5": {"meaning": "Over-temperature", "action": "Allow to cool, check for continuous operation cause"}
+      },
+      "testProcedures": {
+        "sensor-test": {
+          "title": "Sensor Function Test",
+          "steps": ["Access diagnostic mode on control", "Trigger each sensor individually", "Verify LED indication for each input", "Check wiring if sensor not detected"]
+        }
+      },
+      "manuals": [{"name": "NABCO OPUS Installation Manual", "drive_id": "nabco-opus-install"}],
+      "wiring": {
+        "description": "OPUS Wiring Overview",
+        "sections": [
+          {"name": "Power Input", "terminals": "L1, L2/N, GND"},
+          {"name": "Motor", "terminals": "M1, M2, M3"},
+          {"name": "Safety Inputs", "terminals": "S1, S2, COM"},
+          {"name": "Activation", "terminals": "ACT1, ACT2, COM"}
+        ]
+      }
+    },
+    "dorma-ed100": {
+      "manufacturer": "Dorma",
+      "model": "ED100/ED250",
+      "type": "swing",
+      "symptoms": {
+        "no-power": {"title": "No Power / Dead Control", "steps": ["Verify facility power at operator", "Check transformer fuse (typically on bottom of unit)", "Measure 24VDC at control board", "Check power switch position", "Inspect wire connections at terminal block"], "parts": [{"name": "Transformer", "confidence": 0.6}, {"name": "Fuse", "confidence": 0.7}]},
+        "wont-open": {"title": "Won't Open", "steps": ["Check function switch position (not OFF or HOLD)", "Verify activation input at control board", "Check for active safety input", "Test push button or motion sensor output", "Verify door is not locked"], "parts": [{"name": "Push Button", "confidence": 0.5}, {"name": "Motion Sensor", "confidence": 0.5}]},
+        "slams-closed": {"title": "Door Slams or Closes Too Fast", "steps": ["Adjust closing speed potentiometer (slower)", "Check latch speed setting", "Verify backcheck is functioning", "Check arm connection and pivot points", "Inspect internal damper mechanism"], "parts": [{"name": "Arm Assembly", "confidence": 0.4}, {"name": "Internal Damper", "confidence": 0.5}]},
+        "learn-cycle": {"title": "ED100/250 Learn Procedure", "steps": ["Press and hold LEARN button until LED blinks", "Allow door to complete auto-learn cycle", "Door will open and close automatically", "LED should go solid when complete", "If LED continues to blink, check for obstruction"], "parts": []}
+      },
+      "errorCodes": {"1-BLINK": {"meaning": "Obstruction detected", "action": "Clear door path, check sensors"}, "2-BLINK": {"meaning": "Motor fault", "action": "Check motor connections"}, "3-BLINK": {"meaning": "Encoder error", "action": "Verify encoder cable"}, "CONTINUOUS": {"meaning": "Learn required", "action": "Run learn cycle"}},
+      "testProcedures": {},
+      "manuals": [{"name": "Dorma ED100/ED250 Manual", "drive_id": "dorma-ed100-manual"}],
+      "wiring": {"description": "ED100/ED250 Terminal Block", "sections": [{"name": "Power", "terminals": "L, N, PE"}, {"name": "Activation", "terminals": "1, 2 (NO contact)"}, {"name": "Safety", "terminals": "3, 4 (NC contact)"}, {"name": "Hold Open", "terminals": "5, 6"}]}
+    },
+    "besam-unislide": {
+      "manufacturer": "Besam",
+      "model": "UniSlide",
+      "type": "sliding",
+      "symptoms": {
+        "no-power": {"title": "No Power", "steps": ["Check main breaker/disconnect", "Verify 120VAC at operator input", "Check control board fuses", "Measure 24VDC at logic board", "Inspect all connectors for proper seating"], "parts": [{"name": "Power Supply", "confidence": 0.6}, {"name": "Fuse Kit", "confidence": 0.5}]},
+        "wont-open": {"title": "Won't Open", "steps": ["Check FS DIP switches for mode setting", "Verify activation sensor operation", "Check for active safety input", "Verify door is not in LOCK mode", "Test manual activation input"], "parts": [{"name": "Activation Sensor", "confidence": 0.5}]},
+        "drifts-open": {"title": "Door Drifts or Won't Stay Closed", "steps": ["Check track level and alignment", "Verify panel weight is balanced", "Inspect trolley wheel condition", "Check for air pressure differential", "Adjust brake/hold tension if equipped"], "parts": [{"name": "Trolley Assembly", "confidence": 0.6}]},
+        "learn-cycle": {"title": "UniSlide Learn Procedure", "steps": ["Set FS switches to LEARN mode", "Press START button", "Door will cycle open and closed", "System measures travel limits", "Return FS switches to normal mode"], "parts": []}
+      },
+      "errorCodes": {"FS-1": {"meaning": "Safety active", "action": "Check presence sensors"}, "FS-2": {"meaning": "Motor overcurrent", "action": "Check mechanical binding"}, "FS-3": {"meaning": "Position error", "action": "Run learn cycle"}, "FS-4": {"meaning": "Communication fault", "action": "Check board connections"}},
+      "testProcedures": {"sensor-test": {"title": "Besam Sensor Diagnostics", "steps": ["Access diagnostic via DIP switches", "Each sensor has dedicated LED", "Block each sensor and verify LED response", "Check wiring if no response"]}},
+      "manuals": [{"name": "Besam UniSlide Manual", "drive_id": "besam-unislide-manual"}],
+      "wiring": {"description": "UniSlide Wiring", "sections": [{"name": "Power", "terminals": "LINE, NEUTRAL, GND"}, {"name": "Motor", "terminals": "MOT-A, MOT-B, MOT-C"}, {"name": "Sensors", "terminals": "PRES1, PRES2, SAFETY"}]}
+    },
+    "stanley-mc521": {
+      "manufacturer": "Stanley",
+      "model": "MC521",
+      "type": "swing",
+      "symptoms": {
+        "no-power": {"title": "No Power", "steps": ["Check main power at disconnect", "Verify transformer output", "Check all fuses on control board", "Measure 24VDC at logic terminals", "Inspect connector P1-P6 for secure fit"], "parts": [{"name": "Transformer", "confidence": 0.6}, {"name": "Control Board", "confidence": 0.5}]},
+        "obstruction-error": {"title": "Obstruction Error (Continuous)", "steps": ["Clear any physical obstructions", "Check safety sensor alignment", "Verify arm is not binding", "Perform FIS (Full Initial Setup)", "Check encoder wheel and sensor", "If persistent, may need board or motor replacement"], "parts": [{"name": "Encoder", "confidence": 0.6}, {"name": "Control Board", "confidence": 0.4}]},
+        "wont-close": {"title": "Won't Close", "steps": ["Check for active hold-open input", "Verify presence sensor not blocked", "Check close timer setting on keypad", "Test for stuck activation input", "Verify fire alarm input is clear"], "parts": [{"name": "Presence Sensor", "confidence": 0.5}]},
+        "learn-cycle": {"title": "MC521 FIS (Full Initial Setup)", "steps": ["Access INDEX menu on keypad", "Navigate to FIS option", "Press START to begin setup", "Door will cycle to learn limits", "Follow prompts for sensor verification", "Save settings when complete"], "parts": []}
+      },
+      "errorCodes": {"OBS": {"meaning": "Obstruction detected", "action": "Clear path, check sensors, run FIS"}, "MOT": {"meaning": "Motor fault", "action": "Check motor connections and encoder"}, "SEN": {"meaning": "Sensor fault", "action": "Check sensor wiring"}, "PWR": {"meaning": "Power fault", "action": "Check input voltage"}, "ENC": {"meaning": "Encoder fault", "action": "Check encoder wheel and sensor gap"}},
+      "testProcedures": {"sensor-test": {"title": "MC521 Sensor Test", "steps": ["Access diagnostic mode via INDEX", "Navigate to INPUT TEST", "Trigger each sensor", "Display shows input status"]}},
+      "manuals": [{"name": "Stanley MC521 Manual", "drive_id": "stanley-mc521-manual"}],
+      "wiring": {"description": "MC521 Wiring", "sections": [{"name": "Power Input", "terminals": "L1, L2/N, GND"}, {"name": "Motor", "terminals": "RED, BLACK, WHITE"}, {"name": "Activation", "terminals": "ACT1, ACT2"}, {"name": "Safety", "terminals": "SAFE1, SAFE2"}]}
+    },
+    "stanley-duraglide": {
+      "manufacturer": "Stanley",
+      "model": "Dura-Glide Model J",
+      "type": "sliding",
+      "symptoms": {
+        "no-power": {"title": "No Power", "steps": ["Check facility breaker", "Verify voltage at operator input", "Check inline fuses", "Measure control board outputs", "Inspect all wire connections"], "parts": [{"name": "Control Board", "confidence": 0.5}, {"name": "Fuse Kit", "confidence": 0.6}]},
+        "wont-open": {"title": "Won't Open", "steps": ["Check mode selector position", "Verify activation sensor output", "Test manual push button", "Check safety circuit status", "Verify lock strike releases"], "parts": [{"name": "Activation Sensor", "confidence": 0.5}]},
+        "slow-operation": {"title": "Slow Operation", "steps": ["Check speed potentiometer settings", "Verify belt tension", "Inspect trolley for smooth travel", "Clean and lubricate track", "Check motor brushes if applicable"], "parts": [{"name": "Drive Belt", "confidence": 0.6}, {"name": "Trolley", "confidence": 0.5}]},
+        "learn-cycle": {"title": "Dura-Glide Tune-In", "steps": ["Access tune-in mode via control", "Follow LED prompts", "Allow door to cycle for calibration", "System learns open/close limits", "Exit tune-in when complete"], "parts": []}
+      },
+      "errorCodes": {"RED-SOLID": {"meaning": "Fault condition", "action": "Check motor and encoder"}, "RED-FLASH": {"meaning": "Safety active", "action": "Check sensors"}, "GREEN-FLASH": {"meaning": "Standby/Ready", "action": "Normal operation"}, "AMBER-FLASH": {"meaning": "Learn required", "action": "Run tune-in procedure"}},
+      "testProcedures": {},
+      "manuals": [{"name": "Dura-Glide Model J Manual", "drive_id": "duraglide-j-manual"}],
+      "wiring": {"description": "Dura-Glide Wiring", "sections": [{"name": "Power", "terminals": "HOT, NEU, GND"}, {"name": "Motor", "terminals": "M+, M-"}, {"name": "Inputs", "terminals": "ACT, SAFE, LOCK"}]}
+    },
+    "horton-c4190": {
+      "manufacturer": "Horton",
+      "model": "C4190",
+      "type": "swing",
+      "symptoms": {
+        "no-power": {"title": "No Power / Dead Control", "steps": ["Check disconnect switch position", "Verify 120VAC at input terminals", "Check transformer fuse", "Measure 24VDC at control board", "Inspect all plug connections"], "parts": [{"name": "Transformer", "confidence": 0.6}, {"name": "Fuse", "confidence": 0.7}, {"name": "Control Board", "confidence": 0.4}]},
+        "wont-open": {"title": "Won't Open", "steps": ["Check function selector position", "Verify activation sensor operation", "Check for fire alarm input active", "Test push plate or motion sensor", "Verify door is unlocked"], "parts": [{"name": "Push Plate", "confidence": 0.5}, {"name": "Motion Sensor", "confidence": 0.5}]},
+        "slams-closed": {"title": "Door Slams Closed", "steps": ["Adjust close speed potentiometer", "Check latch speed setting", "Verify backcheck adjustment", "Inspect arm and pivot connections", "Check internal damper condition"], "parts": [{"name": "Arm Assembly", "confidence": 0.5}]},
+        "learn-cycle": {"title": "C4190 Setup Procedure", "steps": ["Access programming mode", "Select SETUP option", "Door will automatically cycle", "System learns travel limits", "Verify operation after setup"], "parts": []}
+      },
+      "errorCodes": {"1-FLASH": {"meaning": "Normal operation", "action": "None required"}, "2-FLASH": {"meaning": "Safety input active", "action": "Check safety sensors"}, "3-FLASH": {"meaning": "Motor fault", "action": "Check motor connections"}, "4-FLASH": {"meaning": "Over-temperature", "action": "Allow cooling"}, "5-FLASH": {"meaning": "Encoder fault", "action": "Check encoder connection"}},
+      "testProcedures": {"sensor-test": {"title": "C4190 Input Test", "steps": ["Hold LEARN button for 5 seconds", "Enter diagnostic mode", "Each input shows on LED", "Trigger sensors to verify"]}},
+      "manuals": [{"name": "Horton C4190 Manual", "drive_id": "horton-c4190-manual"}],
+      "wiring": {"description": "C4190 Terminal Overview", "sections": [{"name": "Power", "terminals": "L, N, G"}, {"name": "Motor", "terminals": "BLK, RED, WHT"}, {"name": "Activation", "terminals": "ACT1, ACT2, COM"}, {"name": "Safety", "terminals": "SAF1, SAF2, COM"}]}
+    },
+    "record-8000": {
+      "manufacturer": "Record",
+      "model": "8000 Series",
+      "type": "sliding",
+      "symptoms": {
+        "no-power": {"title": "No Power", "steps": ["Check main breaker", "Verify input voltage at terminals", "Check power supply output", "Measure 24VDC at control", "Inspect fuses and connections"], "parts": [{"name": "Power Supply", "confidence": 0.6}, {"name": "Fuse Kit", "confidence": 0.5}]},
+        "wont-open": {"title": "Won't Open", "steps": ["Check mode switch position", "Verify radar sensor operation", "Test manual activation", "Check for safety input fault", "Verify lock output if equipped"], "parts": [{"name": "Radar Sensor", "confidence": 0.5}]},
+        "noise": {"title": "Unusual Noise", "steps": ["Check belt tension and condition", "Inspect trolley wheels", "Verify track cleanliness", "Check for loose components", "Lubricate as needed"], "parts": [{"name": "Drive Belt", "confidence": 0.6}, {"name": "Trolley Wheels", "confidence": 0.5}]},
+        "learn-cycle": {"title": "Record 8000 Learn Cycle", "steps": ["Press and hold blue/black buttons together", "Wait for LED indication", "Release when LED pattern changes", "Door will auto-cycle for calibration", "Verify smooth operation after learn"], "parts": []}
+      },
+      "errorCodes": {"E01": {"meaning": "Motor overcurrent", "action": "Check for binding"}, "E02": {"meaning": "Encoder fault", "action": "Check encoder connection"}, "E03": {"meaning": "Safety circuit open", "action": "Check safety sensors"}, "E04": {"meaning": "Communication error", "action": "Check wiring"}},
+      "testProcedures": {},
+      "manuals": [{"name": "Record 8000 Manual", "drive_id": "record-8000-manual"}],
+      "wiring": {"description": "Record 8000 Wiring", "sections": [{"name": "Mains", "terminals": "L, N, PE"}, {"name": "Motor", "terminals": "U, V, W"}, {"name": "Sensors", "terminals": "IN1-IN8"}]}
+    },
+    "dorma-esaii": {
+      "manufacturer": "Dorma",
+      "model": "ESA II",
+      "type": "sliding",
+      "symptoms": {
+        "no-power": {"title": "No Power", "steps": ["Check input voltage", "Verify transformer operation", "Check control board indicators", "Inspect all connections"], "parts": [{"name": "Transformer", "confidence": 0.6}]},
+        "wont-open": {"title": "Won't Open", "steps": ["Check mode setting", "Test activation input", "Verify safety clear", "Check for fault code"], "parts": []},
+        "learn-cycle": {"title": "ESA II Learn", "steps": ["Access setup mode", "Initiate learn sequence", "Allow full cycle completion", "Exit setup mode"], "parts": []}
+      },
+      "errorCodes": {"F1": {"meaning": "Motor fault", "action": "Check motor"}, "F2": {"meaning": "Sensor fault", "action": "Check sensors"}},
+      "testProcedures": {},
+      "manuals": [],
+      "wiring": {"description": "ESA II Terminals", "sections": [{"name": "Power", "terminals": "L, N"}, {"name": "Control", "terminals": "Various"}]}
+    }
+  }
+}
