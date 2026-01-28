@@ -1,0 +1,15 @@
+{
+  "name": "aas-portal",
+  "version": "5.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AAS Service Portal with Auth0 Authentication",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build step needed'"
+  },
+  "dependencies": {
+    "@netlify/functions": "^2.8.0",
+    "jose": "^5.2.0"
+  }
+}
